@@ -1,0 +1,6 @@
+/bin
+/obj
+appsettings.json
+/Migrations
+/Uploads
+Migrations/ApplicationDBContextModelSnapshot.cs
