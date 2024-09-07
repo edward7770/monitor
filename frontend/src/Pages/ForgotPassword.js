@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 
 const ForgotPassword = () => {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const { forgotPassword, isLoading } = useAuth();
-    
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,63 +18,83 @@ const ForgotPassword = () => {
     if (email === "") {
       toast.warning(t("change_email_confirm_msg"));
     } else if (!isValidEmail) {
-      toast.warning(t("check_email_validation_msg")); 
+      console.log(isValidEmail);
+      toast.warning(t("check_email_validation_msg"));
     } else {
       await forgotPassword(email);
     }
   };
 
   useEffect(() => {
-    document.title = 'Prosumator | Forgot Password';
+    document.title = "Monitor | Forgot Password";
   }, []);
 
   return (
-    <div className="page-forgot">
-      <main className="page-content shadow-none">
-        <div className="page-inner">
-          <div id="main-wrapper">
-            <div className="row mt-32">
-              <div className="col-md-3 center">
-                <div className="login-box">
-                  <a
-                    href="/"
-                    className="logo-name text-lg text-center"
-                  >
-                    Prosumator
+    <div className="authentication-background">
+      <div className="container">
+        <div className="row justify-content-center align-items-center authentication authentication-basic h-100">
+          <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-6 col-sm-8 col-12">
+            <div className="card custom-card my-4">
+              <div className="card-body p-5">
+                <div className="mb-3 d-flex justify-content-center">
+                  <a href="/#">
+                    <img
+                      src="../assets/images/brand-logos/desktop-logo.png"
+                      alt="logo"
+                      className="desktop-logo"
+                    />
+                    <img
+                      src="../assets/images/brand-logos/desktop-dark.png"
+                      alt="logo"
+                      className="desktop-dark"
+                    />
                   </a>
-                  <p className="text-center m-t-md">
-                    {t("reset_password_description")}
-                  </p>
-                  <form className="m-t-md" onSubmit={handleSubmit}>
-                    <div className="form-group">
+                </div>
+                <p className="h5 mb-2 text-center">Forgot Password</p>
+                <p className="mb-4 text-muted op-7 fw-normal text-center">
+                  {t("reset_password_description")}
+                </p>
+                <form className="m-t-md" onSubmit={handleSubmit}>
+                  <div className="row gy-3">
+                    <div className="col-xl-12">
+                      <label htmlhtmlFor="email" className="form-label text-default">
+                        {t("email")}
+                      </label>
                       <input
-                        type="email"
-                        className="form-control"
+                        type="text"
+                        className="form-control form-control-lg"
                         placeholder={t("email")}
                         value={email}
-                        onChange={(e) => {setEmail(e.target.value)}}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                        }}
                         required
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
+                  </div>
+                  <div className="d-grid mt-4">
+                    <button
+                      type="submit"
+                      className="btn btn-lg btn-primary"
+                      disabled={isLoading}
+                    >
                       {t("submit")}
                     </button>
+                  </div>
+                  <div className="text-center w-full mt-2">
                     <Link
                       to="/login"
-                      className="btn btn-default btn-block m-t-md"
+                      className="btn btn-default btn-block m-t-md text-center w-full"
                     >
                       {t("back")}
                     </Link>
-                  </form>
-                  {/* <p className="text-center m-t-xs text-sm">
-                    2023 &copy; Techumanity.
-                  </p> */}
-                </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

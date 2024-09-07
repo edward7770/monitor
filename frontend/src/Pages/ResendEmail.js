@@ -50,7 +50,7 @@ const ResendEmail = () => {
     if (changeEmail === "") {
       toast.warning(t("change_email_confirm_msg"));
     } else if (!isValidEmail) {
-      toast.warning(t("email_validation_msg")); 
+      toast.warning(t("email_validation_msg"));
     } else {
       setIsChangeSubmitLoading(true);
       const queryParams = new URLSearchParams(window.location.search);
@@ -64,7 +64,9 @@ const ResendEmail = () => {
           })
           .catch((err) => {
             if (err.response.data) {
-              toast.warning(t(err.response.data.message, {email: changeEmail}));
+              toast.warning(
+                t(err.response.data.message, { email: changeEmail })
+              );
             } else {
               toast.warning(t("email_activate_fail_msg"));
             }
@@ -81,7 +83,7 @@ const ResendEmail = () => {
   };
 
   useEffect(() => {
-    document.title = 'Prosumator | Resend Email';
+    document.title = "Monitor | Resend Email";
     const queryParams = new URLSearchParams(window.location.search);
     const email = queryParams.get("email");
     if (email) {
@@ -90,61 +92,74 @@ const ResendEmail = () => {
   }, []);
 
   return (
-    <div className="page-forgot">
-      <main className="page-content shadow-none">
-        <div className="page-inner">
-          <div id="main-wrapper">
-            <div className="row mt-32">
-              <div className="col-md-4 center">
-                <div className="login-box">
-                  <a
-                    href="index.html"
-                    className="logo-name text-lg text-center"
-                  >
-                    Prosumator
+    <div className="authentication-background">
+      <div className="container">
+        <div className="row justify-content-center align-items-center authentication authentication-basic h-100">
+          <div className="col-xxl-4 col-xl-5 col-lg-5 col-md-6 col-sm-8 col-12">
+            <div className="card custom-card my-4">
+              <div className="card-body p-5">
+                <div className="mb-3 d-flex justify-content-center">
+                  <a href="/#">
+                    <img
+                      src="../assets/images/brand-logos/desktop-logo.png"
+                      alt="logo"
+                      className="desktop-logo"
+                    />
+                    <img
+                      src="../assets/images/brand-logos/desktop-dark.png"
+                      alt="logo"
+                      className="desktop-dark"
+                    />
                   </a>
-                  <p className="text-center m-t-md">
-                    {t("resend_email_description1")}<br/>
-                    {t("resend_email_description2")}
-                  </p>
-                  <form className="m-t-md" onSubmit={handleSubmit}>
-                    <button type="submit" className="btn btn-success btn-block">
-                      {t("resend_email_btn")} {resendEmail && resendEmail} {isSubmitLoading && "..."}
-                    </button>
-                  </form>
-                  {!isChangeEmailOpen ? (
-                    <button
-                      type="submit"
-                      className="btn btn-success btn-block mt-6"
-                      onClick={onCollapseChangeEmail}
-                    >
-                      {t("change_email_btn")}
-                    </button>
-                  ) : (
-                    <form className="m-t-md" onSubmit={handleChangeEmailSubmit}>
-                      <div className="form-group">
+                </div>
+                <p className="h5 mb-2 text-center">
+                  {t("resend_email_description1")}
+                </p>
+                <p className="mb-4 text-muted op-7 fw-normal text-center">
+                  {t("resend_email_description2")}
+                </p>
+                <form className="m-t-md" onSubmit={handleSubmit}>
+                  <button type="submit" className="btn btn-lg btn-primary w-full">
+                    {t("resend_email_btn")} {resendEmail && resendEmail}{" "}
+                    {isSubmitLoading && "..."}
+                  </button>
+                </form>
+                {!isChangeEmailOpen ? (
+                  <button
+                    type="submit"
+                    className="btn btn-lg btn-primary mt-6 w-full"
+                    onClick={onCollapseChangeEmail}
+                  >
+                    {t("change_email_btn")}
+                  </button>
+                ) : (
+                  <form className="mt-4" onSubmit={handleChangeEmailSubmit}>
+                    <div className="row gy-3">
+                      <div className="col-xl-12">
+                        <label htmlFor="email" className="form-label text-default">
+                          {t("email")}
+                        </label>
                         <input
-                          className="form-control"
+                          type="text"
+                          className="form-control form-control-lg"
                           onChange={onChangeEmail}
                           name="change_email"
                           value={changeEmail}
                           placeholder={t("email_address")}
                         />
                       </div>
-                      <button
-                        type="submit"
-                        className="btn btn-success btn-block"
-                      >
-                        {t("save_change_email_btn")} {isChangeSubmitLoading && "..."}
+                    </div>
+                      <button type="submit" className="btn btn-lg btn-primary w-full mt-2">
+                        {t("save_change_email_btn")}{" "}
+                        {isChangeSubmitLoading && "..."}
                       </button>
-                    </form>
-                  )}
-                </div>
+                  </form>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

@@ -3,9 +3,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
 i18n.use(LanguageDetector).use(initReactI18next).init({
-    lng: "ro",
+    lng: "en",
     debug: true,
-    fallbackLng: "ro",
+    fallbackLng: "en",
     interpolation: {
         escapeValue: false
     },
@@ -16,9 +16,9 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
                 //register, login page
                 client: "Client",
                 supplier: "Supplier",
-                register: "Register",
-                login: "Login",
-                email: "Email",
+                register: "Sing up",
+                login: "Sign in",
+                email: "Email Address",
                 password: "Password",
                 name: "Name",
                 surname: "Surname",
@@ -66,7 +66,7 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
                 email_address: "Email address",
                 save_change_email_btn: "Save email and resend activation code",
                 profile_change_email_btn: "Change Email",
-                reset_psd_description: "Change your password",
+                reset_psd_description: "Reset your password",
                 password_confirm: "Password Confirm",
                 change_password: "Change Password",
                 check_email_msg: "Please check email again",

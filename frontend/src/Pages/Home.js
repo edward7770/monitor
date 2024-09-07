@@ -7,21 +7,7 @@ const Home = (props) => {
   return (
     <>
       <div id="homepage">
-        <main className="page-content shadow-none">
-          <div className="page-inner">
-            <div id="main-wrapper">
-              <div className="container">
-                <div
-                  className={`row mt-[50px] ${
-                    isLoggedIn() ? "md:mt-[5px]" : "md:mt-[20px]"
-                  }`}
-                >
-                  <h3 className="ml-6 text-xl">Home</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
+        <h3 className="text-xl">Home</h3>
       </div>
     </>
   );

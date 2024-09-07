@@ -27,15 +27,14 @@ namespace backend.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly ISmtpService _smtpService;
-        private readonly ISupplierRepository _supplierRepo;
+        private readonly IClientRepository _supplierRepo;
         private readonly IClientRepository _clientRepo;
         private readonly IUserResetRepository _userResetRepo;
-        private readonly ISupplierUserRepository _supplierUserRepo;
         private readonly SignInManager<AppUser> _signInManager;
         // private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
-        public UserController(UserManager<AppUser> userManager, ISupplierRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, ISupplierUserRepository supplierUserRepo, IConfiguration config)
+        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IConfiguration config)
         {
             _userManager = userManager;
             _supplierRepo = supplierRepo;
@@ -44,7 +43,6 @@ namespace backend.Controllers
             _tokenService = tokenService;
             _signInManager = signInManager;
             _smtpService = smtpService;
-            _supplierUserRepo = supplierUserRepo;
             // _httpContextAccessor = httpContextAccessor;
             _config = config;
         }
@@ -71,14 +69,7 @@ namespace backend.Controllers
 
                 var supplier = await _supplierRepo.GetByUserIdAsync(user.Id);
                 var supplierUsers = new List<string>();
-                if (supplier != null)
-                {
-                    var supplierUserList = await _supplierUserRepo.GetBySupplierId(supplier.Id);
-                    foreach (var supplierUser in supplierUserList)
-                    {
-                        supplierUsers.Add(supplierUser.UserId);
-                    }
-                }
+
                 var client = await _clientRepo.GetByUserIdAsync(user.Id);
 
                 var isUsermanagementRole = await _userManager.IsInRoleAsync(user, "Usermanagement");
@@ -93,9 +84,7 @@ namespace backend.Controllers
                     EmailConfirmed = user.EmailConfirmed,
                     Status = user.Status,
                     DateCreated = user.DateCreated,
-                    Supplier = supplier,
                     Client = client,
-                    SupplierUsers = supplierUsers
                 };
 
                 users.Add(tempuser);
@@ -207,7 +196,7 @@ namespace backend.Controllers
                         {
                             var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                             // var confirmationLink = Url.Action(nameof(ConfirmEmail), "User", new { code, userId = appUser.Id}, Request.Scheme);
-                            var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id;
+                            var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
 
                             var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
                             if (!emailSent)
@@ -233,7 +222,7 @@ namespace backend.Controllers
                     else
                     {
                         var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                        var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id;
+                        var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
                         var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
                         if (!emailSent)
                         {
@@ -387,8 +376,8 @@ namespace backend.Controllers
             }
 
             var userReset = await _userResetRepo.GetUserResetByUserId(user.Id);
-
-            if (userReset.DateRequested.AddMinutes(30) > DateTime.Now)
+            return Ok(DateTime.Now);
+            if (userReset.DateRequested.AddMinutes(30) < DateTime.Now)
             {
                 return StatusCode(403, "forgot_password_expired_msg");
             }

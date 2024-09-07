@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using backend.Dtos.Client;
 using backend.Interfaces;
 using backend.Models;
+using backend.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Dtos.Client;
 
 namespace backend.Controllers
 {
@@ -14,44 +16,62 @@ namespace backend.Controllers
     public class ClientController : ControllerBase
     {
         readonly private IClientRepository _clientRepo;
-        public ClientController(IClientRepository clientRepo)
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public ClientController(IClientRepository clientRepo, IWebHostEnvironment hostEnvironment)
         {
             _clientRepo = clientRepo;
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var clientModels = await _clientRepo.GetAllAsync();
+            var supplierModels = await _clientRepo.GetAllAsync();
 
-            return Ok(clientModels);
+            return Ok(supplierModels);
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] CreateClientRequestDto clientDto)
+        public async Task<IActionResult> Create([FromForm] CreateSupplierRequestDto supplierDto)
         {
-            var newClient = new Client{
-                Name = clientDto.Name,
-                Surname = clientDto.Surname,
-                Email = clientDto.Email,
-                Mobile = clientDto.Mobile,
-                Phone = clientDto.Phone,
-                AddressLine1 = clientDto.AddressLine1,
-                AddressLine2 = clientDto.AddressLine2,
-                AddressLine3 = clientDto.AddressLine3,
-                AddressLine4 = clientDto.AddressLine4,
-                AddressPostalCode = clientDto.AddressPostalCode,
+            var newClient = new Client {
+                Name = supplierDto.Name,
+                Surname = supplierDto.Surname,
+                CompanyName = supplierDto.CompanyName,
+                RegistrationNumber = supplierDto.RegistrationNumber,
+                ContactEmail = supplierDto.ContactEmail,
+                Phone = supplierDto.Phone,
+                Mobile = supplierDto.Mobile,
+                AddressLine1 = supplierDto.AddressLine1,
+                AddressLine2 = supplierDto.AddressLine2,
+                AddressLine3 = supplierDto.AddressLine3,
+                AddressLine4 = supplierDto.AddressLine4,
+                AddressPostalCode = supplierDto.AddressPostalCode,
                 DateCreated = DateTime.Now,
-                UserId = clientDto.UserId
+                UserId = supplierDto.UserId
             };
 
             var client = await _clientRepo.AddAsync(newClient);
             if(client == null)
             {
-                return BadRequest("register_client_fail_msg");
+                return BadRequest("register_supplier_fail_msg");
             }
-            
+
             return Ok(client);
+        }
+
+        [HttpPost("update/{supplierId}")]
+        [Authorize]
+        public async Task<IActionResult> Update(int supplierId, [FromForm] UpdateSupplierRequestDto supplierDto)
+        {
+            var supplier = await _clientRepo.UpdateAsync(supplierId, supplierDto);
+
+            if(supplier == null)
+            {
+                return BadRequest("supplier_not_found");
+            }
+
+            return Ok(supplier);
         }
     }
 }

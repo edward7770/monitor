@@ -44,7 +44,7 @@ export const UserProvider = ({children}) => {
                     setUser(userObj);
                     toast.success('Register success!');
                     setIsLoading(false);
-                    navigate('/dashboard');
+                    navigate("/dashboard");
                 }
             })
             .catch(err => {
@@ -79,7 +79,10 @@ export const UserProvider = ({children}) => {
                             setUser(userObj);
                             toast.success(t("login_success_msg"));
                             setIsLoading(false);
-                            navigate('/dashboard');
+                            navigate("/dashboard");
+                            setTimeout(() => {
+                                window.location.reload();
+                              }, 0);
                         } else {
                             toast.warning(t("account_no_active_msg"));
                         }
@@ -188,6 +191,9 @@ export const UserProvider = ({children}) => {
         setToken('');
         // window.location
         navigate('/login');
+        setTimeout(() => {
+            window.location.reload();
+          }, 0);
     };
 
     return (

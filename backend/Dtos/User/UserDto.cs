@@ -17,8 +17,6 @@ namespace backend.Dtos.User
         public bool UserManagement { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
-        public Models.Supplier Supplier { get; set; }
         public Models.Client Client { get; set; }
-        public List<string> SupplierUsers { get; set; }
     }
 }

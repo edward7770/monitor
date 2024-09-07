@@ -91,21 +91,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISmtpService, SmtpService>();
-builder.Services.AddScoped<ISolutionRepository, SolutionRepository>();
-builder.Services.AddScoped<ISolutionDetailRepository, SolutionDetailRepository>();
-builder.Services.AddScoped<IInverterRepository, InverterRepository>();
-builder.Services.AddScoped<IPanelRepository, PanelRepository>();
-builder.Services.AddScoped<IStorageRepository, StorageRepository>();
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
-builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IUserResetRepository, UserResetRepository>();
-builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
-builder.Services.AddScoped<ISupplierUserRepository, SupplierUserRepository>();
-builder.Services.AddScoped<IUploadRepository, UploadRepository>();
-builder.Services.AddScoped<IProvinceRepository, ProvinceRepository>();
-builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
-builder.Services.AddScoped<ISolutionProvinceRepository, SolutionProvinceRepository>();
 
 var app = builder.Build();
 

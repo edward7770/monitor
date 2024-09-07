@@ -1,5 +1,5 @@
 import "./App.css";
-import Home from "./Pages/Home";
+// import Home from "./Pages/Home";
 import Dashboard from "./Pages/Dashboard";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
@@ -13,22 +13,26 @@ import ProtectedRoute from "./Routes/ProtectedRoute";
 // import ProtectedRoleRoute from "./Routes/ProtectedRoleRoute";
 import ProtectedLoginRoute from "./Routes/ProtectedLoginRoute";
 // import ProtectedAdminRoute from "./Routes/ProtectedAdminRoute";
-import ProtectedSuperadminRoute from "./Routes/ProtectedSuperadminRoute";
-import ProtectedUsermanagementRoute from "./Routes/ProtectedUsermanagementRoute";
+// import ProtectedSuperadminRoute from "./Routes/ProtectedSuperadminRoute";
+// import ProtectedUsermanagementRoute from "./Routes/ProtectedUsermanagementRoute";
 import { useAuth } from "./context/useAuth";
 import NotFound from "./Pages/NotFound";
 import Navbar from "./Components/Navbar";
+import SwitcherCanvs from "./Components/SwitcherCanvs";
 import Sidebar from "./Components/Sidebar";
-import CdNav from "./Components/CdNav";
+import Footer from "./Components/Footer";
 
-import NewAdmin from "./Pages/Manageusers/NewAdmin";
-import SupplierUser from "./Pages/Manageusers/SupplierUser";
-import Manageusers from "./Pages/Manageusers/Manageusers";
+// import NewAdmin from "./Pages/Manageusers/NewAdmin";
+// import SupplierUser from "./Pages/Manageusers/SupplierUser";
+// import Manageusers from "./Pages/Manageusers/Manageusers";
 import Profile from "./Pages/Profile";
 
 import axios from 'axios';
-import { useEffect } from "react";
+import { Outlet } from "react-router";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router";
+
+import { Helmet } from "react-helmet";
 
 axios.defaults.withCredentials = true;
 
@@ -51,7 +55,7 @@ axios.interceptors.response.use(
 
 function App() {
   const { isLoggedIn, getUserStatus } = useAuth();
-
+  
   useEffect(() => {
     const fetchUserRole = async () => {
       const defaultUser = JSON.parse(localStorage.getItem('user'));
@@ -68,37 +72,57 @@ function App() {
     };
 
     fetchUserRole();
-}, [getUserStatus]);
+}, [getUserStatus, isLoggedIn]);
 
   return (
     <>
-      <div className="page-header-fixed compact-menu page-horizontal-bar full-height">
-        <main className="page-content content-wrap">
-          <Navbar/>
-          <Sidebar isLoggedIn = {isLoggedIn()}/>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
-            <Route path="/login" element={<ProtectedLoginRoute><Login /></ProtectedLoginRoute>} />
-            <Route path="/register" element={<ProtectedLoginRoute><Register /></ProtectedLoginRoute>} />
-            <Route path="/forgot" element={<ProtectedLoginRoute><ForgotPassword /></ProtectedLoginRoute>} />
-            <Route path="/resetpassword" element={<ProtectedLoginRoute><ResetPassword /></ProtectedLoginRoute>} />
-            <Route path="/confirm-email" element={<ProtectedLoginRoute><ConfirmEmail /></ProtectedLoginRoute>} />
-            <Route path="/resend-email" element={<ProtectedLoginRoute><ResendEmail /></ProtectedLoginRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <SwitcherCanvs/>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<ProtectedLoginRoute><Login /></ProtectedLoginRoute>} />
+          <Route path="/register" element={<ProtectedLoginRoute><Register /></ProtectedLoginRoute>} />
+          <Route path="/forgot" element={<ProtectedLoginRoute><ForgotPassword /></ProtectedLoginRoute>} />
+          <Route path="/resetpassword" element={<ProtectedLoginRoute><ResetPassword /></ProtectedLoginRoute>} />
+          <Route path="/confirm-email" element={<ProtectedLoginRoute><ConfirmEmail /></ProtectedLoginRoute>} />
+          <Route path="/resend-email" element={<ProtectedLoginRoute><ResendEmail /></ProtectedLoginRoute>} />
 
-            <Route path="/new-admin" element={<ProtectedSuperadminRoute><NewAdmin /></ProtectedSuperadminRoute>} />
-            <Route path="/supplier-user" element={<ProtectedUsermanagementRoute><SupplierUser /></ProtectedUsermanagementRoute>} />
-            <Route path="/manage-users" element={<ProtectedUsermanagementRoute><Manageusers /></ProtectedUsermanagementRoute>} />
+          {/* <Route path="/new-admin" element={<ProtectedSuperadminRoute><NewAdmin /></ProtectedSuperadminRoute>} />
+          <Route path="/supplier-user" element={<ProtectedUsermanagementRoute><SupplierUser /></ProtectedUsermanagementRoute>} />
+          <Route path="/manage-users" element={<ProtectedUsermanagementRoute><Manageusers /></ProtectedUsermanagementRoute>} /> */}
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <div className="flex p-6 justify-center">
-            <p className="no-s">2024 &copy; Prosumator SRL</p>
-          </div>
-        </main>
-        {isLoggedIn() && <CdNav />}
+          {isLoggedIn() && (
+            <Route
+              path="/"
+              element={
+                <div className="page">
+                  <Navbar />
+                  <Sidebar />
+                  <div className="main-content app-content">
+                    <Outlet />
+                  </div>
+                  <Footer />
+                </div>
+              }
+            >
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            </Route>
+          )}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      <div className="scrollToTop">
+        <span className="arrow"><i className="ti ti-arrow-narrow-up fs-20"></i></span>
       </div>
+      <div id="responsive-overlay"></div>
+      <Helmet>
+        {isLoggedIn() && <script src="/assets/js/defaultmenu.min.js"></script>}
+        {isLoggedIn() && <script src="/assets/js/sticky.js"></script>}
+        {isLoggedIn() && <script src="/assets/js/custom.js"></script>}
+        {isLoggedIn() && <script src="/assets/js/custom-switcher.min.js"></script>}
+        {!isLoggedIn() && <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>}
+        {!isLoggedIn() && <script src="/assets/js/show-password.js"></script>}
+        {!isLoggedIn() && <script src="/assets/js/authentication-main.js"></script>}
+      </Helmet>
     </>
   );
 }

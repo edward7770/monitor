@@ -25,7 +25,7 @@ namespace backend.Repository
 
         public async Task<UserReset> GetUserResetByUserId(string userId)
         {
-            return await _context.UserResets.FirstOrDefaultAsync(x => x.UserId == userId);
+            return await _context.UserResets.Where(x => x.UserId == userId).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
         }
     }
 }

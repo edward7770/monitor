@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { getUserAPI } from "../Services/AuthService";
 import { Link } from "react-router-dom";
-import logo from "../assets/images/logo.png";
+// import logo from "../assets/images/logo.png";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 
@@ -14,25 +14,11 @@ const Navbar = (props) => {
 
   const { t, i18n } = useTranslation();
 
-  const onChangeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-  };
+  // const onChangeLanguage = (lang) => {
+  //   i18n.changeLanguage(lang);
+  // };
 
-  const onClickNavbarItem = (event) => {
-    event.preventDefault();
-    var sidebar_menu = window.document.getElementById("sidebar_menu");
-    // if (user) {
-    if (sidebar_menu) {
-      if (sidebar_menu.classList.contains("visible")) {
-        sidebar_menu.classList.remove("visible");
-      } else {
-        sidebar_menu.classList.add("visible");
-      }
-    }
-    // }
-  };
-
-  const { isLoggedIn } = useAuth();
+  // const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,727 +42,858 @@ const Navbar = (props) => {
   return (
     <>
       <Helmet>{/* <script src="/assets/js/modern.min.js"></script> */}</Helmet>
-      <div className="navbar">
-        <div className="navbar-inner container">
-          <div className="sidebar-pusher">
-            <a
-              href="/#"
-              onClick={(e) => onClickNavbarItem(e)}
-              className="waves-effect waves-button waves-classic push-sidebar"
-            >
-              <i className="fa fa-bars"></i>
-            </a>
-          </div>
-          <div className="logo-box content-center">
-            <Link to="/" className="logo-text">
-              {/* <span>Techumanity</span> */}
-              <img src={logo} alt="logo" width="100px" />
-            </Link>
-            <ul
-              className="nav navbar-nav navbar-right responsive-navbar-content"
-              style={{
-                position: "absolute",
-                top: "0",
-                right: "0",
-                marginBottom: "25px",
-                border: "none",
-              }}
-            >
-              {isLoggedIn() ? (
-                <>
-                  {" "}
-                  <li className="dropdown">
-                    <a
-                      href="/#"
-                      onClick={(e) => e.preventDefault()}
-                      className="dropdown-toggle waves-effect waves-button waves-classic"
-                      style={{ padding: "10px 5px" }}
-                      data-toggle="dropdown"
-                    >
-                      <span className="user-name">
-                        {user && user.userName}
-                        <i className="fa fa-angle-down"></i>
-                      </span>
-                      {/* <img
-                        className="img-circle avatar"
-                        src="/assets/images/avatar7.png"
-                        width="40"
-                        height="40"
-                        alt=""
-                      /> */}
-                    </a>
-                    <ul
-                      className="dropdown-menu dropdown-list responsive-profile-dropdown"
-                      role="menu"
-                    >
-                      {/* <li role="presentation">
-                        <a href="calendar.html">
-                          <i className="fa fa-calendar"></i>Calendar
-                        </a>
-                      </li> */}
-                      {user && user.role === "Supplier" && (
-                        <>
-                          <li role="presentation">
-                            <Link
-                              to="/profile"
-                              style={{ padding: "5px 15px 5px 25px" }}
-                            >
-                              <i className="fa fa-user"></i>Profile
-                            </Link>
-                          </li>
-                          <li
-                            role="presentation"
-                            className="divider"
-                            style={{ margin: "2px 0px" }}
-                          ></li>
-                        </>
-                      )}
-                      <li role="presentation">
-                        <a
-                          href="/#"
-                          onClick={handleLogout}
-                          style={{ padding: "5px 15px 5px 25px" }}
-                        >
-                          <i className="fa fa-sign-out m-r-xs"></i>Log out
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  {/* <li>
-                    <a
-                      href="/#"
-                      onClick={(e) => e.preventDefault()}
-                      className="waves-effect waves-button waves-classic"
-                      id="showRight"
-                    >
-                      <i className="fa fa-comments"></i>
-                    </a>
-                  </li> */}
-                  <li className="dropdown">
-                    <a
-                      href="/#"
-                      onClick={(e) => e.preventDefault()}
-                      className="dropdown-toggle waves-effect waves-button waves-classic"
-                      data-toggle="dropdown"
-                    >
-                      <i className="fa fa-globe"></i>
-                    </a>
-                    <ul
-                      className="dropdown-menu dropdown-list theme-settings"
-                      role="menu"
-                      id="language_navbar_menu"
-                    >
-                      <li
-                        className="li-group d-flex cursor-pointer"
-                        onClick={() => onChangeLanguage("en")}
-                      >
-                        <img
-                          src="./assets/images/flags/en-flag.png"
-                          className="ml-2"
-                          alt="en-flag"
-                          style={{ height: "20px", width: "32px" }}
-                        />
-                        <span className="ml-4">English</span>
-                      </li>
-                      <li
-                        className="li-group d-flex cursor-pointer"
-                        onClick={() => onChangeLanguage("ro")}
-                      >
-                        <img
-                          src="./assets/images/flags/ro-flag.png"
-                          className="ml-2"
-                          alt="ro-flag"
-                          style={{ height: "20px", width: "32px" }}
-                        />
-                        <span className="ml-4">Romanian</span>
-                      </li>
-                    </ul>
-                  </li>
-                </>
-              ) : (
-                <>
-                  {" "}
+      <header className="app-header">
+        <div className="main-header-container container-fluid">
+          <div className="header-content-left">
+            <div className="header-element">
+              <div className="horizontal-logo">
+                <a href="/#" className="header-logo">
+                  <img
+                    src="../assets/images/brand-logos/desktop-logo.png"
+                    alt="logo"
+                    className="desktop-logo"
+                  />
+                  <img
+                    src="../assets/images/brand-logos/toggle-logo.png"
+                    alt="logo"
+                    className="toggle-logo"
+                  />
+                  <img
+                    src="../assets/images/brand-logos/desktop-dark.png"
+                    alt="logo"
+                    className="desktop-dark"
+                  />
+                  <img
+                    src="../assets/images/brand-logos/toggle-dark.png"
+                    alt="logo"
+                    className="toggle-dark"
+                  />
+                </a>
+              </div>
+            </div>
+            <div className="header-element mx-lg-0 mx-2">
+              <a
+                aria-label="Hide Sidebar"
+                className="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle"
+                data-bs-toggle="sidebar"
+                href="javascript:void(0);"
+              >
+                <span></span>
+              </a>
+            </div>
+
+            <div className="header-element header-search d-md-block d-none">
+              <input
+                type="text"
+                className="header-search-bar form-control border-0 bg-body"
+                placeholder="Search for Results..."
+              />
+              <a
+                href="javascript:void(0);"
+                className="header-search-icon border-0"
+              >
+                <i className="bi bi-search"></i>
+              </a>
+            </div>
+            <div className="header-element ms-3 d-lg-block d-none my-auto">
+              <div className="dropdown my-auto">
+                <a
+                  href="javascript:void(0);"
+                  className="btn bg-body header-dashboards-button text-start d-flex align-items-center justify-content-between"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                ></a>
+                <ul className="dropdown-menu dashboard-dropdown" role="menu">
                   <li>
                     <a
-                      href="/login"
-                      className="waves-effect waves-button waves-classic show-search"
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="/#"
                     >
-                      Login
+                      Sales Dashboard
                     </a>
                   </li>
                   <li>
                     <a
-                      href="/register"
-                      className="waves-effect waves-button waves-classic"
-                      id="showRight"
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-1.html"
                     >
-                      Register
+                      Analytics Dashboard
                     </a>
                   </li>
-                </>
-              )}
-            </ul>
-          </div>
-
-          {/* <div className="search-button">
-          <a
-            href="/#"
-            className="waves-effect waves-button waves-classic show-search"
-          >
-            <i className="fa fa-search"></i>
-          </a>
-        </div> */}
-          <div className="topmenu-outer">
-            <div className="top-menu">
-              <ul className="nav navbar-nav navbar-left">
-                {/* <li>
-                  <a
-                    href="/#"
-                    onClick={(e) => e.preventDefault()}
-                    className="waves-effect waves-button waves-classic sidebar-toggle"
-                  >
-                    <i className="fa fa-bars"></i>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/#cd-nav"
-                    className="waves-effect waves-button waves-classic cd-nav-trigger"
-                  >
-                    <i className="fa fa-diamond"></i>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/#"
-                    onClick={(e) => e.preventDefault()}
-                    className="waves-effect waves-button waves-classic toggle-fullscreen"
-                  >
-                    <i className="fa fa-expand"></i>
-                  </a>
-                </li>
-                <li className="dropdown">
-                  <a
-                    href="/#"
-                    onClick={(e) => e.preventDefault()}
-                    className="dropdown-toggle waves-effect waves-button waves-classic"
-                    data-toggle="dropdown"
-                  >
-                    <i className="fa fa-cogs"></i>
-                  </a>
-                  <ul
-                    className="dropdown-menu dropdown-md dropdown-list theme-settings"
-                    role="menu"
-                  >
-                    <li className="li-group">
-                      <ul className="list-unstyled">
-                        <li className="no-link" role="presentation">
-                          Fixed Header
-                          <div className="ios-switch pull-right switch-md">
-                            <input
-                              type="checkbox"
-                              className="js-switch pull-right fixed-header-check"
-                            />
-                          </div>
-                        </li>
-                      </ul>
-                    </li>
-                    <li className="li-group">
-                      <ul className="list-unstyled">
-                        <li className="no-link" role="presentation">
-                          Fixed Sidebar
-                          <div className="ios-switch pull-right switch-md">
-                            <input
-                              type="checkbox"
-                              className="js-switch pull-right fixed-sidebar-check"
-                            />
-                          </div>
-                        </li>
-                        <li className="no-link" role="presentation">
-                          Toggle Sidebar
-                          <div className="ios-switch pull-right switch-md">
-                            <input
-                              type="checkbox"
-                              className="js-switch pull-right toggle-sidebar-check"
-                            />
-                          </div>
-                        </li>
-                        <li className="no-link" role="presentation">
-                          Compact Menu
-                          <div className="ios-switch pull-right switch-md">
-                            <input
-                              type="checkbox"
-                              className="js-switch pull-right compact-menu-check"
-                            />
-                          </div>
-                        </li>
-                      </ul>
-                    </li>
-                    <li className="no-link">
-                      <button className="btn btn-default reset-options">
-                        Reset Options
-                      </button>
-                    </li>
-                  </ul>
-                </li> */}
-                {/* <li className="dropdown">
-                  <a
-                    href="/#"
-                    onClick={(e) => e.preventDefault()}
-                    className="dropdown-toggle waves-effect waves-button waves-classic"
-                    data-toggle="dropdown"
-                  >
-                    <i className="fa fa-globe"></i>
-                  </a>
-                  <ul
-                    className="dropdown-menu dropdown-list theme-settings"
-                    role="menu"
-                  >
-                    <li
-                      className="li-group d-flex cursor-pointer"
-                      onClick={() => onChangeLanguage("en")}
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-2.html"
                     >
-                      <img
-                        src="./assets/images/flags/en-flag.png"
-                        className="ml-2"
-                        alt="en-flag"
-                        style={{ height: "20px", width: "32px" }}
-                      />
-                      <span className="ml-4">English</span>
-                    </li>
-                    <li
-                      className="li-group d-flex cursor-pointer"
-                      onClick={() => onChangeLanguage("ro")}
+                      Ecommerce Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-3.html"
                     >
-                      <img
-                        src="./assets/images/flags/ro-flag.png"
-                        className="ml-2"
-                        alt="ro-flag"
-                        style={{ height: "20px", width: "32px" }}
-                      />
-                      <span className="ml-4">Romanian</span>
-                    </li>
-                  </ul>
-                </li> */}
-              </ul>
-              <ul className="nav navbar-nav navbar-right">
-                {isLoggedIn() ? (
-                  <>
-                    {" "}
-                    {/* <li>
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="waves-effect waves-button waves-classic show-search"
-                      >
-                        <i className="fa fa-search"></i>
-                      </a>
-                    </li> */}
-                    {/* <li className="dropdown">
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <i className="fa fa-envelope"></i>
-                        <span className="badge badge-success pull-right">
-                          4
-                        </span>
-                      </a>
-                      <ul
-                        className="dropdown-menu title-caret dropdown-lg"
-                        role="menu"
-                      >
-                        <li>
-                          <p className="drop-title">
-                            You have 4 new messages !
-                          </p>
-                        </li>
-                        <li className="dropdown-menu-list slimscroll messages">
-                          <ul className="list-unstyled">
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="msg-img">
-                                  <div className="online on"></div>
-                                  <img
-                                    className="img-circle"
-                                    src="/assets/images/avatar2.png"
-                                    alt=""
-                                  />
-                                </div>
-                                <p className="msg-name">Robin Bayhack</p>
-                                <p className="msg-text">
-                                  Hey ! I will get back to you shortly.
-                                </p>
-                                <p className="msg-time">3 minutes ago</p>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="msg-img">
-                                  <div className="online off"></div>
-                                  <img
-                                    className="img-circle"
-                                    src="/assets/images/avatar5.png"
-                                    alt=""
-                                  />
-                                </div>
-                                <p className="msg-name">David Horwitz</p>
-                                <p className="msg-text">
-                                  Hi Alisha, the balance on that account is
-                                  still unchanged!
-                                </p>
-                                <p className="msg-time">8 minutes ago</p>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="msg-img">
-                                  <div className="online off"></div>
-                                  <img
-                                    className="img-circle"
-                                    src="/assets/images/avatar3.png"
-                                    alt=""
-                                  />
-                                </div>
-                                <p className="msg-name">Ferosa Limalia</p>
-                                <p className="msg-text">
-                                  I will be in by 9:30 !
-                                </p>
-                                <p className="msg-time">56 minutes ago</p>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="msg-img">
-                                  <div className="online on"></div>
-                                  <img
-                                    className="img-circle"
-                                    src="/assets/images/avatar4.png"
-                                    alt=""
-                                  />
-                                </div>
-                                <p className="msg-name">Julius Idana</p>
-                                <p className="msg-text">
-                                  Account balance is R254,352.00 as at 7 August
-                                  2023.
-                                </p>
-                                <p className="msg-time">2 hours ago</p>
-                              </a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li className="drop-all">
-                          <a
-                            href="/#"
-                            className="text-center"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            All Messages
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li className="dropdown">
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <i className="fa fa-bell"></i>
-                        <span className="badge badge-success pull-right">
-                          3
-                        </span>
-                      </a>
-                      <ul
-                        className="dropdown-menu title-caret dropdown-lg"
-                        role="menu"
-                      >
-                        <li>
-                          <p className="drop-title">
-                            You have 3 pending tasks !
-                          </p>
-                        </li>
-                        <li className="dropdown-menu-list slimscroll tasks">
-                          <ul className="list-unstyled">
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="task-icon badge badge-success">
-                                  <i className="icon-call-out"></i>
-                                </div>
-                                <span className="badge badge-roundless badge-default pull-right">
-                                  1min ago
-                                </span>
-                                <p className="task-details">
-                                  New Accounts:
-                                  <span className="badge badge-success pull-right">
-                                    374
-                                  </span>
-                                </p>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="task-icon badge badge-danger">
-                                  <i className="icon-energy"></i>
-                                </div>
-                                <span className="badge badge-roundless badge-default pull-right">
-                                  24min ago
-                                </span>
-                                <p className="task-details">
-                                  Action needed:
-                                  <span className="badge badge-danger pull-right">
-                                    38
-                                  </span>
-                                </p>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/#" onClick={(e) => e.preventDefault()}>
-                                <div className="task-icon badge badge-info">
-                                  <i className="icon-bell"></i>
-                                </div>
-                                <span className="badge badge-roundless badge-default pull-right">
-                                  1h ago
-                                </span>
-                                <p className="task-details">
-                                  Messages:
-                                  <span className="badge badge-info pull-right">
-                                    5
-                                  </span>
-                                </p>
-                              </a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li className="drop-all">
-                          <a
-                            href="/#"
-                            className="text-center"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            All Tasks
-                          </a>
-                        </li>
-                      </ul>
-                    </li> */}
-                    {/* <li className="dropdown">
-                      <Link
-                        onClick={onHandleCompareSolutions}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <DifferenceIcon
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginTop: "-1px",
-                          }}
-                        />
-                        <span className="badge badge-success pull-right">
-                          {props.compareSolutions
-                            ? props.compareSolutions.length
-                            : 0}
-                        </span>
-                      </Link>
-                    </li> */}
-                    <li className="dropdown">
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        style={{ padding: "20px 0px 20px 8px" }}
-                        data-toggle="dropdown"
-                      >
-                        <span className="user-name">
-                          {user && user.userName}
-                          <i className="fa fa-angle-down"></i>
-                        </span>
-                        {/* <img
-                          className="img-circle avatar"
-                          src="/assets/images/avatar7.png"
-                          width="40"
-                          height="40"
-                          alt=""
-                        /> */}
-                      </a>
-                      <ul className="dropdown-menu dropdown-list" role="menu">
-                        {/* <li role="presentation">
-                          <a href="calendar.html">
-                            <i className="fa fa-calendar"></i>Calendar
-                          </a>
-                        </li> */}
-
-                        {/* <li role="presentation">
-                          <a href="inbox.html">
-                            <i className="fa fa-envelope"></i>Inbox
-                            <span className="badge badge-success pull-right">
-                              4
-                            </span>
-                          </a>
-                        </li> */}
-                        {user && user.role === "Supplier" && (
-                          <>
-                            <li role="presentation">
-                              <Link
-                                to="/profile"
-                                style={{ padding: "5px 15px 5px 25px" }}
-                              >
-                                <i className="fa fa-user"></i>Profile
-                              </Link>
-                            </li>
-                            <li
-                              role="presentation"
-                              className="divider"
-                              style={{ margin: "2px 0px" }}
-                            ></li>
-                          </>
-                        )}
-                        <li role="presentation">
-                          <a href="/#" onClick={handleLogout}>
-                            <i className="fa fa-sign-out m-r-xs"></i>Log out
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li className="dropdown">
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <i className="fa fa-globe"></i>
-                      </a>
-                      <ul
-                        className="dropdown-menu dropdown-list theme-settings"
-                        role="menu"
-                      >
-                        <li
-                          className="li-group d-flex cursor-pointer"
-                          onClick={() => onChangeLanguage("en")}
-                        >
-                          <img
-                            src="./assets/images/flags/en-flag.png"
-                            className="ml-2"
-                            alt="en-flag"
-                            style={{ height: "20px", width: "32px" }}
-                          />
-                          <span className="ml-4">English</span>
-                        </li>
-                        <li
-                          className="li-group d-flex cursor-pointer"
-                          onClick={() => onChangeLanguage("ro")}
-                        >
-                          <img
-                            src="./assets/images/flags/ro-flag.png"
-                            className="ml-2"
-                            alt="ro-flag"
-                            style={{ height: "20px", width: "32px" }}
-                          />
-                          <span className="ml-4">Romanian</span>
-                        </li>
-                      </ul>
-                    </li>
-                    {/* <li>
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="waves-effect waves-button waves-classic"
-                        id="showRight"
-                      >
-                        <i className="fa fa-comments"></i>
-                      </a>
-                    </li> */}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    {/* <li className="dropdown">
-                      <Link
-                        onClick={onHandleCompareSolutions}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <DifferenceIcon
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginTop: "-1px",
-                          }}
-                        />
-                        <span className="badge badge-success pull-right">
-                          {props.compareSolutions
-                            ? props.compareSolutions.length
-                            : 0}
-                        </span>
-                      </Link>
-                    </li> */}
-                    <li>
-                      <a
-                        href="/login"
-                        className="waves-effect waves-button waves-classic show-search"
-                      >
-                        Login
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/register"
-                        className="waves-effect waves-button waves-classic"
-                        id="showRight"
-                      >
-                        Register
-                      </a>
-                    </li>
-                    <li className="dropdown">
-                      <a
-                        href="/#"
-                        onClick={(e) => e.preventDefault()}
-                        className="dropdown-toggle waves-effect waves-button waves-classic"
-                        data-toggle="dropdown"
-                      >
-                        <i className="fa fa-globe"></i>
-                      </a>
-                      <ul
-                        className="dropdown-menu dropdown-list theme-settings"
-                        role="menu"
-                      >
-                        <li
-                          className="li-group d-flex cursor-pointer"
-                          onClick={() => onChangeLanguage("en")}
-                        >
-                          <img
-                            src="./assets/images/flags/en-flag.png"
-                            className="ml-2"
-                            alt="en-flag"
-                            style={{ height: "20px", width: "32px" }}
-                          />
-                          <span className="ml-4">English</span>
-                        </li>
-                        <li
-                          className="li-group d-flex cursor-pointer"
-                          onClick={() => onChangeLanguage("ro")}
-                        >
-                          <img
-                            src="./assets/images/flags/ro-flag.png"
-                            className="ml-2"
-                            alt="ro-flag"
-                            style={{ height: "20px", width: "32px" }}
-                          />
-                          <span className="ml-4">Romanian</span>
-                        </li>
-                      </ul>
-                    </li>
-                  </>
-                )}
-              </ul>
+                      CRM Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-4.html"
+                    >
+                      HRM Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-5.html"
+                    >
+                      NFT Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-6.html"
+                    >
+                      Crypto Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-7.html"
+                    >
+                      Jobs Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-8.html"
+                    >
+                      Projects Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-9.html"
+                    >
+                      Courses Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-10.html"
+                    >
+                      Stocks Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-11.html"
+                    >
+                      Personal Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item dashboards-dropdown-item"
+                      href="index-12.html"
+                    >
+                      Customer Dashboard
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
+
+          <ul className="header-content-right">
+            <li className="header-element d-md-none d-block">
+              <a
+                href="javascript:void(0);"
+                className="header-link"
+                data-bs-toggle="modal"
+                data-bs-target="#header-responsive-search"
+              >
+                <i className="bi bi-search header-link-icon"></i>
+              </a>
+            </li>
+
+            <li className="header-element country-selector">
+              <a
+                href="javascript:void(0);"
+                className="header-link dropdown-toggle"
+                data-bs-auto-close="outside"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="../assets/images/flags/us_flag.jpg"
+                  alt="img"
+                  className="rounded-circle"
+                />
+              </a>
+              <ul
+                className="main-header-dropdown dropdown-menu dropdown-menu-end"
+                data-popper-placement="none"
+              >
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img src="../assets/images/flags/us_flag.jpg" alt="img" />
+                    </span>
+                    English
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img
+                        src="../assets/images/flags/spain_flag.jpg"
+                        alt="img"
+                      />
+                    </span>
+                    Spanish
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img
+                        src="../assets/images/flags/french_flag.jpg"
+                        alt="img"
+                      />
+                    </span>
+                    French
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img
+                        src="../assets/images/flags/germany_flag.jpg"
+                        alt="img"
+                      />
+                    </span>
+                    German
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img
+                        src="../assets/images/flags/italy_flag.jpg"
+                        alt="img"
+                      />
+                    </span>
+                    Italian
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="javascript:void(0);"
+                  >
+                    <span className="avatar avatar-xs lh-1 me-2">
+                      <img
+                        src="../assets/images/flags/russia_flag.jpg"
+                        alt="img"
+                      />
+                    </span>
+                    Russian
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li className="header-element header-theme-mode">
+              <a
+                href="javascript:void(0);"
+                className="header-link layout-setting"
+              >
+                <span className="light-layout">
+                  <i className="bi bi-moon header-link-icon"></i>
+                </span>
+                <span className="dark-layout">
+                  <i className="bi bi-brightness-high header-link-icon"></i>
+                </span>
+              </a>
+            </li>
+
+            <li className="header-element cart-dropdown">
+              <a
+                href="javascript:void(0);"
+                className="header-link dropdown-toggle"
+                data-bs-auto-close="outside"
+                data-bs-toggle="dropdown"
+              >
+                <i className="bi bi-cart2 header-link-icon"></i>
+                <span
+                  className="badge bg-primary rounded-pill header-icon-badge"
+                  id="cart-icon-badge"
+                >
+                  5
+                </span>
+              </a>
+              <div
+                className="main-header-dropdown dropdown-menu dropdown-menu-end"
+                data-popper-placement="none"
+              >
+                <div className="p-3">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <p className="mb-0 fs-16">
+                      Cart Items
+                      <span
+                        className="badge bg-success-transparent ms-1 fs-12 rounded-circle"
+                        id="cart-data"
+                      >
+                        5
+                      </span>
+                    </p>
+                    <span>
+                      <span className="text-muted me-1">Total:</span>
+                      <span className="text-primary fw-medium">$14,289</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="dropdown-divider"></div>
+                <ul
+                  className="list-unstyled mb-0"
+                  id="header-cart-items-scroll"
+                >
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-start cart-dropdown-item">
+                      <img
+                        src="../assets/images/ecommerce/jpg/9.jpg"
+                        alt="img"
+                        className="avatar me-3"
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex align-items-start justify-content-between mb-0">
+                          <div className="mb-0 fs-13 text-dark">
+                            <a href="cart.html">Pink High Heel Sandals</a>
+                          </div>
+                          <div>
+                            <span className="fw-medium mb-1">$499.00</span>
+                            <a
+                              href="javascript:void(0);"
+                              className="header-cart-remove float-end dropdown-item-close"
+                            >
+                              <i className="ti ti-x"></i>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="min-w-fit-content d-flex align-items-start justify-content-between">
+                          <ul className="header-product-item d-flex">
+                            <li>Quantity: 01</li>
+                            <li>
+                              <span className="badge bg-light text-default border">
+                                In Stock
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-start cart-dropdown-item">
+                      <img
+                        src="../assets/images/ecommerce/jpg/10.jpg"
+                        alt="img"
+                        className="avatar me-3"
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex align-items-start justify-content-between mb-0">
+                          <div className="mb-0 fs-13 text-dark">
+                            <a href="cart.html">Blue Denim Jacket</a>
+                          </div>
+                          <div>
+                            <span className="fw-medium mb-1">$129.79</span>
+                            <a
+                              href="javascript:void(0);"
+                              className="header-cart-remove float-end dropdown-item-close"
+                            >
+                              <i className="ti ti-x"></i>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="min-w-fit-content d-flex align-items-start justify-content-between">
+                          <ul className="header-product-item">
+                            <li>Quantity: 02</li>
+                            <li>
+                              <span className="badge bg-light text-default border">
+                                In Stock
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-start cart-dropdown-item">
+                      <img
+                        src="../assets/images/ecommerce/jpg/13.jpg"
+                        alt="img"
+                        className="avatar me-3"
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex align-items-start justify-content-between mb-0">
+                          <div className="mb-0 fs-13 text-dark">
+                            <a href="cart.html">Yellow Backpack (24L)</a>
+                          </div>
+                          <div>
+                            <span className="fw-medium mb-1">$99.99</span>
+                            <a
+                              href="javascript:void(0);"
+                              className="header-cart-remove float-end dropdown-item-close"
+                            >
+                              <i className="ti ti-x"></i>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="min-w-fit-content d-flex align-items-start justify-content-between">
+                          <ul className="header-product-item d-flex">
+                            <li>Quantity: 01</li>
+                            <li>
+                              <span className="badge bg-light text-default border">
+                                In Stock
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-start cart-dropdown-item">
+                      <img
+                        src="../assets/images/ecommerce/jpg/16.jpg"
+                        alt="img"
+                        className="avatar me-3"
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex align-items-start justify-content-between mb-0">
+                          <div className="mb-0 fs-13 text-dark">
+                            <a href="cart.html">
+                              Multi Color Dress for Girls (3Y - 4Y)
+                            </a>
+                          </div>
+                          <div>
+                            <span className="fw-medium mb-1">$1.499.00</span>
+                            <a
+                              href="javascript:void(0);"
+                              className="header-cart-remove float-end dropdown-item-close"
+                            >
+                              <i className="ti ti-x"></i>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="min-w-fit-content d-flex align-items-start justify-content-between">
+                          <ul className="header-product-item d-flex">
+                            <li>Quantity: 02</li>
+                            <li>
+                              <span className="badge bg-danger-transparent border">
+                                Out Of Stock
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-start cart-dropdown-item">
+                      <img
+                        src="../assets/images/ecommerce/jpg/18.jpg"
+                        alt="img"
+                        className="avatar me-3"
+                      />
+                      <div className="flex-grow-1">
+                        <div className="d-flex align-items-start justify-content-between mb-0">
+                          <div className="mb-0 fs-13 text-dark">
+                            <a href="cart.html">Xavier Smart Watch</a>
+                          </div>
+                          <div>
+                            <span className="fw-medium mb-1">$49.79</span>
+                            <a
+                              href="javascript:void(0);"
+                              className="header-cart-remove float-end dropdown-item-close"
+                            >
+                              <i className="ti ti-x"></i>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-start justify-content-between">
+                          <ul className="header-product-item d-flex">
+                            <li>Quantity: 03</li>
+                            <li>
+                              <span className="badge bg-light text-default border">
+                                In Stock
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <div className="p-3 empty-header-item border-top">
+                  <div className="text-center">
+                    <a
+                      href="checkout.html"
+                      className="link-primary text-decoration-underline"
+                    >
+                      Proceed to checkout
+                    </a>
+                  </div>
+                </div>
+                <div className="p-5 empty-item d-none">
+                  <div className="text-center">
+                    <span className="avatar avatar-xl avatar-rounded bg-primary-transparent">
+                      <i className="ri-shopping-cart-2-line fs-2"></i>
+                    </span>
+                    <h6 className="fw-medium mb-1 mt-3">Your Cart is Empty</h6>
+                    <span className="mb-3 fw-normal fs-13 d-block">
+                      Add some items to make me happy :)
+                    </span>
+                    <a
+                      href="products.html"
+                      className="btn btn-primary btn-wave btn-sm m-1"
+                      data-abc="true"
+                    >
+                      continue shopping{" "}
+                      <i className="bi bi-arrow-right ms-1"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <li className="header-element notifications-dropdown d-xl-block d-none">
+              <a
+                href="javascript:void(0);"
+                className="header-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                id="messageDropdown"
+                aria-expanded="false"
+              >
+                <i className="bi bi-bell header-link-icon"></i>
+                <span className="header-icon-pulse bg-secondary rounded pulse pulse-secondary"></span>
+              </a>
+              <div
+                className="main-header-dropdown dropdown-menu dropdown-menu-end"
+                data-popper-placement="none"
+              >
+                <div className="p-3">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <p className="mb-0 fs-16">Notifications</p>
+                    <span
+                      className="badge bg-secondary-transparent"
+                      id="notifiation-data"
+                    >
+                      5 Unread
+                    </span>
+                  </div>
+                </div>
+                <div className="dropdown-divider"></div>
+                <ul
+                  className="list-unstyled mb-0"
+                  id="header-notification-scroll"
+                >
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-center">
+                      <div className="pe-2 lh-1">
+                        <span className="avatar avatar-rounded">
+                          <img src="../assets/images/faces/11.jpg" alt="" />
+                        </span>
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center justify-content-between">
+                        <div>
+                          <p className="mb-0 fw-medium">
+                            <a href="notifications.html">John Doe</a>
+                          </p>
+                          <span className="text-muted fw-normal fs-12 header-notification-text">
+                            Hey there! What's up?
+                          </span>
+                        </div>
+                        <div>
+                          <a
+                            href="javascript:void(0);"
+                            className="min-w-fit-content text-muted me-1 dropdown-item-close1"
+                          >
+                            <i className="ti ti-x fs-16"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-center">
+                      <div className="pe-2 lh-1">
+                        <span className="avatar bg-secondary-transparent avatar-rounded">
+                          <img src="../assets/images/faces/21.jpg" alt="" />
+                        </span>
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center justify-content-between">
+                        <div>
+                          <p className="mb-0 fw-medium">
+                            <a href="notifications.html">Customer Support</a>
+                          </p>
+                          <span className="text-muted fw-normal fs-12 header-notification-text">
+                            Great job on resolving the issue! Thank you!
+                          </span>
+                        </div>
+                        <div>
+                          <a
+                            href="javascript:void(0);"
+                            className="min-w-fit-content text-muted me-1 dropdown-item-close1"
+                          >
+                            <i className="ti ti-x"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-center">
+                      <div className="pe-2 lh-1">
+                        <span className="avatar bg-pink-transparent avatar-rounded">
+                          <img src="../assets/images/faces/20.jpg" alt="" />
+                        </span>
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center justify-content-between">
+                        <div>
+                          <p className="mb-0 fw-medium">
+                            <a href="notifications.html">
+                              Digital Marketing Trends
+                            </a>
+                          </p>
+                          <span className="text-muted fw-normal fs-12 header-notification-text">
+                            Next Thursday at 2:30 PM
+                          </span>
+                        </div>
+                        <div>
+                          <a
+                            href="javascript:void(0);"
+                            className="min-w-fit-content text-muted me-1 dropdown-item-close1"
+                          >
+                            <i className="ti ti-x"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-center">
+                      <div className="pe-2 lh-1">
+                        <span className="avatar bg-danger-transparent avatar-rounded">
+                          <i className="ti ti-circle-check fs-18"></i>
+                        </span>
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center justify-content-between">
+                        <div>
+                          <p className="mb-0 fw-medium">
+                            <a href="notifications.html">
+                              Amount: $50.00 paid for the order
+                            </a>
+                          </p>
+                          <span className="text-muted fw-normal fs-12 header-notification-text">
+                            Transaction ID: 123456789
+                          </span>
+                        </div>
+                        <div>
+                          <a
+                            href="javascript:void(0);"
+                            className="min-w-fit-content text-muted me-1 dropdown-item-close1"
+                          >
+                            <i className="ti ti-x"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li className="dropdown-item">
+                    <div className="d-flex align-items-center">
+                      <div className="pe-2 lh-1">
+                        <span className="avatar bg-success-transparent avatar-rounded">
+                          <img src="../assets/images/faces/6.jpg" alt="" />
+                        </span>
+                      </div>
+                      <div className="flex-grow-1 d-flex align-items-center justify-content-between">
+                        <div>
+                          <p className="mb-0 fw-medium">
+                            <a href="notifications.html">Samantha</a>
+                          </p>
+                          <span className="text-muted fw-normal fs-12 header-notification-text">
+                            Would you like to connect?
+                          </span>
+                        </div>
+                        <div>
+                          <a
+                            href="javascript:void(0);"
+                            className="min-w-fit-content text-muted me-1 dropdown-item-close1"
+                          >
+                            <i className="ti ti-x"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <div className="p-3 empty-header-item1 border-top">
+                  <div className="text-center">
+                    <a
+                      href="notifications.html"
+                      className="link-primary text-decoration-underline"
+                    >
+                      View All
+                    </a>
+                  </div>
+                </div>
+                <div className="p-5 empty-item1 d-none">
+                  <div className="text-center">
+                    <span className="avatar avatar-xl avatar-rounded bg-secondary-transparent">
+                      <i className="ri-notification-off-line fs-2"></i>
+                    </span>
+                    <h6 className="fw-medium mt-3">No New Notifications</h6>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <li className="header-element header-fullscreen">
+              <a
+                onclick="openFullscreen();"
+                href="javascript:void(0);"
+                className="header-link"
+              >
+                <i className="bi bi-fullscreen full-screen-open header-link-icon"></i>
+                <i className="bi bi-fullscreen-exit full-screen-close header-link-icon d-none"></i>
+              </a>
+            </li>
+
+            <li className="header-element">
+              <a
+                href="javascript:void(0);"
+                className="header-link dropdown-toggle"
+                id="mainHeaderProfile"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-expanded="false"
+              >
+                <div className="d-flex align-items-center">
+                  <div className="me-sm-2 me-0">
+                    <img
+                      src="../assets/images/faces/9.jpg"
+                      alt="img"
+                      className="avatar avatar-sm avatar-rounded"
+                    />
+                  </div>
+                  <div className="d-xl-block d-none lh-1">
+                    <span className="fw-medium lh-1">
+                      {user && user.userName}
+                    </span>
+                  </div>
+                </div>
+              </a>
+              <ul
+                className="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"
+                aria-labelledby="mainHeaderProfile"
+              >
+                <li>
+                  <Link
+                    to="/profile"
+                    className="dropdown-item d-flex align-items-center"
+                  >
+                    {" "}
+                    <i className="bi bi-person fs-18 me-2 op-7"></i>Profile
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="mail.html"
+                  >
+                    <i className="bi bi-envelope fs-16 me-2 op-7"></i>Inbox{" "}
+                    <span className="ms-auto badge bg-light border text-default">
+                      19
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="to-do-list.html"
+                  >
+                    <i className="bi bi-check-square fs-16 me-2 op-7"></i>Task
+                    Manager
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="mail-settings.html"
+                  >
+                    <i className="bi bi-gear fs-16 me-2 op-7"></i>Settings
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="chat.html"
+                  >
+                    <i className="bi bi-headset fs-18 me-2 op-7"></i>Support
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#"
+                    className="dropdown-item d-flex align-items-center"
+                    onClick={(e) => handleLogout(e)}
+                  >
+                    <i className="bi bi-box-arrow-right fs-18 me-2 op-7"></i>Log
+                    Out
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li className="header-element">
+              <a
+                href="javascript:void(0);"
+                className="header-link switcher-icon"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#switcher-canvas"
+              >
+                <i className="bi bi-gear header-link-icon border-0"></i>
+              </a>
+            </li>
+          </ul>
         </div>
-      </div>
+      </header>
     </>
   );
 };
