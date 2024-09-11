@@ -39,7 +39,7 @@ namespace backend.Service
                 MailMessage mail = new MailMessage();
                 mail.To.Add(email ?? string.Empty);
                 mail.From = new MailAddress(serverEmail);
-                mail.Subject = "Verify your Prosumator account.";
+                mail.Subject = "Verify your Monitor account.";
 
                 string mailBody = "";
                 mailBody += "<h2>Hello, " + name + "</h2>";

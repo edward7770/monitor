@@ -54,6 +54,10 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddDbContext<FormDataDbContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FormRecordDataConnection"));
+});
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -107,12 +111,12 @@ app.UseHttpsRedirection();
 
 app.UseForwardedHeaders();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
-    RequestPath = "/Uploads"
-});
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//     FileProvider = new PhysicalFileProvider(
+//            Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+//     RequestPath = "/Uploads"
+// });
 
 
 app.UseCors(x => x

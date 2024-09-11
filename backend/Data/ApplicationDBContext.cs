@@ -12,8 +12,8 @@ namespace backend.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDBContext(DbContextOptions dbContextOptions)
-        : base(dbContextOptions)
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
+        : base(options)
         {
 
         }
@@ -39,6 +39,10 @@ namespace backend.Data
                     }
                 );
         }
+    }
 
+    public class FormDataDbContext : DbContext
+    {
+        public FormDataDbContext(DbContextOptions<FormDataDbContext> options) : base(options) { }
     }
 }
