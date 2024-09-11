@@ -97,6 +97,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISmtpService, SmtpService>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IUserResetRepository, UserResetRepository>();
+builder.Services.AddScoped<IFormDataRepository, FormDataRepository>();
 
 var app = builder.Build();
 

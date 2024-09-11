@@ -44,5 +44,7 @@ namespace backend.Data
     public class FormDataDbContext : DbContext
     {
         public FormDataDbContext(DbContextOptions<FormDataDbContext> options) : base(options) { }
+        public DbSet<J187FormRecord> J187FormRecords { get; set; }
+        public DbSet<J193FormRecord> J193FormRecords { get; set; }
     }
 }
