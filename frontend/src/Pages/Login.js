@@ -23,6 +23,11 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    loginUser(email, password);
+  };
+
   useEffect(() => {
     // logout();
     document.title = "Monitor | Login";
@@ -49,11 +54,6 @@ const Login = () => {
       navigate("/login", { replace: true });
     }
   }, [location.state, t]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    loginUser(email, password);
-  };
 
   return (
     <div className="authentication-background">
@@ -120,6 +120,7 @@ const Login = () => {
                         />
                         <button
                           className="show-password-button text-muted"
+                          type="button"
                           onClick={(e) => togglePasswordVisibility(e)}
                           id="button-addon2"
                         >
