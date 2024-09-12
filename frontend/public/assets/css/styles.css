@@ -10067,7 +10067,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
 }
-*::-webkit-scrollbar {
+/* *::-webkit-scrollbar {
   width: 0;
   height: 0.25rem;
   -webkit-transition: all ease 0.05s;
@@ -10076,7 +10076,7 @@ body {
 }
 *:hover::-webkit-scrollbar-thumb {
   background: rgb(var(--light-rgb));
-}
+} */
 a,
 button {
   outline: 0 !important;
