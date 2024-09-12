@@ -18,6 +18,14 @@ const debounce = (func, delay) => {
   };
 };
 
+const extractEmail = (text) => {
+  const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+  const match = text.match(emailPattern);
+
+  return match ? match[0] : null;
+};
+
+
 const Dashboard = () => {
   const { t } = useTranslation();
   //form193 records table
@@ -176,13 +184,22 @@ const Dashboard = () => {
       sortable: false,
     },
     {
-      headerName: "Advertiser Details",
-      headerClass: "header-center",
-      children: [
-        { headerName: "Executor Name", field: "executorName" },
-        { headerName: "Executor Phone Number", field: "executorPhone" },
-        { headerName: "Executor Email", field: "executorEmail" },
-      ],
+      headerName: "Executor Name",
+      field: "executorName",
+      filter: false,
+      sortable: false,
+    },
+    {
+      headerName: "Executor Phone Number",
+      field: "executorPhone",
+      filter: false,
+      sortable: false,
+    },
+    {
+      headerName: "Executor Email",
+      field: "executorEmail",
+      filter: false,
+      sortable: false,
     },
     {
       headerName: "Raw Record",
@@ -309,17 +326,8 @@ const Dashboard = () => {
             executorPhone = advertiserDetails.split("Tel: ")[1];
             executorPhone = executorPhone.trim();
           }
-          if (advertiserDetails.includes("Email: ")) {
-            executorEmail = advertiserDetails
-              .split("Email: ")[1]
-              .split("Tel:")[0];
-            executorEmail = executorEmail.trim().replace(/;/g, "");
-          } else if (advertiserDetails.includes("E-pos: ")) {
-            executorEmail = advertiserDetails
-              .split("E-pos: ")[1]
-              .split("Tel:")[0];
-            executorEmail = executorEmail.trim().replace(/;/g, "");
-          }
+  
+          executorEmail = extractEmail(advertiserDetails)?.trim().replace(/;/g, "");
         } else {
           if (rawRecord.includes("(2)")) {
             caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
@@ -348,17 +356,7 @@ const Dashboard = () => {
               executorPhone = advertiserDetails.split("Tel: ")[1];
               executorPhone = executorPhone.trim();
             }
-            if (advertiserDetails.includes("Email: ")) {
-              executorEmail = advertiserDetails
-                .split("Email: ")[1]
-                .split("Tel:")[0];
-              executorEmail = executorEmail.trim().replace(/;/g, "");
-            } else if (advertiserDetails.includes("E-pos: ")) {
-              executorEmail = advertiserDetails
-                .split("E-pos: ")[1]
-                .split("Tel:")[0];
-              executorEmail = executorEmail.trim().replace(/;/g, "");
-            }
+            executorEmail = extractEmail(advertiserDetails)?.trim().replace(/;/g, "");
           }
 
           idNumber = item.idNumber;
