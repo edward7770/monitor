@@ -9,6 +9,8 @@ import {
   getForm187RecordsAPI,
 } from "../Services/FormDataService";
 import RawRecordCellRenderer from "../Components/RawRecordCellRenderer";
+import { runMonitorActionAPI } from "../Services/MonitorService";
+import { toast } from "react-toastify";
 
 const debounce = (func, delay) => {
   let timerId;
@@ -25,6 +27,11 @@ const extractEmail = (text) => {
   return match ? match[0] : null;
 };
 
+function extractFirst13DigitNumber(str) {
+  const match = str.match(/\b\d{13}\b/);
+
+  return match ? match[0] : null;
+}
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -52,6 +59,7 @@ const Dashboard = () => {
   //     setSortModel(tempSortModel);
   //   }
   // };
+  const [user, setUser] = useState(null);
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(parseInt(newPage));
@@ -93,6 +101,16 @@ const Dashboard = () => {
 
   const onChangeSearchText1 = (e) => {
     setSearchText1(e.target.value);
+  };
+
+  const clickMonitorActionBtn = async () => {
+    await runMonitorActionAPI(user.userId)
+      .then((res) => {
+        toast.success("Monitor action run successfully!");
+      })
+      .catch((err) => {
+        toast.success("Monitor action running was failed.!")
+      });
   };
 
   const columnDefs = [
@@ -219,7 +237,7 @@ const Dashboard = () => {
     if (response) {
       let tempRowData = [];
       response.data.forEach((item) => {
-        var rawRecord = item.replace(/-/g, "");
+        var rawRecord = item.rawRecord.replace(/-/g, "");
         let [caseNumber, idNumber, name, particulars, noticeDate] = [
           "",
           "",
@@ -238,10 +256,7 @@ const Dashboard = () => {
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
           idNumber = particulars.split(", ")[3];
           name = particulars.split(", ")[1];
-          noticeDate = item
-            .split("(3)")[1]
-            .split("(4)")[0]
-            .replace(/;/g, "");
+          noticeDate = item.noticeDate.split("T")[0];
         } else {
           caseNumber = rawRecord.split(", ")[0];
           particulars =
@@ -260,7 +275,7 @@ const Dashboard = () => {
             rawRecord.split(", ")[7];
           name = rawRecord.split(", ")[1];
           idNumber = rawRecord.split(", ")[3];
-          noticeDate = item.split(", ")[8].replace(/;/g, "");
+          noticeDate = item.noticeDate.split("T")[0];
         }
 
         let itemObject = {
@@ -278,7 +293,7 @@ const Dashboard = () => {
       setRowData(tempRowData);
       setTotalRecords(response.totalRecords);
     }
-  }
+  };
 
   const extractForm187Data = (response) => {
     if (response) {
@@ -308,7 +323,7 @@ const Dashboard = () => {
         ) {
           caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-          idNumber = item.idNumber;
+          idNumber = extractFirst13DigitNumber(rawRecord);
           name = particulars.split(", ")[1].split(" (")[0];
           description = item.rawRecord
             .split("(3)")[1]
@@ -326,8 +341,10 @@ const Dashboard = () => {
             executorPhone = advertiserDetails.split("Tel: ")[1];
             executorPhone = executorPhone.trim();
           }
-  
-          executorEmail = extractEmail(advertiserDetails)?.trim().replace(/;/g, "");
+
+          executorEmail = extractEmail(advertiserDetails)
+            ?.trim()
+            .replace(/;/g, "");
         } else {
           if (rawRecord.includes("(2)")) {
             caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
@@ -356,10 +373,12 @@ const Dashboard = () => {
               executorPhone = advertiserDetails.split("Tel: ")[1];
               executorPhone = executorPhone.trim();
             }
-            executorEmail = extractEmail(advertiserDetails)?.trim().replace(/;/g, "");
+            executorEmail = extractEmail(advertiserDetails)
+              ?.trim()
+              .replace(/;/g, "");
           }
 
-          idNumber = item.idNumber;
+          idNumber = extractFirst13DigitNumber(rawRecord);
           noticeDate = item.noticeDate.split("T")[0];
         }
 
@@ -384,7 +403,7 @@ const Dashboard = () => {
       setRowData1(tempRowData);
       setTotalRecords1(response.totalRecords);
     }
-  }
+  };
 
   const fetch193Data = useCallback(
     debounce(async (searchText) => {
@@ -405,15 +424,24 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
+    document.title = "Monitor | Dashboard";
+
+    const user = JSON.parse(window.localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
-      if (searchText.trim() === '') {
+      if (searchText.trim() === "") {
         // Fetch all records
         try {
           const response = await getForm193RecordsAPI(
             currentPage,
             pageSize,
             [],
-            ''
+            ""
           );
 
           extractForm193Data(response);
@@ -448,14 +476,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (searchText1.trim() === '') {
+      if (searchText1.trim() === "") {
         // Fetch all records
         try {
           const response = await getForm187RecordsAPI(
             currentPage1,
             pageSize1,
             [],
-            ''
+            ""
           );
 
           extractForm187Data(response);
@@ -597,6 +625,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      {(user && user.role === "Superadmin") && (
+        <div className="d-grid my-4">
+          <button
+            onClick={() => clickMonitorActionBtn()}
+            className="btn btn-lg btn-primary"
+          >
+            Run Monitor Action
+          </button>
+        </div>
+      )}
     </div>
   );
 };

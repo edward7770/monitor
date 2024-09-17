@@ -96,7 +96,7 @@ const Navbar = (props) => {
               </a>
             </div>
             <div className="header-element ms-3 d-lg-block d-none my-auto">
-              <div className="dropdown my-auto">
+              <div className="dropdown my-auto d-none">
                 <a
                   href="javascript:void(0);"
                   className="btn bg-body header-dashboards-button text-start d-flex align-items-center justify-content-between"
@@ -104,110 +104,7 @@ const Navbar = (props) => {
                   aria-expanded="false"
                 ></a>
                 <ul className="dropdown-menu dashboard-dropdown" role="menu">
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="/#"
-                    >
-                      Sales Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-1.html"
-                    >
-                      Analytics Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-2.html"
-                    >
-                      Ecommerce Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-3.html"
-                    >
-                      CRM Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-4.html"
-                    >
-                      HRM Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-5.html"
-                    >
-                      NFT Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-6.html"
-                    >
-                      Crypto Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-7.html"
-                    >
-                      Jobs Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-8.html"
-                    >
-                      Projects Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-9.html"
-                    >
-                      Courses Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-10.html"
-                    >
-                      Stocks Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-11.html"
-                    >
-                      Personal Dashboard
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item dashboards-dropdown-item"
-                      href="index-12.html"
-                    >
-                      Customer Dashboard
-                    </a>
-                  </li>
+                  
                 </ul>
               </div>
             </div>
@@ -784,7 +681,7 @@ const Navbar = (props) => {
               </div>
             </li>
 
-            <li className="header-element header-fullscreen">
+            {/* <li className="header-element header-fullscreen">
               <a
                 onclick="openFullscreen();"
                 href="javascript:void(0);"
@@ -793,7 +690,7 @@ const Navbar = (props) => {
                 <i className="bi bi-fullscreen full-screen-open header-link-icon"></i>
                 <i className="bi bi-fullscreen-exit full-screen-close header-link-icon d-none"></i>
               </a>
-            </li>
+            </li> */}
 
             <li className="header-element">
               <a

@@ -202,6 +202,7 @@ const Register = () => {
                         <button
                           className="show-password-button text-muted"
                           onClick={(e) => togglePasswordVisibility(e)}
+                          type="button"
                           id="button-addon2"
                         >
                           <i className={showPassword ? "ri-eye-line align-middle" : "ri-eye-off-line align-middle"}></i>

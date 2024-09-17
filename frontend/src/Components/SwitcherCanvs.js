@@ -79,7 +79,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="theme-style"
                         id="switcher-light-theme"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -111,7 +111,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="direction"
                         id="switcher-ltr"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -143,7 +143,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="navigation-style"
                         id="switcher-vertical"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -237,7 +237,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="sidemenu-layout-styles"
                         id="switcher-default-menu"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -333,7 +333,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="page-styles"
                         id="switcher-regular"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -378,7 +378,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="layout-width"
                         id="switcher-full-width"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -410,7 +410,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="menu-positions"
                         id="switcher-menu-fixed"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -448,7 +448,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="header-positions"
                         id="switcher-header-fixed"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -502,7 +502,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="page-loader"
                         id="switcher-loader-disable"
-                        checked
+                        defaultChecked
                       />
                     </div>
                   </div>
@@ -529,7 +529,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="menu-colors"
                         id="switcher-menu-light"
-                        checked
+                        defaultChecked
                       />
                     </div>
                     <div className="form-check switch-select me-3">
@@ -594,7 +594,7 @@ const SwitcherCanvs = () => {
                         type="radio"
                         name="header-colors"
                         id="switcher-header-light"
-                        checked
+                        defaultChecked
                       />
                     </div>
                     <div className="form-check switch-select me-3">
@@ -694,7 +694,7 @@ const SwitcherCanvs = () => {
                       <div className="theme-container-primary"></div>
                       <div
                         className="pickr-container-primary"
-                        onChange="updateChartColor(this.value)"
+                        // onchange="updateChartColor(this.value)"
                       ></div>
                     </div>
                   </div>

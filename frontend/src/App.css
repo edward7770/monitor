@@ -7,6 +7,10 @@
     justify-content: center !important;
 }
 
+#upload_input #filepond--drop-label-4jko24jgo {
+    font-size: 18px !important;
+}
+
 @media (max-width: 768px) {
     .dashboard-data-table .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
         padding: 0;

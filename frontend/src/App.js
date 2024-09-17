@@ -1,9 +1,9 @@
 import "./App.css";
 // import Home from "./Pages/Home";
+import { Route, Routes } from "react-router-dom";
 import Dashboard from "./Pages/Dashboard";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import { Route, Routes } from "react-router-dom";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
 import ConfirmEmail from "./Pages/ConfirmEmail";
@@ -22,10 +22,9 @@ import SwitcherCanvs from "./Components/SwitcherCanvs";
 import Sidebar from "./Components/Sidebar";
 import Footer from "./Components/Footer";
 
-// import NewAdmin from "./Pages/Manageusers/NewAdmin";
-// import SupplierUser from "./Pages/Manageusers/SupplierUser";
-// import Manageusers from "./Pages/Manageusers/Manageusers";
 import Profile from "./Pages/Profile";
+import UploadPage from "./Pages/UploadPage";
+import History from "./Pages/History";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -105,6 +104,8 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/upload" element={<ProtectedRoute><UploadPage/></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History/></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             </Route>
           )}

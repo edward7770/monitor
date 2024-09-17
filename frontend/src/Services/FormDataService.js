@@ -37,3 +37,13 @@ export const getForm187RecordsAPI = async (currentPage, pageSize, sortModel, sea
       console.error("Error fetching data:", error);
     }
 };
+
+export const getForm193RecordByRecordIdAPI = async (recordId) => {
+  const res = await axios.get(api + "data/form193/" + recordId);
+  return res;
+}
+
+export const getForm187RecordByRecordIdAPI = async (recordId) => {
+  const res = await axios.get(api + "data/form187/" + recordId);
+  return res;
+}

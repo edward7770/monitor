@@ -87,6 +87,7 @@ const ResetPassword = () => {
                         <button
                           className="show-password-button text-muted"
                           onClick={(e) => togglePasswordVisibility(e)}
+                          type="button"
                           id="button-addon2"
                         >
                           <i className={showPassword ? "ri-eye-line align-middle" : "ri-eye-off-line align-middle"}></i>
@@ -114,6 +115,7 @@ const ResetPassword = () => {
                         <button
                           className="show-password-button text-muted"
                           onClick={(e) => toggleConfirmPasswordVisibility(e)}
+                          type="button"
                           id="button-addon2"
                         >
                           <i className={showConfirmPassword ? "ri-eye-line align-middle" : "ri-eye-off-line align-middle"}></i>
