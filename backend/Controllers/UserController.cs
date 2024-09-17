@@ -376,7 +376,7 @@ namespace backend.Controllers
             }
 
             var userReset = await _userResetRepo.GetUserResetByUserId(user.Id);
-            return Ok(DateTime.Now);
+
             if (userReset.DateRequested.AddMinutes(30) < DateTime.Now)
             {
                 return StatusCode(403, "forgot_password_expired_msg");

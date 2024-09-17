@@ -44,5 +44,21 @@ namespace backend.Controllers
 
             return Ok(form193Records);
         }
+
+        [HttpGet("form187/{recordId}")]
+        public async Task<IActionResult> GetForm187Record(Guid recordId)
+        {
+            var form187Record = await _formDataRepo.GetForm187ByRecordIdAsync(recordId);
+
+            return Ok(form187Record);
+        }
+
+        [HttpGet("form193/{recordId}")]
+        public async Task<IActionResult> GetForm193Record(Guid recordId)
+        {
+            var form193Record = await _formDataRepo.GetForm193ByRecordIdAsync(recordId);
+
+            return Ok(form193Record);
+        }
     }
 }

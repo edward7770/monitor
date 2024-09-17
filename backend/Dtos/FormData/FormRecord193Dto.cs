@@ -10,5 +10,6 @@ namespace backend.Dtos.FormData
     {
         [MaxLength(1000)]
         public string RawRecord { get; set; }
+        public DateTime? NoticeDate { get; set; }
     }
 }

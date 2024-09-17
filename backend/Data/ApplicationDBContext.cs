@@ -20,6 +20,9 @@ namespace backend.Data
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<UserReset> UserResets { get; set; }
+        public DbSet<Match> Matches { get; set;}
+        public DbSet<MatchData> MatchDatas { get; set; }
+        public DbSet<MatchResult> MatchResults { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using backend.Repository;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
+using Hangfire;
+using Hangfire.MemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +109,14 @@ builder.Services.AddScoped<ISmtpService, SmtpService>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IUserResetRepository, UserResetRepository>();
 builder.Services.AddScoped<IFormDataRepository, FormDataRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IMatchDataRepository, MatchDataRepository>();
+builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
+
+// builder.Services.AddHostedService<LongRunningTaskService>();
+builder.Services.AddHangfire(config => config.UseMemoryStorage()); 
+builder.Services.AddHangfireServer();
+
 
 var app = builder.Build();
 
@@ -127,6 +137,9 @@ app.UseForwardedHeaders();
 //            Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
 //     RequestPath = "/Uploads"
 // });
+
+// Use Hangfire Dashboard (optional, good for debugging background jobs)
+app.UseHangfireDashboard();
 
 
 app.UseCors(x => x

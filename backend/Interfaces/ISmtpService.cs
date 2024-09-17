@@ -10,6 +10,8 @@ namespace backend.Interfaces
     public interface ISmtpService
     {
         Task<bool> ActivateMailbySmtp(string email, string name, string confirmationLink);
+        Task<bool> SendProcessResultMailbySmtp(string email, string name);
+        Task<bool> SendMonitorActionMailbySmtp(string email, string name);
         Task ForgotPasswordMailBySmtp(string token, string email, string userName);
     }
 }

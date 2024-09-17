@@ -19,6 +19,54 @@ namespace backend.Repository
             _formDataContext = formDataDbContext;
         }
 
+        public async Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId, string IdNumber)
+        {
+            var matchFormRecords = new List<MatchResult>();
+            var query187 = _formDataContext.J187FormRecords.AsQueryable();
+            var query193 = _formDataContext.J193FormRecords.AsQueryable();
+
+            if (!string.IsNullOrEmpty(IdNumber))
+            {
+                query187 = query187.Where(record => record.RawRecord != null && record.RawRecord.Contains(IdNumber));
+                query193 = query193.Where(record => record.RawRecord != null && record.RawRecord.Contains(IdNumber));
+            }
+
+            var form187Records = await query187.ToListAsync();
+            var form193Records = await query193.ToListAsync();
+
+            foreach (var form187 in form187Records)
+            {
+                var matchForm187 = new MatchResult
+                {
+                    MatchId = MatchId,
+                    IdNumber = IdNumber,
+                    Type = "J187",
+                    RecordId = form187.RecordId,
+                    RawRecord = form187.RawRecord,
+                    DateMatched = DateTime.Now
+                };
+
+                matchFormRecords.Add(matchForm187);
+            }
+
+            foreach (var form193 in form193Records)
+            {
+                var matchForm193 = new MatchResult
+                {
+                    MatchId = MatchId,
+                    IdNumber = IdNumber,
+                    Type = "J193",
+                    RecordId = form193.RecordId,
+                    RawRecord = form193.RawRecord,
+                    DateMatched = DateTime.Now
+                };
+
+                matchFormRecords.Add(matchForm193);
+            }
+
+            return matchFormRecords;
+        }
+
         public async Task<PagedResult<FormRecord187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
         {
             var query = _formDataContext.J187FormRecords.AsQueryable();
@@ -48,7 +96,7 @@ namespace backend.Repository
                 .Select(record => new FormRecord187Dto
                 {
                     RawRecord = record.RawRecord,
-                    IdNumber =  record.IdNumber,
+                    IdNumber = record.IdNumber,
                     NoticeDate = record.NoticeDate
                 })
                 .ToListAsync();
@@ -60,7 +108,7 @@ namespace backend.Repository
             };
         }
 
-        public async Task<PagedResult<string>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
+        public async Task<PagedResult<FormRecord193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
         {
             var query = _formDataContext.J193FormRecords.AsQueryable();
 
@@ -96,14 +144,50 @@ namespace backend.Repository
             var rawRecords = await query
                 .Skip(page * pageSize)
                 .Take(pageSize)
-                .Select(record => record.RawRecord)
+                .Select(record => new FormRecord193Dto
+                {
+                    RawRecord = record.RawRecord,
+                    NoticeDate = record.NoticeDate
+                })
                 .ToListAsync();
 
-            return new PagedResult<string>
+            return new PagedResult<FormRecord193Dto>
             {
                 TotalRecords = totalRecords,
                 Data = rawRecords
             };
+        }
+
+        public async Task<J187FormRecord> GetForm187ByRecordIdAsync(Guid RecordId)
+        {
+            var formRecord = await _formDataContext.J187FormRecords.FirstOrDefaultAsync(x => x.RecordId == RecordId);
+
+            return formRecord;
+        }
+
+        public async Task<J193FormRecord> GetForm193ByRecordIdAsync(Guid RecordId)
+        {
+            var formRecord = await _formDataContext.J193FormRecords.FirstOrDefaultAsync(x => x.RecordId == RecordId);
+
+            return formRecord;
+        }
+
+        public async Task<List<J187FormRecord>> GetLatestForm187Async()
+        {
+            var latestDate = await _formDataContext.J187FormRecords.MaxAsync(x => x.DateCreated);
+
+            var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated == latestDate).ToListAsync();
+
+            return latestRecords;
+        }
+
+        public async Task<List<J193FormRecord>> GetLatestForm193Async()
+        {
+            var latestDate = await _formDataContext.J193FormRecords.MaxAsync(x => x.DateCreated);
+
+            var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated == latestDate).ToListAsync();
+
+            return latestRecords;
         }
     }
 }
