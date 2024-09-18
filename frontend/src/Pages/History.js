@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 // import { TablePagination } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -29,6 +29,15 @@ const groupByMatchedStep = (arr) => {
   arr
     .sort((a, b) => new Date(a.matchedStep) - new Date(b.matchedStep))
     .forEach((item) => {
+      const date = item.dateMatched.split(".")[0];
+      if (item.downloadDate === "0001-01-01T00:00:00") {
+        item.downloadDate = null;
+      } else {
+        item.downloadDate =
+          item.downloadDate?.split("T")[0] +
+          " " +
+          item.downloadDate?.split("T")[1].split(".")[0];
+      }
       if (!grouped[item.matchedStep]) {
         grouped[item.matchedStep] = [];
       }
@@ -53,23 +62,41 @@ function extractFirst13DigitNumber(str) {
 
 function arrayToCSV(array) {
   if (array.length === 0) return "";
-  const J187headers = ['Case Number', 'Id Number', 'Name', 'Particulars', 'Notice Date', 'Description of Account', 'Surviving Spouse Details', 'Period Of Inspection', 'Executor Name', 'Executor Phone Number', 'Executor Email', 'Raw Record'];
-  const J193headers = ['Case Number', 'Id Number', 'Name', 'Particulars', 'Notice Date', 'Raw Record'];
-
-  const valuesJ187Array = array.filter(x => Object.values(x).length === 12).map(obj => Object.values(obj));
-  const valuesJ193Array = array.filter(x => Object.values(x).length === 6).map(obj => Object.values(obj));
-
-  const csv187Rows = [
-    J187headers,
-    ...valuesJ187Array
+  const J187headers = [
+    "Case Number",
+    "Id Number",
+    "Name",
+    "Particulars",
+    "Notice Date",
+    "Description of Account",
+    "Surviving Spouse Details",
+    "Period Of Inspection",
+    "Executor Name",
+    "Executor Phone Number",
+    "Executor Email",
+    "Raw Record",
+  ];
+  const J193headers = [
+    "Case Number",
+    "Id Number",
+    "Name",
+    "Particulars",
+    "Notice Date",
+    "Raw Record",
   ];
 
-  const csv193Rows = [
-    J193headers,
-    ...valuesJ193Array
-  ];
+  const valuesJ187Array = array
+    .filter((x) => Object.values(x).length === 12)
+    .map((obj) => Object.values(obj));
+  const valuesJ193Array = array
+    .filter((x) => Object.values(x).length === 6)
+    .map((obj) => Object.values(obj));
 
-  return {csv187Rows: csv187Rows, csv193Rows: csv193Rows};
+  const csv187Rows = [J187headers, ...valuesJ187Array];
+
+  const csv193Rows = [J193headers, ...valuesJ193Array];
+
+  return { csv187Rows: csv187Rows, csv193Rows: csv193Rows };
 }
 
 const downloadCSV = (array, filename = "Monitor.xlsx") => {
@@ -523,9 +550,7 @@ const History = (props) => {
                     domLayout="autoHeight"
                     pagination={true}
                     suppressPaginationPanel={false}
-                    paginationPageSizeSelector={
-                      paginationPageSizeSelector
-                    }
+                    paginationPageSizeSelector={paginationPageSizeSelector}
                     paginationPageSize={10}
                   />
                   {/* <div className="gridjs-footer1">
