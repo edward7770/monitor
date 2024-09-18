@@ -625,7 +625,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      {(user ) && (
+      {/* {(user && user.role === "Superadmin") && (
         <div className="d-grid my-4">
           <button
             onClick={() => clickMonitorActionBtn()}
@@ -634,7 +634,7 @@ const Dashboard = () => {
             Run Monitor Action
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

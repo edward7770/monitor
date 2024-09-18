@@ -2,16 +2,30 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getUserAPI } from "../Services/AuthService";
 import { useTranslation } from "react-i18next";
+import { runMonitorActionAPI } from "../Services/MonitorService";
+import { toast } from "react-toastify";
 
 const Sidebar = (props) => {
   const { t } = useTranslation();
   const [role, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const wrapperRef = useRef(null);
 
   // const handleClick = (event) => {
   //   event.preventDefault();
   // };
+
+  const clickMonitorActionBtn = async (e) => {
+    e.preventDefault();
+    await runMonitorActionAPI(userId)
+      .then((res) => {
+        toast.success("Monitor action run successfully!");
+      })
+      .catch((err) => {
+        toast.success("Monitor action running was failed.!");
+      });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,6 +34,7 @@ const Sidebar = (props) => {
         const user = await getUserAPI(defaultUser.userId);
         if (user) {
           setRole(user.role);
+          setUserId(user.userId);
         }
       }
     };
@@ -51,7 +66,11 @@ const Sidebar = (props) => {
 
   return (
     <>
-      <aside className="app-sidebar sticky" id="sidebar" style={{position: 'fixed'}}>
+      <aside
+        className="app-sidebar sticky"
+        id="sidebar"
+        style={{ position: "fixed" }}
+      >
         <div className="main-sidebar-header">
           <a href="/#" className="header-logo">
             <img
@@ -110,6 +129,19 @@ const Sidebar = (props) => {
                   <span className="side-menu__label">History</span>
                 </Link>
               </li>
+              {role && role === "Superadmin" && (
+                <li className="slide">
+                  <a
+                    href="/#"
+                    onClick={(e) => clickMonitorActionBtn(e)}
+                    className="side-menu__item"
+                  >
+                    <i className="bi bi-pen side-menu__icon"></i>
+                    <span className="side-menu__label">Run Monitor</span>
+                  </a>
+                </li>
+              )}
+
               <li className="slide has-sub">
                 <a href="javascript:void(0);" className="side-menu__item">
                   <i className="bi bi-exclamation-triangle side-menu__icon"></i>

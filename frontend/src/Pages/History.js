@@ -29,7 +29,6 @@ const groupByMatchedStep = (arr) => {
   arr
     .sort((a, b) => new Date(a.matchedStep) - new Date(b.matchedStep))
     .forEach((item) => {
-      const date = item.dateMatched.split(".")[0];
       if (item.downloadDate === "0001-01-01T00:00:00") {
         item.downloadDate = null;
       } else {

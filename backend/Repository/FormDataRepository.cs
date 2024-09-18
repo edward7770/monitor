@@ -13,10 +13,12 @@ namespace backend.Repository
     public class FormDataRepository : IFormDataRepository
     {
         FormDataDbContext _formDataContext;
+        ApplicationDBContext _context;
 
-        public FormDataRepository(FormDataDbContext formDataDbContext)
+        public FormDataRepository(FormDataDbContext formDataDbContext, ApplicationDBContext context)
         {
             _formDataContext = formDataDbContext;
+            _context = context;
         }
 
         public async Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId, string IdNumber)
@@ -176,20 +178,39 @@ namespace backend.Repository
 
         public async Task<List<J187FormRecord>> GetLatestForm187Async()
         {
-            var latestDate = await _formDataContext.J187FormRecords.MaxAsync(x => x.DateCreated);
+            var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
 
-            var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated == latestDate).ToListAsync();
+            if (maxMatchedStep == 0)
+            {
+                var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
+                var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                return latestRecords;
+            }
+            else
+            {
+                var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                return latestRecords;
+            }
 
-            return latestRecords;
         }
 
         public async Task<List<J193FormRecord>> GetLatestForm193Async()
         {
-            var latestDate = await _formDataContext.J193FormRecords.MaxAsync(x => x.DateCreated);
+            var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
 
-            var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated == latestDate).ToListAsync();
-
-            return latestRecords;
+            if (maxMatchedStep == 0)
+            {
+                var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
+                var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                return latestRecords;
+            }
+            else
+            {
+                var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                return latestRecords;
+            }
         }
     }
 }

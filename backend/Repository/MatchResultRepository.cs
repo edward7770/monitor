@@ -36,9 +36,14 @@ namespace backend.Repository
 
         public async Task<GetLastMatchedStepDto> GetLastMatchedStepAsync(int matchId)
         {
-            var lastMatchedStep = await _context.MatchResults.Where(x => x.MatchId == matchId).MaxAsync(y => y.MatchedStep);
-            
-            var lastMatchedDto = new GetLastMatchedStepDto {
+            var lastMatchedStep = await _context.MatchResults
+                .Where(x => x.MatchId == matchId)
+                .OrderByDescending(y => y.MatchedStep)
+                .Select(y => y.MatchedStep)
+                .FirstOrDefaultAsync();
+
+            var lastMatchedDto = new GetLastMatchedStepDto
+            {
                 MatchedStep = lastMatchedStep
             };
 
