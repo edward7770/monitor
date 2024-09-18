@@ -36,7 +36,9 @@ export const UserProvider = ({children}) => {
                         username: res.data.userName,
                         email: res.data.email,
                         role: res.data.role,
-                        userId: res.data.userId
+                        userId: res.data.userId,
+                        balanceType: 'prepaid',
+                        balanceAmount: 0
                     };
                     localStorage.setItem('user', JSON.stringify(userObj));
                     
@@ -71,7 +73,9 @@ export const UserProvider = ({children}) => {
                                 email: res.data.email,
                                 role: res.data.role,
                                 emailConfirmed: res.data.emailConfirmed,
-                                userManagement: res.data.userManagement
+                                userManagement: res.data.userManagement,
+                                balanceType: res.data.balanceType,
+                                balanceAmount: res.data.balanceAmount
                             };
         
                             localStorage.setItem('user', JSON.stringify(userObj));

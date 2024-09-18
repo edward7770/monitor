@@ -15,3 +15,8 @@ export const createClientAPI = async (data) => {
     const res = await axios.post(api + "client/create", data);
     return res.data;
 }
+
+export const updateBalanceTypeAPI = async (clientId, balanceType) => {
+    const res = await axios.post(api + "client/update/balanceType/" + clientId, balanceType);
+    return res.data;
+}

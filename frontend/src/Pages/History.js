@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import { updateDownloadDates } from "../Services/MonitorService";
+import { createClientTransactionAPI } from "../Services/ClientTransactionService";
+import { getUserAPI } from "../Services/AuthService";
 import { toast } from "react-toastify";
 
 const groupByDateMatched = (arr) => {
@@ -88,10 +90,11 @@ function downloadCSV(array, filename = "data.csv") {
   window.document.body.removeChild(link);
 }
 
-const History = () => {
+const History = (props) => {
   const { t } = useTranslation();
   const [rowData, setRowData] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
@@ -123,9 +126,7 @@ const History = () => {
     setSelectedMatchResult(null);
   };
 
-  const handleDownloadCSVFile = async (index) => {
-    setIsSetDownloaded(!isSetDownloaded);
-
+  const handleDownloadCSVFile = async (index, downloadDate) => {
     let extractedCSVRecords = [];
     let matchResultsIds = [];
     await Promise.all(
@@ -143,20 +144,61 @@ const History = () => {
           extractedRecord = extractForm187Data(formRecord);
         }
 
+        item.downloadDate =
+          new Date().toISOString().split("T")[0] +
+          " " +
+          new Date().toISOString().split("T")[1].split(".")[0];
+
         extractedCSVRecords.push(extractedRecord);
       })
     );
 
-    await updateDownloadDates(matchResultsIds)
-      .then((res) => {
-        if (res.data) {
-          downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
-        }
-      })
-      .catch((err) => {
-        console.log(err.response);
-        toast.error("Failed to download file.");
-      });
+    if (downloadDate !== null) {
+      downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
+    } else {
+      var balanceAmount = user.balanceAmount - matchResultsIds.length * 199;
+      if (balanceAmount > 0) {
+        props.handleChangeBalance(balanceAmount);
+
+        await updateDownloadDates(matchResultsIds)
+          .then(async (res) => {
+            if (res) {
+              if (user && user.balanceType === "prepaid") {
+                var clientTransactionObj = {
+                  clientId: userId,
+                  balanceId: user.balanceId,
+                  matchId: selectedMatchResult.id,
+                  records: matchResultsIds.length,
+                  billValue: matchResultsIds.length * 199,
+                  dateCreated: new Date(),
+                  invoiceNumber: null,
+                  invoiceStatus: null,
+                };
+
+                var response = await createClientTransactionAPI(
+                  clientTransactionObj
+                );
+
+                if (response) {
+                  setIsSetDownloaded(!isSetDownloaded);
+                  downloadCSV(
+                    extractedCSVRecords,
+                    "Monitor " + parseInt(index + 1)
+                  );
+                }
+              }
+            }
+          })
+          .catch((err) => {
+            console.log(err.response);
+            toast.error("Failed to download file.");
+          });
+      } else {
+        toast.warning(
+          "The cost of the file exceeds your balance of R " + user.balanceAmount
+        );
+      }
+    }
   };
 
   const DownloadCellRenderer = (params) => {
@@ -398,6 +440,19 @@ const History = () => {
   }, []);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      if (userId) {
+        var tempUser = await getUserAPI(userId);
+        if (tempUser) {
+          setUser(tempUser);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [userId, isSetDownloaded]);
+
+  useEffect(() => {
     const fetchMatchResults = async () => {
       var response = await getMatchResultsAPI(userId);
       var tempMatchResults = [];
@@ -503,7 +558,11 @@ const History = () => {
             {selectedMatchResult &&
               selectedMatchResult.fileDatas.map((file, index) => (
                 <div
-                  className={`${!file[0]?.downloadDate ? "shadow-md bg-slate-100": "bg-slate-50"} flex items-center justify-between p-2 mt-2 rounded-md`}
+                  className={`${
+                    !file[0]?.downloadDate
+                      ? "shadow-md bg-slate-100"
+                      : "bg-slate-50"
+                  } flex items-center justify-between p-2 mt-2 rounded-md`}
                   //   shadow-md mb-2 hover:shadow-lg
                   key={index}
                 >
@@ -515,14 +574,16 @@ const History = () => {
                       </h5>
                       {file[0]?.downloadDate && (
                         <p className="text-sm" style={{ fontSize: "12px" }}>
-                          Downloaded Date: {file[0]?.downloadDate}
+                          Last Downloaded Date: {file[0]?.downloadDate}
                         </p>
                       )}
                     </div>
                   </div>
                   <div className="float-right">
                     <IconButton
-                      onClick={() => handleDownloadCSVFile(index)}
+                      onClick={() =>
+                        handleDownloadCSVFile(index, file[0]?.downloadDate)
+                      }
                       style={{
                         cursor: "pointer",
                         color: "#387CFE",

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Models;
 
 namespace backend.Dtos.User
 {
@@ -16,5 +17,8 @@ namespace backend.Dtos.User
         public bool UserManagement { get; set; }
         public int Status { get; set; }
         public string Province { get; set; }
+        public int BalanceId { get; set; }
+        public string BalanceType { get; set; }
+        public int BalanceAmount { get; set; }
     }
 }

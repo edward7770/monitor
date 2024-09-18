@@ -95,7 +95,7 @@ const Sidebar = (props) => {
               <li className="slide">
                 <Link to="/dashboard" className="side-menu__item">
                   <i className="bi bi-house side-menu__icon"></i>
-                  <span className="side-menu__label">Dashboards</span>
+                  <span className="side-menu__label">Dashboard</span>
                 </Link>
               </li>
               <li className="slide">

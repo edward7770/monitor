@@ -29,12 +29,13 @@ namespace backend.Controllers
         private readonly ISmtpService _smtpService;
         private readonly IClientRepository _supplierRepo;
         private readonly IClientRepository _clientRepo;
+        private readonly IClientBalanceRepository _clientBalanceRepo;
         private readonly IUserResetRepository _userResetRepo;
         private readonly SignInManager<AppUser> _signInManager;
         // private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
-        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IConfiguration config)
+        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IClientBalanceRepository clientBalanceRepo, IConfiguration config)
         {
             _userManager = userManager;
             _supplierRepo = supplierRepo;
@@ -42,6 +43,7 @@ namespace backend.Controllers
             _userResetRepo = userResetRepo;
             _tokenService = tokenService;
             _signInManager = signInManager;
+            _clientBalanceRepo = clientBalanceRepo;
             _smtpService = smtpService;
             // _httpContextAccessor = httpContextAccessor;
             _config = config;
@@ -66,9 +68,6 @@ namespace backend.Controllers
                         }
                     }
                 }
-
-                var supplier = await _supplierRepo.GetByUserIdAsync(user.Id);
-                var supplierUsers = new List<string>();
 
                 var client = await _clientRepo.GetByUserIdAsync(user.Id);
 
@@ -118,17 +117,13 @@ namespace backend.Controllers
                 }
             }
 
+            var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(userId);
+
             var province = "";
             if (role == "Client")
             {
                 var client = await _clientRepo.GetByUserIdAsync(userId);
                 province = client.AddressLine4;
-            }
-
-            if (role == "Supplier")
-            {
-                var supplier = await _supplierRepo.GetByUserIdAsync(userId);
-                province = supplier.AddressLine4;
             }
 
             var isUsermanagementRole = await _userManager.IsInRoleAsync(user, "Usermanagement");
@@ -144,7 +139,10 @@ namespace backend.Controllers
                     EmailConfirmed = user.EmailConfirmed,
                     UserManagement = isUsermanagementRole,
                     Status = user.Status,
-                    Province = province
+                    Province = province,
+                    BalanceId = clientBalance.Id,
+                    BalanceType = clientBalance.Type,
+                    BalanceAmount = clientBalance.Balance
                 }
             );
         }
@@ -188,23 +186,59 @@ namespace backend.Controllers
 
                 if (createdUser.Succeeded)
                 {
-                    if (registerDto.Role != "User")
+                    var newClientBalance = new ClientBalance
                     {
-                        var roleResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
+                        ClientId = appUser.Id,
+                        Type = "prepaid",
+                        Balance = 0
+                    };
 
-                        if (roleResult.Succeeded)
+                    var createClientBalance = await _clientBalanceRepo.AddAsync(newClientBalance);
+
+                    if (createClientBalance != null)
+                    {
+
+                        if (registerDto.Role != "User")
+                        {
+                            var roleResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
+
+                            if (roleResult.Succeeded)
+                            {
+                                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                                // var confirmationLink = Url.Action(nameof(ConfirmEmail), "User", new { code, userId = appUser.Id}, Request.Scheme);
+                                var confirmationLink = "http://www.superlinq.com:2000/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
+
+                                var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
+                                if (!emailSent)
+                                {
+                                    return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
+                                }
+
+                                // return Ok("Successfully registered and sent activation email");
+                                return Ok(
+                                    new NewUserDto
+                                    {
+                                        UserId = appUser.Id,
+                                        UserName = appUser.Name,
+                                        Email = appUser.Email,
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                return BadRequest(roleResult.Errors);
+                            }
+                        }
+                        else
                         {
                             var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                            // var confirmationLink = Url.Action(nameof(ConfirmEmail), "User", new { code, userId = appUser.Id}, Request.Scheme);
-                            var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
-
+                            var confirmationLink = "http://www.superlinq.com:2000/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
                             var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
                             if (!emailSent)
                             {
                                 return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
                             }
 
-                            // return Ok("Successfully registered and sent activation email");
                             return Ok(
                                 new NewUserDto
                                 {
@@ -214,30 +248,11 @@ namespace backend.Controllers
                                 }
                             );
                         }
-                        else
-                        {
-                            return BadRequest(roleResult.Errors);
-                        }
-                    }
-                    else
+                    } else
                     {
-                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                        var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
-                        var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
-                        if (!emailSent)
-                        {
-                            return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
-                        }
-
-                        return Ok(
-                            new NewUserDto
-                            {
-                                UserId = appUser.Id,
-                                UserName = appUser.Name,
-                                Email = appUser.Email,
-                            }
-                        );
+                        return BadRequest("Failed to create client balance");
                     }
+
                 }
                 else
                 {
@@ -289,6 +304,8 @@ namespace backend.Controllers
                 return BadRequest("Role doesn't exist!");
             }
 
+            var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(user.Id);
+
             return Ok(
                 new NewUserDto
                 {
@@ -299,6 +316,9 @@ namespace backend.Controllers
                     Role = role,
                     EmailConfirmed = user.EmailConfirmed,
                     UserManagement = isUsermanagementRole,
+                    BalanceId = clientBalance.Id,
+                    BalanceType = clientBalance.Type,
+                    BalanceAmount = clientBalance.Balance,
                     Status = user.Status
                 }
             );
@@ -405,7 +425,7 @@ namespace backend.Controllers
             {
                 return StatusCode(404, new { Status = "Error", Message = "user_no_exist_msg" });
             }
-            
+
             user.Email = email;
             user.UserName = email.Replace("@", "AT");
 
@@ -462,6 +482,8 @@ namespace backend.Controllers
                 await _clientRepo.UpdateApprovedDate(userId);
             }
 
+            var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(user.Id);
+
             return Ok(
                 new NewUserDto
                 {
@@ -472,6 +494,9 @@ namespace backend.Controllers
                     Role = role,
                     EmailConfirmed = user.EmailConfirmed,
                     UserManagement = isUsermanagementRole,
+                    BalanceId = clientBalance.Id,
+                    BalanceType = clientBalance.Type,
+                    BalanceAmount = clientBalance.Balance,
                     Status = user.Status
                 }
             );
@@ -495,7 +520,7 @@ namespace backend.Controllers
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = "http://prosumator.com/confirm-email?token=" + token + "&userId=" + user.Id + "&email=" + email;
+            var confirmationLink = "http://www.superlinq.com:2000/confirm-email?token=" + token + "&userId=" + user.Id + "&email=" + email;
 
             var emailSent = await _smtpService.ActivateMailbySmtp(email, user.Name, confirmationLink);
             if (!emailSent)

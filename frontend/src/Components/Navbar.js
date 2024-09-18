@@ -25,6 +25,7 @@ const Navbar = (props) => {
       const defaultUser = JSON.parse(localStorage.getItem("user"));
       if (defaultUser) {
         const user = await getUserAPI(defaultUser.userId);
+
         if (user) {
           setUser(user);
         }
@@ -32,7 +33,18 @@ const Navbar = (props) => {
     };
 
     fetchData();
-  }, [location, i18n]);
+  }, [location]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const updatedUser = { ...user, balanceAmount: props.balanceAmount };
+        setUser(updatedUser);
+      }
+    };
+
+    fetchData();
+  }, [props.isChangedBalance]);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -103,9 +115,10 @@ const Navbar = (props) => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 ></a>
-                <ul className="dropdown-menu dashboard-dropdown" role="menu">
-                  
-                </ul>
+                <ul
+                  className="dropdown-menu dashboard-dropdown"
+                  role="menu"
+                ></ul>
               </div>
             </div>
           </div>
@@ -712,6 +725,10 @@ const Navbar = (props) => {
                   <div className="d-xl-block d-none lh-1">
                     <span className="fw-medium lh-1">
                       {user && user.userName}
+                      <br />
+                      <small>
+                        Credit Balance: R {user && user.balanceAmount}
+                      </small>
                     </span>
                   </div>
                 </div>
@@ -730,6 +747,15 @@ const Navbar = (props) => {
                   </Link>
                 </li>
                 <li>
+                  <Link
+                    to="/account-settings"
+                    className="dropdown-item d-flex align-items-center"
+                  >
+                    <i className="bi bi-check-square fs-16 me-2 op-7"></i>
+                    Account Settings
+                  </Link>
+                </li>
+                <li>
                   <a
                     className="dropdown-item d-flex align-items-center"
                     href="mail.html"
@@ -738,31 +764,6 @@ const Navbar = (props) => {
                     <span className="ms-auto badge bg-light border text-default">
                       19
                     </span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item d-flex align-items-center"
-                    href="to-do-list.html"
-                  >
-                    <i className="bi bi-check-square fs-16 me-2 op-7"></i>Task
-                    Manager
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item d-flex align-items-center"
-                    href="mail-settings.html"
-                  >
-                    <i className="bi bi-gear fs-16 me-2 op-7"></i>Settings
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item d-flex align-items-center"
-                    href="chat.html"
-                  >
-                    <i className="bi bi-headset fs-18 me-2 op-7"></i>Support
                   </a>
                 </li>
                 <li>

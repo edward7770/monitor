@@ -25,6 +25,8 @@ const ConfirmEmail = () => {
             role: res.data.role,
             userId: res.data.userId,
             userManagement: res.data.userManagement,
+            balanceType: res.data.balanceType,
+            balanceAmount: res.data.balanceAmount
           };
           localStorage.setItem("user", JSON.stringify(userObj));
 

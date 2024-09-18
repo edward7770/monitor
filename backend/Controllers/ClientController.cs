@@ -16,10 +16,12 @@ namespace backend.Controllers
     public class ClientController : ControllerBase
     {
         readonly private IClientRepository _clientRepo;
+        readonly private IClientBalanceRepository _clientBalanceRepo;
         private readonly IWebHostEnvironment _hostEnvironment;
-        public ClientController(IClientRepository clientRepo, IWebHostEnvironment hostEnvironment)
+        public ClientController(IClientRepository clientRepo, IClientBalanceRepository clientBalanceRepo, IWebHostEnvironment hostEnvironment)
         {
             _clientRepo = clientRepo;
+            _clientBalanceRepo = clientBalanceRepo;
             _hostEnvironment = hostEnvironment;
         }
 
@@ -72,6 +74,19 @@ namespace backend.Controllers
             }
 
             return Ok(supplier);
+        }
+
+        [HttpPost("update/balanceType/{clientId}")]
+        public async Task<IActionResult> UpdateBalanceType(string clientId, UpdateClientBalanceTypeRequestDto updateClientBalanceTypeRequestDto)
+        {
+            var clientBalance = await _clientBalanceRepo.UpdateBalanceType(clientId, updateClientBalanceTypeRequestDto.BalanceType);
+
+            if(clientBalance == null)
+            {
+                return BadRequest("Failed to update balance type");
+            }
+
+            return Ok(clientBalance);
         }
     }
 }

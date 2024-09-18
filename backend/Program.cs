@@ -112,6 +112,8 @@ builder.Services.AddScoped<IFormDataRepository, FormDataRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IMatchDataRepository, MatchDataRepository>();
 builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
+builder.Services.AddScoped<IClientBalanceRepository, ClientBalanceRepository>();
+builder.Services.AddScoped<IClientTransactionRepository, ClientTransactionRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage()); 

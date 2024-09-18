@@ -22,24 +22,29 @@ const UploadPage = () => {
       reader.onload = (e) => {
         const text = e.target.result;
         const rows = text.split("\n").map((row) => row.split(","));
-
+ 
         if (
-          rows[0][0] === "IdNo" ||
-          rows[0][0] === "ID Number" ||
-          rows[0][0] === "IDNumber " ||
-          rows[0][0] === "ID"
+          rows[0][0].trim() === "IdNo" ||
+          rows[0][0].trim() === "ID Number" ||
+          rows[0][0].trim() === "IDNUmber " ||
+          rows[0][0].trim() === "ID"
         ) {
           const tempRows = rows.slice(1);
           if (tempRows.length > 0) {
             tempRows.forEach((row) => {
               let otherData = "";
+              let idNumber = row[0];
               rows[0].forEach((item, index) => {
                 item = item.replace(/\r/g, "");
                 otherData += item + ": " + row[index] + "; ";
               });
 
+              if(row[0].includes("\r")) {
+                idNumber = row[0].replace(/\r/g, "");
+              }
+
               let rowObj = {
-                idNumber: row[0],
+                idNumber: idNumber,
                 otherData: otherData,
               };
 

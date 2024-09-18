@@ -23,6 +23,8 @@ namespace backend.Data
         public DbSet<Match> Matches { get; set;}
         public DbSet<MatchData> MatchDatas { get; set; }
         public DbSet<MatchResult> MatchResults { get; set; }
+        public DbSet<ClientBalance> ClientBalances { get; set; }
+        public DbSet<ClientTransaction> ClientTransactions { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

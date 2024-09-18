@@ -25,10 +25,11 @@ import Footer from "./Components/Footer";
 import Profile from "./Pages/Profile";
 import UploadPage from "./Pages/UploadPage";
 import History from "./Pages/History";
+import AccountSettings from "./Pages/AccountSettings";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router";
 
 import { Helmet } from "react-helmet";
@@ -54,6 +55,14 @@ axios.interceptors.response.use(
 
 function App() {
   const { isLoggedIn, getUserStatus } = useAuth();
+
+  const [isChangedBalance, setIsChangedBalance] = useState(false);
+  const [balanceAmount, setBalanceAmount] = useState(0);
+
+  const handleChangeBalance = (amount) => {
+    setIsChangedBalance(!isChangedBalance);
+    setBalanceAmount(amount);
+  }
   
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -71,7 +80,7 @@ function App() {
     };
 
     fetchUserRole();
-}, [getUserStatus, isLoggedIn]);
+}, [getUserStatus, isLoggedIn, isChangedBalance]);
 
   return (
     <>
@@ -94,7 +103,7 @@ function App() {
               path="/"
               element={
                 <div className="page">
-                  <Navbar />
+                  <Navbar isChangedBalance={isChangedBalance} balanceAmount={balanceAmount} />
                   <Sidebar />
                   <div className="main-content app-content">
                     <Outlet />
@@ -105,8 +114,9 @@ function App() {
             >
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/upload" element={<ProtectedRoute><UploadPage/></ProtectedRoute>} />
-              <Route path="/history" element={<ProtectedRoute><History/></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History handleChangeBalance={handleChangeBalance} /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/account-settings" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />
