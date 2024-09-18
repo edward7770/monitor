@@ -15,21 +15,43 @@ namespace backend.Controllers
     public class MatchController : ControllerBase
     {
         readonly private IMatchRepository _matchRepo;
+        readonly private IWebHostEnvironment _hostEnvironment;
 
-        public MatchController(IMatchRepository matchRepo)
+        public MatchController(IMatchRepository matchRepo, IWebHostEnvironment hostEnvironment)
         {
             _matchRepo = matchRepo;
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> addMatchRecord([FromBody] CreateMatchRequestDto createMatchRequestDto)
+        public async Task<IActionResult> addMatchRecord([FromForm] CreateMatchRequestDto createMatchRequestDto)
         {
+            string uniqueFileName = "";
+
+            List<string> validExtensions = new List<string>() {".csv"};
+            if(createMatchRequestDto.UploadedFile.Length > 0)
+            {
+                string fileExtenstion = Path.GetExtension(createMatchRequestDto.UploadedFile.FileName);
+                if(!validExtensions.Contains(fileExtenstion))
+                {
+                    return StatusCode(StatusCodes.Status409Conflict, "Extension is not valid");
+                }
+
+                string uploadedFileName = Guid.NewGuid().ToString() + fileExtenstion;
+                var filePath = Path.Combine(_hostEnvironment.ContentRootPath, "Uploads", "UploadedFiles");
+                var fileStream = new FileStream(filePath + "\\" + uploadedFileName, FileMode.Create);
+                uniqueFileName = uploadedFileName;
+
+                await createMatchRequestDto.UploadedFile.CopyToAsync(fileStream);
+            }
+
             var newMatchRecord = new Match {
                 ClientId = createMatchRequestDto.ClientId,
                 Records = createMatchRequestDto.Records,
                 Matched = "",
                 Status = "Processing",
                 FileName = createMatchRequestDto.FileName,
+                UniqueFileName = uniqueFileName,
                 UploadedBy = createMatchRequestDto.UploadedBy,
                 UploadDate = DateTime.Now,
                 ProcessingStartDate = DateTime.Now,

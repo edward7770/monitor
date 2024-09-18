@@ -127,21 +127,26 @@ namespace backend.Controllers
                 {
                     var matchDataRecords = await _matchDataRepo.GetLatestMatchDatasByIdNumber(idNumber);
 
-                    foreach (var matchDataRecord in matchDataRecords)
+                    if(matchDataRecords.Count > 0)
                     {
-                        var matchForm187 = new MatchResult
+                        foreach (var matchDataRecord in matchDataRecords)
                         {
-                            MatchId = matchDataRecord.MatchId,
-                            IdNumber = idNumber,
-                            Type = "J187",
-                            RecordId = form187Record.RecordId,
-                            RawRecord = form187Record.RawRecord,
-                            DateMatched = DateTime.Now
-                        };
+                            var lastMatchedStepDto = await _matchResultRepo.GetLastMatchedStepAsync(matchDataRecord.MatchId);
 
-                        matchFormRecords.Add(matchForm187);
+                            var matchForm187 = new MatchResult
+                            {
+                                MatchId = matchDataRecord.MatchId,
+                                IdNumber = idNumber,
+                                Type = "J187",
+                                RecordId = form187Record.RecordId,
+                                RawRecord = form187Record.RawRecord,
+                                MatchedStep = lastMatchedStepDto.MatchedStep + 1,
+                                DateMatched = DateTime.Now
+                            };
+
+                            matchFormRecords.Add(matchForm187);
+                        }
                     }
-
                 }
             }
 
@@ -153,21 +158,26 @@ namespace backend.Controllers
                 {
                     var matchDataRecords = await _matchDataRepo.GetLatestMatchDatasByIdNumber(idNumber);
 
-                    foreach (var matchDataRecord in matchDataRecords)
+                    if(matchDataRecords.Count > 0)
                     {
-                        var matchForm193 = new MatchResult
+                        foreach (var matchDataRecord in matchDataRecords)
                         {
-                            MatchId = matchDataRecord.MatchId,
-                            IdNumber = idNumber,
-                            Type = "J187",
-                            RecordId = form193Record.RecordId,
-                            RawRecord = form193Record.RawRecord,
-                            DateMatched = DateTime.Now
-                        };
+                            var lastMatchedStepDto = await _matchResultRepo.GetLastMatchedStepAsync(matchDataRecord.MatchId);
 
-                        matchFormRecords.Add(matchForm193);
+                            var matchForm193 = new MatchResult
+                            {
+                                MatchId = matchDataRecord.MatchId,
+                                IdNumber = idNumber,
+                                Type = "J187",
+                                RecordId = form193Record.RecordId,
+                                RawRecord = form193Record.RawRecord,
+                                MatchedStep = lastMatchedStepDto.MatchedStep + 1,
+                                DateMatched = DateTime.Now
+                            };
+
+                            matchFormRecords.Add(matchForm193);
+                        }
                     }
-
                 }
             }
 

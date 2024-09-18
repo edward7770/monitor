@@ -13,5 +13,6 @@ namespace backend.Dtos.Match
         public string FileName { get; set; }
         public string UploadedBy { get; set; }
         public DateTime UploadDate { get; set; }
+        public IFormFile UploadedFile { get; set; }
     }
 }

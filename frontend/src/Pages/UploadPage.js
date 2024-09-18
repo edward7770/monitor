@@ -4,10 +4,11 @@ import { toast } from "react-toastify";
 import { Helmet } from "react-helmet";
 import { addMatchAPI, addMatchDataAPI } from "../Services/UploadService";
 
+let isSetUploadFile = false;
 const UploadPage = () => {
   const [userId, setUserId] = useState(null);
-//   const [files, setFiles] = useState([]);
-  const [fileName, setFileName] = useState('');
+  const [csvFile, setCsvFile] = useState(null);
+  const [fileName, setFileName] = useState("");
   const [data, setData] = useState([]);
 
   const handleUploadCSV = (fileItems) => {
@@ -15,14 +16,16 @@ const UploadPage = () => {
     let tempData = [];
     let status = 1;
 
-    if (file) {
+    if (file && !isSetUploadFile) {
+      setCsvFile(file);
+      isSetUploadFile = true;
       const reader = new FileReader();
       setFileName(file.name);
 
       reader.onload = (e) => {
         const text = e.target.result;
         const rows = text.split("\n").map((row) => row.split(","));
- 
+
         if (
           rows[0][0].trim() === "IdNo" ||
           rows[0][0].trim() === "ID Number" ||
@@ -34,12 +37,12 @@ const UploadPage = () => {
             tempRows.forEach((row) => {
               let otherData = "";
               let idNumber = row[0];
-              rows[0].forEach((item, index) => {
+              rows[0].slice(1).forEach((item, index) => {
                 item = item.replace(/\r/g, "");
                 otherData += item + ": " + row[index] + "; ";
               });
 
-              if(row[0].includes("\r")) {
+              if (row[0].includes("\r")) {
                 idNumber = row[0].replace(/\r/g, "");
               }
 
@@ -60,7 +63,7 @@ const UploadPage = () => {
             toast.warning("This file is empty!");
           }
         } else {
-          toast.warning("This file format is incorrect!");
+          toast.warning("Wrong file format! Please check sample file!");
           status = 0;
         }
       };
@@ -75,53 +78,63 @@ const UploadPage = () => {
 
   const handleRemoveFile = () => {
     setData([]);
-    setFileName('');
+    setFileName("");
+    setCsvFile(null);
+    isSetUploadFile = false;
   };
 
   const handleStartProcess = async () => {
-    let formData = {
-        clientId: userId,
-        records: data.length,
-        status: "Processing",
-        fileName: fileName,
-        uploadedBy: userId,
-        uploadDate: new Date()
-    }
+    let formDataObj = {
+      clientId: userId,
+      records: data.length,
+      status: "Processing",
+      fileName: fileName,
+      uploadedBy: userId,
+      uploadDate: new Date().toISOString(),
+      uploadedFile: csvFile,
+    };
+
+    let formData = new FormData();
+    Object.entries(formDataObj).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
     await addMatchAPI(formData)
-        .then(async (res) => {
-            data.forEach(matchItem => {
-                matchItem.matchId = res.data.id;
-            });
+      .then(async (res) => {
+        data.forEach((matchItem) => {
+          matchItem.matchId = res.data.id;
+        });
 
-            await addMatchDataAPI(data)
-                .then(response => {
-                    console.log(response);
-                    toast.success('Started to process uploaded file. We will return back soon!');
-                    setData([]);
-                    setFileName('');
-                })
-                .catch(err => {
-                    if(err.response) {
-                        toast.error(err.response.data);
-                    } else {
-                        toast.error('Failed to add match data!');
-                    }
-                })
-        })
-        .catch(err => {
-            if(err.response) {
-                toast.error(err.response.data);
+        await addMatchDataAPI(data)
+          .then((response) => {
+            toast.success(
+              "Started to process uploaded file. We will return back soon!"
+            );
+            setData([]);
+            setFileName("");
+            setCsvFile(null);
+          })
+          .catch((err) => {
+            if (err.response) {
+              toast.error(err.response.data);
             } else {
-                toast.error('Failed to add match record!');
+              toast.error("Failed to add match data!");
             }
-        })
+          });
+      })
+      .catch((err) => {
+        if (err.response) {
+          toast.error(err.response.data);
+        } else {
+          toast.error("Failed to add match record!");
+        }
+      });
   };
 
   useEffect(() => {
     const user = JSON.parse(window.localStorage.getItem("user"));
     if (user) {
-        setUserId(user.userId);
+      setUserId(user.userId);
     }
   }, []);
 
@@ -141,6 +154,16 @@ const UploadPage = () => {
             maxFileSize="100MB"
             labelIdle='<i class="bi bi-cloud-arrow-up" style="font-size: 25px;"></i><br/> <span style="font-size: 16px;">Drag & Drop Your CSV File or <span class="filepond--label-action">Browse</span></span>'
           />
+          <p className="mt-2 flex">
+            See &nbsp;
+            <a
+              href={`${process.env.REACT_APP_BACKEND_API}/Uploads/sample1.csv`}
+              className="underline text-[#266FFE]"
+            >
+              sample
+            </a>
+            &nbsp; file for example! File must be in .csv format.{" "}
+          </p>
           <div className="w-[98%] mx-auto mt-4 block">
             <button
               type="button"

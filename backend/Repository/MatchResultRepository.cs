@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.Data;
+using backend.Dtos.MatchResult;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,17 @@ namespace backend.Repository
             await _context.SaveChangesAsync();
 
             return matchResults;
+        }
+
+        public async Task<GetLastMatchedStepDto> GetLastMatchedStepAsync(int matchId)
+        {
+            var lastMatchedStep = await _context.MatchResults.Where(x => x.MatchId == matchId).MaxAsync(y => y.MatchedStep);
+            
+            var lastMatchedDto = new GetLastMatchedStepDto {
+                MatchedStep = lastMatchedStep
+            };
+
+            return lastMatchedDto;
         }
 
         public async Task<MatchResult> UpdateAsync(int matchResultId)

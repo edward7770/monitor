@@ -14,6 +14,7 @@ namespace backend.Dtos.MatchResult
         public Guid RecordId { get; set; }
         public string RawRecord { get; set; }
         public DateTime DateMatched { get; set; }
+        public int MatchedStep { get; set; }
         public DateTime DownloadDate { get; set; }
     }
 }

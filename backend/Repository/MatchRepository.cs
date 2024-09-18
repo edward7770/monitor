@@ -56,6 +56,7 @@ namespace backend.Repository
                         RecordId = result.RecordId,
                         RawRecord = result.RawRecord,
                         DateMatched = result.DateMatched,
+                        MatchedStep = result.MatchedStep,
                         DownloadDate = result.DownloadDate
                     }).ToList()
                 })

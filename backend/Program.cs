@@ -97,6 +97,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -116,7 +118,7 @@ builder.Services.AddScoped<IClientBalanceRepository, ClientBalanceRepository>();
 builder.Services.AddScoped<IClientTransactionRepository, ClientTransactionRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
-builder.Services.AddHangfire(config => config.UseMemoryStorage()); 
+builder.Services.AddHangfire(config => config.UseMemoryStorage());
 builder.Services.AddHangfireServer();
 
 
@@ -153,6 +155,29 @@ app.UseCors(x => x
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+
+    if (path.StartsWith("/Uploads") && !context.User.Identity.IsAuthenticated)
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Unauthorized access. Please log in to download files.");
+        return;
+    }
+
+    // Continue processing the request
+    await next.Invoke();
+});
+
+// Serve static files from the Uploads directory
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Uploads"
+});
 
 app.MapControllers();
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TablePagination } from "@mui/material";
+import * as XLSX from 'xlsx';
+// import { TablePagination } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -22,25 +23,16 @@ import { createClientTransactionAPI } from "../Services/ClientTransactionService
 import { getUserAPI } from "../Services/AuthService";
 import { toast } from "react-toastify";
 
-const groupByDateMatched = (arr) => {
+const groupByMatchedStep = (arr) => {
   const grouped = {};
 
   arr
-    .sort((a, b) => new Date(a.dateMatched) - new Date(b.dateMatched))
+    .sort((a, b) => new Date(a.matchedStep) - new Date(b.matchedStep))
     .forEach((item) => {
-      const date = item.dateMatched.split(".")[0];
-      if (item.downloadDate === "0001-01-01T00:00:00") {
-        item.downloadDate = null;
-      } else {
-        item.downloadDate =
-          item.downloadDate?.split("T")[0] +
-          " " +
-          item.downloadDate?.split("T")[1].split(".")[0];
+      if (!grouped[item.matchedStep]) {
+        grouped[item.matchedStep] = [];
       }
-      if (!grouped[date]) {
-        grouped[date] = [];
-      }
-      grouped[date].push(item);
+      grouped[item.matchedStep].push(item);
     });
 
   return Object.values(grouped);
@@ -61,56 +53,70 @@ function extractFirst13DigitNumber(str) {
 
 function arrayToCSV(array) {
   if (array.length === 0) return "";
+  const J187headers = ['Case Number', 'Id Number', 'Name', 'Particulars', 'Notice Date', 'Description of Account', 'Surviving Spouse Details', 'Period Of Inspection', 'Executor Name', 'Executor Phone Number', 'Executor Email', 'Raw Record'];
+  const J193headers = ['Case Number', 'Id Number', 'Name', 'Particulars', 'Notice Date', 'Raw Record'];
 
-  const headers = Object.keys(array[0]);
-  const csvRows = [
-    headers.join(","),
-    ...array.map((row) =>
-      headers
-        .map((header) =>
-          JSON.stringify(row[header], (key, value) =>
-            value === null ? "" : value
-          )
-        )
-        .join(",")
-    ),
+  const valuesJ187Array = array.filter(x => Object.values(x).length === 12).map(obj => Object.values(obj));
+  const valuesJ193Array = array.filter(x => Object.values(x).length === 6).map(obj => Object.values(obj));
+
+  const csv187Rows = [
+    J187headers,
+    ...valuesJ187Array
   ];
 
-  return csvRows.join("\n");
+  const csv193Rows = [
+    J193headers,
+    ...valuesJ193Array
+  ];
+
+  return {csv187Rows: csv187Rows, csv193Rows: csv193Rows};
 }
 
-function downloadCSV(array, filename = "data.csv") {
+const downloadCSV = (array, filename = "Monitor.xlsx") => {
   const csvData = arrayToCSV(array);
-  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-  const link = window.document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.setAttribute("download", filename);
-  window.document.body.appendChild(link);
-  link.click();
-  window.document.body.removeChild(link);
-}
+  console.log(csvData);
+  const workbook = XLSX.utils.book_new();
+
+  const worksheet1 = XLSX.utils.aoa_to_sheet(csvData.csv187Rows);
+  const worksheet2 = XLSX.utils.aoa_to_sheet(csvData.csv193Rows);
+
+  XLSX.utils.book_append_sheet(workbook, worksheet1, "J187");
+  XLSX.utils.book_append_sheet(workbook, worksheet2, "J193");
+
+  XLSX.writeFile(workbook, filename + ".xlsx");
+};
+
+// function downloadCSV(array, filename = "Monitor.csv") {
+//   const csvData = arrayToCSV(array);
+//   const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+//   const link = window.document.createElement("a");
+//   link.href = URL.createObjectURL(blob);
+//   link.setAttribute("download", filename);
+//   window.document.body.appendChild(link);
+//   link.click();
+//   window.document.body.removeChild(link);
+// }
 
 const History = (props) => {
   const { t } = useTranslation();
   const [rowData, setRowData] = useState([]);
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  // const [currentPage, setCurrentPage] = useState(0);
+  // const [pageSize, setPageSize] = useState(10);
 
   const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
   const [selectedMatchResult, setSelectedMatchResult] = useState(null);
   const [isSetDownloaded, setIsSetDownloaded] = useState(false);
-  //   const [fileDatas, setFileDatas] = useState([]);
 
-  const handleChangePage = (event, newPage) => {
-    setCurrentPage(parseInt(newPage));
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setCurrentPage(parseInt(newPage));
+  // };
 
-  const handleChangeRowsPerPage = (event) => {
-    setPageSize(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setPageSize(parseInt(event.target.value, 10));
+  //   setCurrentPage(0);
+  // };
 
   const handleDownloadBtn = (resultId) => {
     setOpenDownloadDialog(true);
@@ -426,9 +432,13 @@ const History = (props) => {
     },
   ];
 
-  const onGridReady = (params) => {
-    params.api.sizeColumnsToFit();
-  };
+  // const onGridReady = (params) => {
+  //   params.api.sizeColumnsToFit();
+  // };
+
+  const paginationPageSizeSelector = useMemo(() => {
+    return [10, 20, 50];
+  }, []);
 
   useEffect(() => {
     document.title = "Monitor | History";
@@ -459,7 +469,7 @@ const History = (props) => {
 
       if (response.data.length > 0) {
         response.data.forEach((result) => {
-          var fileDatas = groupByDateMatched(result.matchResults);
+          var fileDatas = groupByMatchedStep(result.matchResults);
           var countJ187 =
             result.matchResults.length > 0 &&
             result.matchResults.filter((x) => x.type === "J187").length;
@@ -488,6 +498,7 @@ const History = (props) => {
       }
 
       if (tempMatchResults.length > 0) {
+        console.log(tempMatchResults);
         setRowData(tempMatchResults);
       }
     };
@@ -510,9 +521,14 @@ const History = (props) => {
                     columnDefs={columnDefs}
                     rowData={rowData}
                     domLayout="autoHeight"
+                    pagination={true}
                     suppressPaginationPanel={false}
+                    paginationPageSizeSelector={
+                      paginationPageSizeSelector
+                    }
+                    paginationPageSize={10}
                   />
-                  <div className="gridjs-footer1">
+                  {/* <div className="gridjs-footer1">
                     <div className="gridjs-pagination d-flex justify-content-between align-items-center">
                       <div className="gridjs-summary pl-4 hidden md:block">
                         Showing <b>{pageSize * currentPage + 1}</b> to{" "}
@@ -534,7 +550,7 @@ const History = (props) => {
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

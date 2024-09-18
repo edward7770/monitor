@@ -13,6 +13,7 @@ namespace backend.Models
         public string Matched { get; set; }
         public string Status { get; set; }
         public string FileName { get; set; }
+        public string UniqueFileName { get; set; }
         public string UploadedBy { get; set; }
         public DateTime UploadDate { get; set; }
         public DateTime ProcessingStartDate { get; set; }

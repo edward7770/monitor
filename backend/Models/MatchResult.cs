@@ -14,6 +14,7 @@ namespace backend.Models
         public Guid RecordId { get; set; }
         public string RawRecord { get; set; }
         public DateTime DateMatched { get; set; }
+        public int MatchedStep { get; set; } = 0;
         public DateTime DownloadDate { get; set; }
     }
 }

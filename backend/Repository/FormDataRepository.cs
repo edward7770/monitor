@@ -43,7 +43,8 @@ namespace backend.Repository
                     Type = "J187",
                     RecordId = form187.RecordId,
                     RawRecord = form187.RawRecord,
-                    DateMatched = DateTime.Now
+                    DateMatched = DateTime.Now,
+                    MatchedStep = 0
                 };
 
                 matchFormRecords.Add(matchForm187);
@@ -58,7 +59,8 @@ namespace backend.Repository
                     Type = "J193",
                     RecordId = form193.RecordId,
                     RawRecord = form193.RawRecord,
-                    DateMatched = DateTime.Now
+                    DateMatched = DateTime.Now,
+                    MatchedStep = 0
                 };
 
                 matchFormRecords.Add(matchForm193);

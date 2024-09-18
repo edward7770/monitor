@@ -108,11 +108,12 @@ const Register = () => {
             }
           } else {
             if (!Array.isArray(err.response.data)) {
-              Object.entries(err.response.data.errors).forEach(
-                ([key, value]) => {
-                  toast.warning(value[0]);
-                }
-              );
+              // Object.entries(err.response.data.errors).forEach(
+              //   ([key, value]) => {
+              //     toast.warning(value[0]);
+              //   }
+              // );
+              toast.warning("Register was failed!");
             } else {
               if (
                 err.response.data[0].description ===
