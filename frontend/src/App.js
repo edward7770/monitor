@@ -86,7 +86,7 @@ function App() {
     <>
       <SwitcherCanvs/>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<ProtectedLoginRoute><Login /></ProtectedLoginRoute>} />
           <Route path="/login" element={<ProtectedLoginRoute><Login /></ProtectedLoginRoute>} />
           <Route path="/register" element={<ProtectedLoginRoute><Register /></ProtectedLoginRoute>} />
           <Route path="/forgot" element={<ProtectedLoginRoute><ForgotPassword /></ProtectedLoginRoute>} />

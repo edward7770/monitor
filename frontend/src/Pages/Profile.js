@@ -48,12 +48,13 @@ const Profile = () => {
             localStorage.removeItem("user");
             navigate("/login", {
               state: {
-                successMessage: "email_activate_resend_msg",
+                successMessage: "change_email_activate_send_msg",
                 changeEmail: changeEmail,
               },
             });
-            if (res.data.status === 200) {
-            }
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
           })
           .catch((err) => {
             if (err.response.data) {
@@ -224,7 +225,6 @@ const Profile = () => {
             <div class="card-body">
               <div class="d-sm-flex flex-wrap align-items-top gap-5 p-2 border-bottom-0">
                 <form onSubmit={handleSupplierSubmit}>
-
                   <div className="row gy-3">
                     <div className="col-xl-6 col-12">
                       <label htmlFor="name" className="form-label text-default">
@@ -283,11 +283,12 @@ const Profile = () => {
                         value={supplierData ? supplierData.companyName : ""}
                         onChange={onChangeSupplierData}
                       />
-                      {isError && supplierErrors.indexOf("companyName") > -1 && (
-                        <span className="text-red-500">
-                          {t("field_required")}
-                        </span>
-                      )}
+                      {isError &&
+                        supplierErrors.indexOf("companyName") > -1 && (
+                          <span className="text-red-500">
+                            {t("field_required")}
+                          </span>
+                        )}
                     </div>
                     <div className="col-xl-6 col-12">
                       <label
@@ -315,7 +316,10 @@ const Profile = () => {
                         )}
                     </div>
                     <div className="col-xl-6 col-12">
-                      <label htmlFor="mobile" className="form-label text-default">
+                      <label
+                        htmlFor="mobile"
+                        className="form-label text-default"
+                      >
                         {t("contact_mobile")}
                       </label>
                       <input
@@ -334,7 +338,10 @@ const Profile = () => {
                       )}
                     </div>
                     <div className="col-xl-6 col-12">
-                      <label htmlFor="phone" className="form-label text-default">
+                      <label
+                        htmlFor="phone"
+                        className="form-label text-default"
+                      >
                         {t("alternative_phone")}
                       </label>
                       <input
@@ -343,7 +350,11 @@ const Profile = () => {
                         placeholder={t("alternative_phone")}
                         name="phone"
                         id="phone"
-                        value={(supplierData && supplierData.phone !== 'null') ? supplierData.phone : ""}
+                        value={
+                          supplierData && supplierData.phone !== "null"
+                            ? supplierData.phone
+                            : ""
+                        }
                         onChange={onChangeSupplierData}
                       />
                     </div>
@@ -363,11 +374,12 @@ const Profile = () => {
                         value={supplierData ? supplierData.addressLine1 : ""}
                         onChange={onChangeSupplierData}
                       />
-                      {isError && supplierErrors.indexOf("addressLine1") > -1 && (
-                        <span className="text-red-500">
-                          {t("field_required")}
-                        </span>
-                      )}
+                      {isError &&
+                        supplierErrors.indexOf("addressLine1") > -1 && (
+                          <span className="text-red-500">
+                            {t("field_required")}
+                          </span>
+                        )}
                     </div>
                     <div className="col-xl-6 col-12">
                       <label
@@ -382,7 +394,11 @@ const Profile = () => {
                         placeholder={t("address2")}
                         name="addressLine2"
                         id="addressLine2"
-                        value={(supplierData && supplierData.addressLine2 !== 'null') ? supplierData.addressLine2 : ""}
+                        value={
+                          supplierData && supplierData.addressLine2 !== "null"
+                            ? supplierData.addressLine2
+                            : ""
+                        }
                         onChange={onChangeSupplierData}
                       />
                     </div>
@@ -406,11 +422,12 @@ const Profile = () => {
                         }
                         onChange={onChangeSupplierData}
                       />
-                      {isError && supplierErrors.indexOf("addressLine4") > -1 && (
-                        <span className="text-red-500">
-                          {t("field_required")}
-                        </span>
-                      )}
+                      {isError &&
+                        supplierErrors.indexOf("addressLine4") > -1 && (
+                          <span className="text-red-500">
+                            {t("field_required")}
+                          </span>
+                        )}
                     </div>
                     <div className="col-xl-6 col-12">
                       <label
@@ -432,11 +449,12 @@ const Profile = () => {
                         }
                         onChange={onChangeSupplierData}
                       />
-                      {isError && supplierErrors.indexOf("addressLine3") > -1 && (
-                        <span className="text-red-500">
-                          {t("field_required")}
-                        </span>
-                      )}
+                      {isError &&
+                        supplierErrors.indexOf("addressLine3") > -1 && (
+                          <span className="text-red-500">
+                            {t("field_required")}
+                          </span>
+                        )}
                     </div>
                     <div className="col-xl-12 col-12">
                       <label
@@ -451,7 +469,9 @@ const Profile = () => {
                         placeholder={t("postal_code")}
                         name="addressPostalCode"
                         id="addressPostalCode"
-                        value={supplierData ? supplierData.addressPostalCode : ""}
+                        value={
+                          supplierData ? supplierData.addressPostalCode : ""
+                        }
                         onChange={onChangeSupplierData}
                       />
                       {isError &&

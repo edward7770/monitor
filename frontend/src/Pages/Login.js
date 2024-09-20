@@ -49,8 +49,7 @@ const Login = () => {
     if (location.state && location.state.successMessage && isShowToast === 0) {
       isShowToast = 1;
       toast.success(
-        t("email_activate_resend_msg") + " " + location.state.changeEmail
-      );
+        t(location.state.successMessage));
       navigate("/login", { replace: true });
     }
   }, [location.state, t]);

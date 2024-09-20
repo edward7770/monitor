@@ -178,36 +178,57 @@ namespace backend.Repository
 
         public async Task<List<J187FormRecord>> GetLatestForm187Async()
         {
-            var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
+            var allMatchedResults = await _context.MatchResults.ToListAsync();
 
-            if (maxMatchedStep == 0)
+            if (allMatchedResults.Count > 0)
             {
-                var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
-                var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
-                return latestRecords;
+                var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
+
+                if (maxMatchedStep == 0)
+                {
+                    var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
+                    var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    return latestRecords;
+                }
+                else
+                {
+                    var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                    var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    return latestRecords;
+                }
             }
             else
             {
-                var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                var lastMonitorDate = DateTime.Now.AddDays(-3);
                 var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                 return latestRecords;
             }
-
         }
 
         public async Task<List<J193FormRecord>> GetLatestForm193Async()
         {
-            var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
+            var allMatchedResults = await _context.MatchResults.ToListAsync();
 
-            if (maxMatchedStep == 0)
+            if (allMatchedResults.Count > 0)
             {
-                var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
-                var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
-                return latestRecords;
+                var maxMatchedStep = await _context.MatchResults.MaxAsync(x => x.MatchedStep);
+
+                if (maxMatchedStep == 0)
+                {
+                    var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
+                    var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    return latestRecords;
+                }
+                else
+                {
+                    var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                    var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    return latestRecords;
+                }
             }
             else
             {
-                var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
+                var lastMonitorDate = DateTime.Now.AddDays(-3);
                 var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                 return latestRecords;
             }
