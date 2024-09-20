@@ -21,12 +21,12 @@ namespace backend.Repository
         {
             foreach (var matchResult in matchResults)
             {
-                var findSameMatches = await _context.MatchResults.Where(x => x.MatchId == matchResult.MatchId && x.RecordId == matchResult.RecordId).ToListAsync();
+                // var findSameMatches = await _context.MatchResults.Where(x => x.MatchId == matchResult.MatchId && x.RecordId == matchResult.RecordId).ToListAsync();
 
-                if (findSameMatches.Count == 0)
-                {
-                    await _context.MatchResults.AddAsync(matchResult);
-                }
+                // if (findSameMatches.Count == 0)
+                // {
+                // }
+                await _context.MatchResults.AddAsync(matchResult);
             }
 
             await _context.SaveChangesAsync();

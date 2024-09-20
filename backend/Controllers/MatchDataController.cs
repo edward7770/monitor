@@ -168,7 +168,7 @@ namespace backend.Controllers
                             {
                                 MatchId = matchDataRecord.MatchId,
                                 IdNumber = idNumber,
-                                Type = "J187",
+                                Type = "J193",
                                 RecordId = form193Record.RecordId,
                                 RawRecord = form193Record.RawRecord,
                                 MatchedStep = lastMatchedStepDto.MatchedStep + 1,

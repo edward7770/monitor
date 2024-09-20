@@ -173,6 +173,7 @@ const History = (props) => {
           extractedRecord = extractForm193Data(formRecord);
         } else {
           formRecord = await getForm187RecordByRecordIdAPI(item.recordId);
+          console.log(item.recordId);
           extractedRecord = extractForm187Data(formRecord);
         }
 
@@ -186,12 +187,12 @@ const History = (props) => {
     );
 
     if (downloadDate !== null) {
+      console.log(extractedCSVRecords);
       downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
       var balanceAmount = user.balanceAmount - matchResultsIds.length * 199;
       if (balanceAmount > 0) {
-        props.handleChangeBalance(balanceAmount);
-
+        console.log(matchResultsIds);
         await updateDownloadDates(matchResultsIds)
           .then(async (res) => {
             if (res) {
@@ -213,6 +214,8 @@ const History = (props) => {
 
                 if (response) {
                   setIsSetDownloaded(!isSetDownloaded);
+                  props.handleChangeBalance(balanceAmount);
+                  console.log(extractedCSVRecords);
                   downloadCSV(
                     extractedCSVRecords,
                     "Monitor " + parseInt(index + 1)
@@ -436,6 +439,7 @@ const History = (props) => {
     {
       headerName: "J187 Count",
       field: "countJ187",
+      cellDataType: 'number',
       filter: false,
       sortable: false,
       flex: 1,
@@ -443,6 +447,7 @@ const History = (props) => {
     {
       headerName: "J193 Count",
       field: "countJ193",
+      cellDataType: 'number',
       filter: false,
       sortable: false,
       flex: 1,
@@ -496,12 +501,13 @@ const History = (props) => {
       if (response.data.length > 0) {
         response.data.forEach((result) => {
           var fileDatas = groupByMatchedStep(result.matchResults);
+          
           var countJ187 =
-            result.matchResults.length > 0 &&
-            result.matchResults.filter((x) => x.type === "J187").length;
+            result.matchResults.length > 0 ?
+            result.matchResults.filter((x) => x.type === "J187").length : 0;
           var countJ193 =
-            result.matchResults.length > 0 &&
-            result.matchResults.filter((x) => x.type === "J193").length;
+            result.matchResults.length > 0 ?
+            result.matchResults.filter((x) => x.type === "J193").length : 0;
 
           let matchItem = {
             id: result.id,

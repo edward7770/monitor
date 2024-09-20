@@ -77,11 +77,11 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme =
-    options.DefaultChallengeScheme =
-    options.DefaultForbidScheme =
-    options.DefaultScheme =
-    options.DefaultSignInScheme =
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
@@ -93,7 +93,9 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JWT:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
-        )
+        ),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero 
     };
 });
 
@@ -156,20 +158,20 @@ app.UseCors(x => x
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.Use(async (context, next) =>
-{
-    var path = context.Request.Path.Value;
+// app.Use(async (context, next) =>
+// {
+//     var path = context.Request.Path.Value;
 
-    if (path.StartsWith("/Uploads") && !context.User.Identity.IsAuthenticated)
-    {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        await context.Response.WriteAsync("Unauthorized access. Please log in to download files.");
-        return;
-    }
+//     if (path.StartsWith("/Uploads") && !context.User.Identity.IsAuthenticated)
+//     {
+//         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+//         await context.Response.WriteAsync("Unauthorized access. Please log in to download files.");
+//         return;
+//     }
 
-    // Continue processing the request
-    await next.Invoke();
-});
+//     // Continue processing the request
+//     await next.Invoke();
+// });
 
 // Serve static files from the Uploads directory
 app.UseStaticFiles(new StaticFileOptions

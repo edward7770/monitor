@@ -21,55 +21,65 @@ namespace backend.Repository
             _context = context;
         }
 
-        public async Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId, string IdNumber)
+        public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId, string idNumber)
         {
             var matchFormRecords = new List<MatchResult>();
-            var query187 = _formDataContext.J187FormRecords.AsQueryable();
-            var query193 = _formDataContext.J193FormRecords.AsQueryable();
 
-            if (!string.IsNullOrEmpty(IdNumber))
+            try
             {
-                query187 = query187.Where(record => record.RawRecord != null && record.RawRecord.Contains(IdNumber));
-                query193 = query193.Where(record => record.RawRecord != null && record.RawRecord.Contains(IdNumber));
-            }
-
-            var form187Records = await query187.ToListAsync();
-            var form193Records = await query193.ToListAsync();
-
-            foreach (var form187 in form187Records)
-            {
-                var matchForm187 = new MatchResult
+                // Check if IdNumber is null or empty before proceeding
+                if (string.IsNullOrEmpty(idNumber))
                 {
-                    MatchId = MatchId,
-                    IdNumber = IdNumber,
+                    return matchFormRecords; // Return empty list as no IdNumber is provided
+                }
+
+                // Retrieve the current date only once
+                var currentDate = DateTime.Now;
+
+                // Query both J187 and J193 records with filters applied
+                var form187Records = await _formDataContext.J187FormRecords
+                    .Where(record => record.RawRecord != null && record.RawRecord.Contains(idNumber))
+                    .ToListAsync();
+
+                var form193Records = await _formDataContext.J193FormRecords
+                    .Where(record => record.RawRecord != null && record.RawRecord.Contains(idNumber))
+                    .ToListAsync();
+
+                // Map J187 records to MatchResult
+                matchFormRecords.AddRange(form187Records.Select(form187 => new MatchResult
+                {
+                    MatchId = matchId,
+                    IdNumber = idNumber,
                     Type = "J187",
                     RecordId = form187.RecordId,
                     RawRecord = form187.RawRecord,
-                    DateMatched = DateTime.Now,
+                    DateMatched = currentDate,
                     MatchedStep = 0
-                };
+                }));
 
-                matchFormRecords.Add(matchForm187);
-            }
-
-            foreach (var form193 in form193Records)
-            {
-                var matchForm193 = new MatchResult
+                // Map J193 records to MatchResult
+                matchFormRecords.AddRange(form193Records.Select(form193 => new MatchResult
                 {
-                    MatchId = MatchId,
-                    IdNumber = IdNumber,
+                    MatchId = matchId,
+                    IdNumber = idNumber,
                     Type = "J193",
                     RecordId = form193.RecordId,
                     RawRecord = form193.RawRecord,
-                    DateMatched = DateTime.Now,
+                    DateMatched = currentDate,
                     MatchedStep = 0
-                };
+                }));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if a logger is available (assuming _logger is injected)
 
-                matchFormRecords.Add(matchForm193);
+                // Optionally rethrow or handle the exception
+                throw;
             }
 
             return matchFormRecords;
         }
+
 
         public async Task<PagedResult<FormRecord187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
         {
