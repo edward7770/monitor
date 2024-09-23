@@ -25,6 +25,7 @@ namespace backend.Data
         public DbSet<MatchResult> MatchResults { get; set; }
         public DbSet<ClientBalance> ClientBalances { get; set; }
         public DbSet<ClientTransaction> ClientTransactions { get; set; }
+        public DbSet<ClientPayment> ClientPayments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.Data;
 using backend.Dtos.Client;
+using backend.Dtos.ClientPayment;
 using backend.Dtos.ClientTransaction;
 using backend.Interfaces;
 using backend.Models;
@@ -87,49 +88,83 @@ namespace backend.Repository
 
         public async Task<List<ClientDto>> GetAllAsync()
         {
-            var clientBalances = await (from c in _context.Clients
-                                        join cm in _context.ClientBalances
-                                        on c.UserId equals cm.ClientId
-                                        join ct in _context.ClientTransactions
-                                        on cm.ClientId equals ct.ClientId into transactionsGroup
-                                        select new ClientDto
-                                        {
-                                            Id = c.Id,
-                                            Name = c.Name + " " + c.Surname,
-                                            Surname = c.Surname,
-                                            Email = c.ContactEmail,
-                                            CompanyName = c.CompanyName,
-                                            RegistrationNumber = c.RegistrationNumber,
-                                            Phone = c.Phone,
-                                            Mobile = c.Mobile,
-                                            AddressLine1 = c.AddressLine1,
-                                            AddressLine2 = c.AddressLine2,
-                                            AddressLine3 = c.AddressLine3,
-                                            AddressLine4 = c.AddressLine4,
-                                            AddressPostalCode = c.AddressPostalCode,
-                                            BalanceType = cm.Type,
-                                            BalanceAmount = cm.Balance,
-                                            CreditLimit = cm.CreditLimit,
-                                            Transactions = transactionsGroup.OrderByDescending(t => t.DateCreated).Select(t => new ClientTransactionDto
-                                            {
-                                                Id = t.Id,
-                                                ClientId = t.ClientId,
-                                                MatchId = t.MatchId,
-                                                Records = t.Records,
-                                                FileName = t.FileName,
-                                                Monitor = t.Monitor,
-                                                BillValue = t.BillValue,
-                                                Balance = t.Balance,
-                                                DateCreated = t.DateCreated,
-                                                InvoiceNumber = t.InvoiceNumber,
-                                                InvoiceStatus = t.InvoiceStatus,
-                                                UniqueFileName = (from m in _context.Matches
-                                                                  where m.Id == t.MatchId
-                                                                  select m.UniqueFileName).FirstOrDefault()
-                                            }).ToList()
-                                        }).ToListAsync();
+            var clients = await (from c in _context.Clients
+                                 join cm in _context.ClientBalances on c.UserId equals cm.ClientId
+                                 select new ClientDto
+                                 {
+                                     Id = c.Id,
+                                     Name = c.Name + " " + c.Surname,
+                                     Surname = c.Surname,
+                                     Email = c.ContactEmail,
+                                     CompanyName = c.CompanyName,
+                                     UserId = c.UserId,
+                                     RegistrationNumber = c.RegistrationNumber,
+                                     Phone = c.Phone,
+                                     Mobile = c.Mobile,
+                                     AddressLine1 = c.AddressLine1,
+                                     AddressLine2 = c.AddressLine2,
+                                     AddressLine3 = c.AddressLine3,
+                                     AddressLine4 = c.AddressLine4,
+                                     AddressPostalCode = c.AddressPostalCode,
+                                     BalanceId = cm.Id,
+                                     BalanceType = cm.Type,
+                                     BalanceAmount = cm.Balance,
+                                     CreditLimit = cm.CreditLimit
+                                 }).ToListAsync();
 
-            return clientBalances;
+            var clientIds = clients.Select(c => c.UserId).ToList();
+
+            var transactions = await (from t in _context.ClientTransactions
+                                      where clientIds.Contains(t.ClientId)
+                                      select new ClientTransactionDto
+                                      {
+                                          Id = t.Id,
+                                          ClientId = t.ClientId,
+                                          MatchId = t.MatchId,
+                                          Records = t.Records,
+                                          FileName = t.FileName,
+                                          Monitor = t.Monitor,
+                                          BillValue = t.BillValue,
+                                          Balance = t.Balance,
+                                          DateCreated = t.DateCreated,
+                                          InvoiceNumber = t.InvoiceNumber,
+                                          InvoiceStatus = t.InvoiceStatus,
+                                          UniqueFileName = (from m in _context.Matches
+                                                            where m.Id == t.MatchId
+                                                            select m.UniqueFileName).FirstOrDefault()
+                                      }).ToListAsync();
+
+            var payments = await (from p in _context.ClientPayments
+                                  where clientIds.Contains(p.ClientId)
+                                  select new ClientPaymentDto
+                                  {
+                                      Id = p.Id,
+                                      ClientId = p.ClientId,
+                                      PaymentAmount = p.PaymentAmount,
+                                      PaymentDate = p.PaymentDate,
+                                      CapturedBy = (from u in _context.Users
+                                                            where u.Id == p.CapturedBy
+                                                            select u.Email).FirstOrDefault(),
+                                      CapturedDate = p.CapturedDate
+                                  }).ToListAsync();
+
+
+            foreach (var client in clients)
+            {
+                client.Transactions = transactions
+                    .Where(t => t.ClientId == client.UserId)
+                    .OrderByDescending(t => t.DateCreated)
+                    .ToList();
+
+                client.Payments = payments
+                    .Where(p => p.ClientId == client.UserId)
+                    .OrderByDescending(p => p.CapturedDate)
+                    .ToList();
+            }
+
+            return clients;
         }
+
+
     }
 }

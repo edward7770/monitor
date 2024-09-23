@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Dtos.ClientPayment;
 using backend.Dtos.ClientTransaction;
 using backend.Models;
 
@@ -35,9 +36,11 @@ namespace backend.Dtos.Client
         public string UserId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateActivated { get; set; }
+        public int BalanceId { get; set; }
         public string BalanceType { get; set; }
         public int BalanceAmount { get; set; }
         public int CreditLimit { get; set; }
-        public List<ClientTransactionDto> Transactions { get; set;}
+        public List<ClientTransactionDto> Transactions { get; set; }
+        public List<ClientPaymentDto> Payments { get; set; }
     }
 }
