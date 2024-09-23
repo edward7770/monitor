@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,6 +19,7 @@ const ClientsListTable = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openId, setOpenId] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [rowData, setRowData] = useState(null);
 
   // const [page1, setPage1] = useState(0);
   // const [rowsPerPage1, setRowsPerPage1] = useState(5);
@@ -48,8 +49,24 @@ const ClientsListTable = (props) => {
       props.rowData && props.rowData.length - page * rowsPerPage
     );
 
+  useEffect(() => {
+    setRowData(props.rowData);
+  }, [props.rowData, props.searchText]);
+
   return (
     <>
+      <div className="gridjs-head">
+        <div className="gridjs-search text-right">
+          <input
+            placeholder="Search for client..."
+            type="search"
+            onChange={(e) => props.onChangeSearchText(e)}
+            value={props.searchText}
+            className="gridjs-input gridjs-search-input mb-2 w-full"
+            style={{ outline: "0" }}
+          />
+        </div>
+      </div>
       <TableContainer
         sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
       >
@@ -69,9 +86,9 @@ const ClientsListTable = (props) => {
               <TableCell className="w-1/6">Balance(R)</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody className="opacity-80 clients-list-table">
-            {props.rowData &&
-              props.rowData
+          <TableBody className="clients-list-table">
+            {rowData &&
+              rowData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <React.Fragment key={row.id}>
@@ -155,126 +172,231 @@ const ClientsListTable = (props) => {
                       </TableCell>
                     </TableRow>
                     {openId === row.id && (
-                      <TableRow className="w-full border-t-2">
-                        <TableCell colSpan={6} style={{ padding: "0px" }}>
-                          {selectedClient && selectedClient.transactions && (
-                            <TableContainer
-                              sx={{
-                                border: 1,
-                                borderRadius: 2,
-                                borderColor: "grey.300",
-                              }}
-                              style={{width: '90%', marginLeft: 'auto', marginRight: 'auto'}}
-                              className="my-3"
-                            >
-                              <Table className="w-full rtl:text-right">
-                                <TableHead className="text-md border-0 bg-gray-50 client-table-header">
-                                  <TableRow>
-                                    <TableCell
+                      <>
+                        <TableRow className="w-full ">
+                          <TableCell colSpan={6} style={{ padding: "0px", border: 'none' }}>
+                            {selectedClient && selectedClient.transactions && (
+                              <TableContainer
+                                sx={{
+                                  border: 1,
+                                  borderRadius: 2,
+                                  borderColor: "grey.300",
+                                }}
+                                style={{
+                                  width: "90%",
+                                  marginLeft: "auto",
+                                  marginRight: "auto",
+                                }}
+                                className="mt-3"
+                              >
+                                <Table className="w-full rtl:text-right">
+                                  <TableHead className="text-md border-0 bg-gray-50 client-table-header">
+                                    <TableRow>
+                                      <TableCell
                                       // className="w-1/6"
-                                    >
-                                      Date
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      File Name
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      Monitor
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      Records Found
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      Price(R)
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      Total(R)
-                                    </TableCell>
-                                    <TableCell className="w-1/8">
-                                      Balance(R)
-                                    </TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody className="opacity-80 clients-list-table">
-                                  {selectedClient.transactions &&
-                                    selectedClient.transactions
-                                      .map((transaction) => (
-                                        <React.Fragment key={transaction.id}>
-                                          <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "200px",
-                                              }}
-                                            >
-                                              {transaction.dateCreated.split("T")[0] + " " + transaction.dateCreated.split("T")[1].split(".")[0]}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "120px",
-                                              }}
-                                            >
-                                              <a className="hover:underline hover:text-[blue]" href={`${process.env.REACT_APP_BACKEND_API}/Uploads/UploadedFiles/${transaction.uniqueFileName}`}>
-                                                {transaction.fileName}
-                                              </a>
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "120px",
-                                              }}
-                                            >
-                                              {transaction.monitor}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "150px",
-                                              }}
-                                            >
-                                              {transaction.records}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "120px",
-                                              }}
-                                            >
-                                              199
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "120px",
-                                              }}
-                                            >
-                                              {transaction.billValue}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                border: "0px",
-                                                minWidth: "120px",
-                                              }}
-                                            >
-                                              {transaction.balance}
-                                            </TableCell>
-                                          </TableRow>
-                                        </React.Fragment>
-                                      ))}
-                                  {/* {emptyRows > 0 && (
+                                      >
+                                        Date
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        File Name
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        Monitor
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        Records Found
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        Price(R)
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        Total(R)
+                                      </TableCell>
+                                      <TableCell className="w-1/8">
+                                        Balance(R)
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody className="clients-list-table">
+                                    {selectedClient.transactions &&
+                                      selectedClient.transactions.map(
+                                        (transaction) => (
+                                          <React.Fragment key={transaction.id}>
+                                            <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "200px",
+                                                }}
+                                              >
+                                                {
+                                                  transaction.dateCreated.split(
+                                                    "T"
+                                                  )[0]
+                                                }
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                <a
+                                                  className="hover:underline hover:text-[blue]"
+                                                  href={`${process.env.REACT_APP_BACKEND_API}/Uploads/UploadedFiles/${transaction.uniqueFileName}`}
+                                                >
+                                                  {transaction.fileName}
+                                                </a>
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {transaction.monitor}
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "150px",
+                                                }}
+                                              >
+                                                {transaction.records}
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                199
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {transaction.billValue}
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {transaction.balance}
+                                              </TableCell>
+                                            </TableRow>
+                                          </React.Fragment>
+                                        )
+                                      )}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className="w-full ">
+                          <TableCell colSpan={6} style={{ padding: "0px" }}>
+                            {selectedClient && selectedClient.transactions && (
+                              <TableContainer
+                                sx={{
+                                  border: 1,
+                                  borderRadius: 2,
+                                  borderColor: "grey.300",
+                                }}
+                                style={{
+                                  width: "90%",
+                                  marginLeft: "auto",
+                                  marginRight: "auto",
+                                }}
+                                className="my-3"
+                              >
+                                <Table className="w-full rtl:text-right">
+                                  <TableHead className="text-md border-0 bg-gray-50 client-table-header">
+                                    <TableRow>
+                                      <TableCell
+                                        className="w-1/4"
+                                      >
+                                        Captured Date
+                                      </TableCell>
+                                      <TableCell
+                                        className="w-1/4"
+                                      >
+                                        Captured By
+                                      </TableCell>
+                                      <TableCell className="w-1/4">
+                                        Payment Amount
+                                      </TableCell>
+                                      <TableCell className="w-1/4">
+                                        Payment Date
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody className="clients-list-table">
+                                    {selectedClient.payments &&
+                                      selectedClient.payments.map(
+                                        (payment) => (
+                                          <React.Fragment key={payment.id}>
+                                            <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "200px",
+                                                }}
+                                              >
+                                                {
+                                                  payment.capturedDate.split(
+                                                    "T"
+                                                  )[0]
+                                                }
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {payment.capturedBy}
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {payment.paymentAmount}
+                                              </TableCell>
+                                              <TableCell
+                                                style={{
+                                                  border: "0px",
+                                                  minWidth: "120px",
+                                                }}
+                                              >
+                                                {payment.paymentDate.split(
+                                                    "T"
+                                                  )[0]}
+                                              </TableCell>
+                                            </TableRow>
+                                          </React.Fragment>
+                                        )
+                                      )}
+                                    {/* {emptyRows > 0 && (
                                     <TableRow
                                       style={{ height: 53 * emptyRows }}
                                     >
                                       <TableCell colSpan={8} />
                                     </TableRow>
                                   )} */}
-                                </TableBody>
-                              </Table>
-                            </TableContainer>
-                          )}
-                        </TableCell>
-                      </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      </>
                     )}
                   </React.Fragment>
                 ))}
@@ -291,13 +413,13 @@ const ClientsListTable = (props) => {
           <div className="gridjs-summary pl-4 hidden md:block">
             Showing <b>{rowsPerPage * page + 1}</b> to{" "}
             <b>{rowsPerPage * (page + 1)}</b> of{" "}
-            <b>{props.rowData && props.rowData.length}</b> results
+            <b>{rowData && rowData.length}</b> results
           </div>
           <div className="dashboard-data-table">
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
               component="div"
-              count={props.rowData && props.rowData.length}
+              count={rowData && rowData.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

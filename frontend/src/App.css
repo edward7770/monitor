@@ -31,6 +31,26 @@
     font-family: "Poppins", sans-serif;
 }
 
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    font-size: 1rem;
+    width: 100%;
+    display: block;
+    border-color: var(--input-border);
+    color: var(--default-text-color);
+    background-color: var(--form-control-bg);
+    font-size: 0.875rem;
+    font-weight: var(--default-font-weight);
+    line-height: 1.8;
+    border-radius: 0.85rem;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    padding: 0.5rem 1rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
 @media (max-width: 768px) {
     .dashboard-data-table .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
         padding: 0;

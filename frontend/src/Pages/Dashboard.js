@@ -9,8 +9,6 @@ import {
   getForm187RecordsAPI,
 } from "../Services/FormDataService";
 import RawRecordCellRenderer from "../Components/RawRecordCellRenderer";
-import { runMonitorActionAPI } from "../Services/MonitorService";
-import { toast } from "react-toastify";
 
 const debounce = (func, delay) => {
   let timerId;
@@ -101,16 +99,6 @@ const Dashboard = () => {
 
   const onChangeSearchText1 = (e) => {
     setSearchText1(e.target.value);
-  };
-
-  const clickMonitorActionBtn = async () => {
-    await runMonitorActionAPI(user.userId)
-      .then((res) => {
-        toast.success("Monitor action run successfully!");
-      })
-      .catch((err) => {
-        toast.success("Monitor action running was failed.!")
-      });
   };
 
   const columnDefs = [

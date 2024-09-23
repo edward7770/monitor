@@ -4,18 +4,34 @@ import { getClientsAPI } from "../Services/ClientService";
 
 const TransactionHistory = () => {
   const [rowData, setRowData] = useState(null);
+  const [searchText, setSearchText] = useState("");
+
+  const onChangeSearchText = (e) => {
+    setSearchText(e.target.value);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       var clients = await getClientsAPI();
       if (clients) {
-        console.log(clients);
+        if(searchText !== "" ) {
+          for (let i = clients.length - 1; i >= 0; i--) {
+            if (
+              !clients[i].name
+                .toLowerCase()
+                .includes(searchText.toLocaleLowerCase())
+            ) {
+              clients.splice(i, 1);
+            }
+          }
+        } 
+
         setRowData(clients);
       }
     };
 
     fetchData();
-  }, []);
+  }, [searchText]);
 
   useEffect(() => {
     document.title = "Monitor | Transaction History";
@@ -30,7 +46,7 @@ const TransactionHistory = () => {
               <div className="card-title">Transaction History</div>
             </div>
             <div className="card-body">
-              <ClientsListTable rowData={rowData && rowData} />
+              <ClientsListTable rowData={rowData && rowData} onChangeSearchText={onChangeSearchText} searchText={searchText} />
             </div>
           </div>
         </div>
