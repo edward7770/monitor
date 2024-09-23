@@ -31,6 +31,7 @@ const CapturePayment = () => {
     paymentDate: new Date(),
     note: "",
   });
+  const [isAddedPayment, setIsAddedPayment] = useState(false);
 
   const onChangeFormPayment = (e) => {
     setFormAddPayment({...formAddPayment, [e.target.name]: e.target.value});
@@ -78,6 +79,7 @@ const CapturePayment = () => {
         if(res) {
           toast.success("Successfully payment added!");
           window.document.getElementById("closeAddFormPaymentModal").click();
+          setIsAddedPayment(!isAddedPayment);
         }
       })
       .catch(err => {
@@ -110,7 +112,7 @@ const CapturePayment = () => {
     };
 
     fetchData();
-  }, [searchText]);
+  }, [searchText, isAddedPayment]);
 
   useEffect(() => {
     document.title = "Monitor | Capture Payment";
