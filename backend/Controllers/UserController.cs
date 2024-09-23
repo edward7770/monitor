@@ -190,14 +190,13 @@ namespace backend.Controllers
                     {
                         ClientId = appUser.Id,
                         Type = "prepaid",
-                        Balance = 0
+                        Balance = 5000,
                     };
 
                     var createClientBalance = await _clientBalanceRepo.AddAsync(newClientBalance);
 
                     if (createClientBalance != null)
                     {
-
                         if (registerDto.Role != "User")
                         {
                             var roleResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
@@ -221,6 +220,7 @@ namespace backend.Controllers
                                         UserId = appUser.Id,
                                         UserName = appUser.Name,
                                         Email = appUser.Email,
+                                        BalanceId = createClientBalance.Id
                                     }
                                 );
                             }
@@ -245,6 +245,7 @@ namespace backend.Controllers
                                     UserId = appUser.Id,
                                     UserName = appUser.Name,
                                     Email = appUser.Email,
+                                    BalanceId = createClientBalance.Id
                                 }
                             );
                         }

@@ -9,7 +9,7 @@ namespace backend.Interfaces
 {
     public interface IClientRepository
     {
-        Task<List<Client>> GetAllAsync();
+        Task<List<ClientDto>> GetAllAsync();
         Task<Client> AddAsync(Client client);
         Task<Client> GetBySupplierIdAsync(int supplierId);
         Task<Client> UpdateApprovedDate(string userId); 

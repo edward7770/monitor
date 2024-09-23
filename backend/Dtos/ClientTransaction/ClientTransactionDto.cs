@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 
 namespace backend.Dtos.ClientTransaction
 {
-    public class CreateClientTransactionRequestDto
+    public class ClientTransactionDto
     {
+        public int Id { get; set; }
         public string ClientId { get; set; }
         public int BalanceId { get; set; }
-        public string BalanceType { get; set; }
         public int MatchId { get; set; }
         public string FileName { get; set; }
+        public string UniqueFileName { get; set; }
         public int Monitor { get; set; }
         public int Records { get; set; }
         public int BillValue { get; set; }

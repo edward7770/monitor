@@ -27,6 +27,10 @@ const Sidebar = (props) => {
       });
   };
 
+  const onClickSidebarMenu = (e) => {
+    e.preventDefault();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const defaultUser = JSON.parse(localStorage.getItem("user"));
@@ -142,33 +146,58 @@ const Sidebar = (props) => {
                 </li>
               )}
 
-              <li className="slide has-sub">
-                <a href="javascript:void(0);" className="side-menu__item">
-                  <i className="bi bi-exclamation-triangle side-menu__icon"></i>
-                  <span className="side-menu__label">Error</span>
-                  <i className="fe fe-chevron-right side-menu__angle"></i>
-                </a>
-                <ul className="slide-menu child1">
-                  <li className="slide side-menu__label1">
-                    <a href="javascript:void(0)">Error</a>
-                  </li>
-                  <li className="slide">
-                    <a href="401-error.html" className="side-menu__item">
-                      401 - Error
-                    </a>
-                  </li>
-                  <li className="slide">
-                    <a href="404-error.html" className="side-menu__item">
-                      404 - Error
-                    </a>
-                  </li>
-                  <li className="slide">
-                    <a href="500-error.html" className="side-menu__item">
-                      500 - Error
-                    </a>
-                  </li>
-                </ul>
-              </li>
+              {role && role === "Superadmin" && (
+                <li className="slide has-sub">
+                  <a
+                    href="/#"
+                    onClick={(e) => onClickSidebarMenu(e)}
+                    className="side-menu__item"
+                  >
+                    <i className="bi bi-check-square side-menu__icon"></i>
+                    <span className="side-menu__label">Accounts</span>
+                    <i className="fe fe-chevron-right side-menu__angle"></i>
+                  </a>
+                  <ul className="slide-menu child1">
+                    <li className="slide side-menu__label1">
+                      <a href="/#" onClick={(e) => onClickSidebarMenu(e)}>
+                        Accounts
+                      </a>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/transaction-history"
+                        className="side-menu__item"
+                      >
+                        Transaction History
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/capture-payment"
+                        className="side-menu__item"
+                      >
+                        Capture Payment
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/increase-credit"
+                        className="side-menu__item"
+                      >
+                        Increase Credit
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/credit-limit"
+                        className="side-menu__item"
+                      >
+                        Credit Limit
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
             </ul>
             <div className="slide-right" id="slide-right">
               <svg

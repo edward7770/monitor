@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Dtos.ClientTransaction;
 using backend.Models;
 
 namespace backend.Dtos.Client
 {
-    public class CreateSupplierRequestDto
+    public class ClientDto
     {
+        public int Id { get; set; }
         [StringLength(50)]
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string Email { get; set; }
         public string CompanyName { get; set; }
         [StringLength(50)]
         public string RegistrationNumber { get; set; }
@@ -30,6 +33,11 @@ namespace backend.Dtos.Client
         [StringLength(15)]
         public string AddressPostalCode { get; set; }
         public string UserId { get; set; }
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        public DateTime DateCreated { get; set; }
+        public DateTime DateActivated { get; set; }
+        public string BalanceType { get; set; }
+        public int BalanceAmount { get; set; }
+        public int CreditLimit { get; set; }
+        public List<ClientTransactionDto> Transactions { get; set;}
     }
 }

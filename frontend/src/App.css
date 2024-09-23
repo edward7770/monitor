@@ -1,3 +1,6 @@
+* {
+    font-family: "Poppins", sans-serif;
+}
 .css-16c50h-MuiInputBase-root-MuiTablePagination-select {
     margin-top: 2px;
 }
@@ -9,6 +12,23 @@
 
 #upload_input #filepond--drop-label-4jko24jgo {
     font-size: 18px !important;
+}
+
+.clients-list-table .css-1ex1afd-MuiTableCell-root {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-family: "Poppins", sans-serif;
+}
+
+.client-table-header th {
+    color: #181d1f !important;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    padding: 12px;
+}
+
+.dashboard-data-table .css-pdct74-MuiTablePagination-selectLabel {
+    font-family: "Poppins", sans-serif;
 }
 
 @media (max-width: 768px) {

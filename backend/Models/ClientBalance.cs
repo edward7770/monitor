@@ -11,5 +11,6 @@ namespace backend.Models
         public string ClientId { get; set; }
         public string Type { get; set; }
         public int Balance { get; set; }
+        public int CreditLimit { get; set; }
     }
 }

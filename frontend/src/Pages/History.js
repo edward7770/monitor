@@ -173,66 +173,75 @@ const History = (props) => {
           extractedRecord = extractForm193Data(formRecord);
         } else {
           formRecord = await getForm187RecordByRecordIdAPI(item.recordId);
-          console.log(item.recordId);
           extractedRecord = extractForm187Data(formRecord);
         }
 
-        item.downloadDate =
-          new Date().toISOString().split("T")[0] +
-          " " +
-          new Date().toISOString().split("T")[1].split(".")[0];
+        // item.downloadDate =
+        //   new Date().toISOString().split("T")[0] +
+        //   " " +
+        //   new Date().toISOString().split("T")[1].split(".")[0];
 
         extractedCSVRecords.push(extractedRecord);
       })
     );
 
     if (downloadDate !== null) {
-      console.log(extractedCSVRecords);
+      await Promise.all(
+        selectedMatchResult.fileDatas[index].map(async (item) => {
+          item.downloadDate =
+            new Date().toISOString().split("T")[0] +
+            " " +
+            new Date().toISOString().split("T")[1].split(".")[0];
+        })
+      );
       downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
       var balanceAmount = user.balanceAmount - matchResultsIds.length * 199;
-      if (balanceAmount > 0) {
-        console.log(matchResultsIds);
-        await updateDownloadDates(matchResultsIds)
-          .then(async (res) => {
-            if (res) {
-              if (user && user.balanceType === "prepaid") {
-                var clientTransactionObj = {
-                  clientId: userId,
-                  balanceId: user.balanceId,
-                  matchId: selectedMatchResult.id,
-                  records: matchResultsIds.length,
-                  billValue: matchResultsIds.length * 199,
-                  dateCreated: new Date(),
-                  invoiceNumber: null,
-                  invoiceStatus: null,
-                };
 
-                var response = await createClientTransactionAPI(
-                  clientTransactionObj
-                );
+      var clientTransactionObj = {
+        clientId: userId,
+        balanceId: user.balanceId,
+        balanceType: user.balanceType,
+        matchId: selectedMatchResult.id,
+        fileName: selectedMatchResult.fileName,
+        monitor: index + 1,
+        records: matchResultsIds.length,
+        billValue: matchResultsIds.length * 199,
+        balance: balanceAmount,
+        dateCreated: new Date(),
+        invoiceNumber: null,
+        invoiceStatus: null,
+      };
 
-                if (response) {
-                  setIsSetDownloaded(!isSetDownloaded);
-                  props.handleChangeBalance(balanceAmount);
-                  console.log(extractedCSVRecords);
-                  downloadCSV(
-                    extractedCSVRecords,
-                    "Monitor " + parseInt(index + 1)
-                  );
-                }
-              }
+      await createClientTransactionAPI(clientTransactionObj)
+        .then(async (res) => {
+          if (res) {
+            var response = await updateDownloadDates(matchResultsIds);
+
+            if (response) {
+              await Promise.all(
+                selectedMatchResult.fileDatas[index].map(async (item) => {
+                  item.downloadDate =
+                    new Date().toISOString().split("T")[0] +
+                    " " +
+                    new Date().toISOString().split("T")[1].split(".")[0];
+                })
+              );
+
+              setIsSetDownloaded(!isSetDownloaded);
+              props.handleChangeBalance(balanceAmount);
+              downloadCSV(
+                extractedCSVRecords,
+                "Monitor " + parseInt(index + 1)
+              );
             }
-          })
-          .catch((err) => {
-            console.log(err.response);
-            toast.error("Failed to download file.");
-          });
-      } else {
-        toast.warning(
-          "The cost of the file exceeds your balance of R " + user.balanceAmount
-        );
-      }
+          }
+        })
+        .catch((err) => {
+          if (err.response) {
+            toast.warning(err.response.data);
+          }
+        });
     }
   };
 
@@ -439,7 +448,7 @@ const History = (props) => {
     {
       headerName: "J187 Count",
       field: "countJ187",
-      cellDataType: 'number',
+      cellDataType: "number",
       filter: false,
       sortable: false,
       flex: 1,
@@ -447,7 +456,7 @@ const History = (props) => {
     {
       headerName: "J193 Count",
       field: "countJ193",
-      cellDataType: 'number',
+      cellDataType: "number",
       filter: false,
       sortable: false,
       flex: 1,
@@ -501,13 +510,15 @@ const History = (props) => {
       if (response.data.length > 0) {
         response.data.forEach((result) => {
           var fileDatas = groupByMatchedStep(result.matchResults);
-          
+
           var countJ187 =
-            result.matchResults.length > 0 ?
-            result.matchResults.filter((x) => x.type === "J187").length : 0;
+            result.matchResults.length > 0
+              ? result.matchResults.filter((x) => x.type === "J187").length
+              : 0;
           var countJ193 =
-            result.matchResults.length > 0 ?
-            result.matchResults.filter((x) => x.type === "J193").length : 0;
+            result.matchResults.length > 0
+              ? result.matchResults.filter((x) => x.type === "J193").length
+              : 0;
 
           let matchItem = {
             id: result.id,

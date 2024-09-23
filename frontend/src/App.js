@@ -26,6 +26,10 @@ import Profile from "./Pages/Profile";
 import UploadPage from "./Pages/UploadPage";
 import History from "./Pages/History";
 import AccountSettings from "./Pages/AccountSettings";
+import TransactionHistory from "./Pages/TransactionHistory";
+import CapturePayment from "./Pages/CapturePayment";
+import IncreaseCredit from "./Pages/IncreaseCredit";
+import CreditLimit from "./Pages/CreditLimit";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -117,6 +121,10 @@ function App() {
               <Route path="/history" element={<ProtectedRoute><History handleChangeBalance={handleChangeBalance} /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/account-settings" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} />
+              <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory/></ProtectedRoute>} />
+              <Route path="/capture-payment" element={<ProtectedRoute><CapturePayment/></ProtectedRoute>} />
+              <Route path="/increase-credit" element={<ProtectedRoute><IncreaseCredit/></ProtectedRoute>} />
+              <Route path="/credit-limit" element={<ProtectedRoute><CreditLimit/></ProtectedRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

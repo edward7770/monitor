@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.Data;
 using backend.Dtos.Client;
+using backend.Dtos.ClientTransaction;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -14,8 +15,9 @@ namespace backend.Repository
     public class ClientRepository : IClientRepository
     {
         ApplicationDBContext _context;
-        
-        public ClientRepository(ApplicationDBContext context){
+
+        public ClientRepository(ApplicationDBContext context)
+        {
             _context = context;
         }
 
@@ -23,13 +25,8 @@ namespace backend.Repository
         {
             await _context.Clients.AddAsync(newSupplier);
             await _context.SaveChangesAsync();
-            
-            return newSupplier;
-        }
 
-        public async Task<List<Client>> GetAllAsync()
-        {
-            return await _context.Clients.ToListAsync();
+            return newSupplier;
         }
 
         public async Task<Client> GetBySupplierIdAsync(int supplierId)
@@ -46,7 +43,7 @@ namespace backend.Repository
         {
             var supplier = await _context.Clients.FirstOrDefaultAsync(s => s.UserId == userId);
 
-            if(supplier == null)
+            if (supplier == null)
             {
                 throw new ArgumentException("That supplier was not found", nameof(userId));
             }
@@ -66,7 +63,7 @@ namespace backend.Repository
         {
             var supplier = await _context.Clients.FindAsync(supplierId);
 
-            if(supplier == null)
+            if (supplier == null)
             {
                 throw new ArgumentException("That supplier not found!", nameof(supplierId));
             }
@@ -86,6 +83,53 @@ namespace backend.Repository
             await _context.SaveChangesAsync();
 
             return supplier;
+        }
+
+        public async Task<List<ClientDto>> GetAllAsync()
+        {
+            var clientBalances = await (from c in _context.Clients
+                                        join cm in _context.ClientBalances
+                                        on c.UserId equals cm.ClientId
+                                        join ct in _context.ClientTransactions
+                                        on cm.ClientId equals ct.ClientId into transactionsGroup
+                                        select new ClientDto
+                                        {
+                                            Id = c.Id,
+                                            Name = c.Name + " " + c.Surname,
+                                            Surname = c.Surname,
+                                            Email = c.ContactEmail,
+                                            CompanyName = c.CompanyName,
+                                            RegistrationNumber = c.RegistrationNumber,
+                                            Phone = c.Phone,
+                                            Mobile = c.Mobile,
+                                            AddressLine1 = c.AddressLine1,
+                                            AddressLine2 = c.AddressLine2,
+                                            AddressLine3 = c.AddressLine3,
+                                            AddressLine4 = c.AddressLine4,
+                                            AddressPostalCode = c.AddressPostalCode,
+                                            BalanceType = cm.Type,
+                                            BalanceAmount = cm.Balance,
+                                            CreditLimit = cm.CreditLimit,
+                                            Transactions = transactionsGroup.OrderByDescending(t => t.DateCreated).Select(t => new ClientTransactionDto
+                                            {
+                                                Id = t.Id,
+                                                ClientId = t.ClientId,
+                                                MatchId = t.MatchId,
+                                                Records = t.Records,
+                                                FileName = t.FileName,
+                                                Monitor = t.Monitor,
+                                                BillValue = t.BillValue,
+                                                Balance = t.Balance,
+                                                DateCreated = t.DateCreated,
+                                                InvoiceNumber = t.InvoiceNumber,
+                                                InvoiceStatus = t.InvoiceStatus,
+                                                UniqueFileName = (from m in _context.Matches
+                                                                  where m.Id == t.MatchId
+                                                                  select m.UniqueFileName).FirstOrDefault()
+                                            }).ToList()
+                                        }).ToListAsync();
+
+            return clientBalances;
         }
     }
 }

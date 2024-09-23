@@ -82,10 +82,10 @@ const Register = () => {
         .then((res) => {
           if (res) {
             let formData = new FormData();
+            supplierData.contactEmail = email;
             Object.entries(supplierData).forEach(([key, value]) => {
               formData.append(key, value);
             });
-            formData.append("contactEmail", email);
             formData.append("userId", res.data.userId);
             createSupplierAPI(formData)
               .then((res) => {
