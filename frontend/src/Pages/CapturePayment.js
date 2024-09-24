@@ -18,12 +18,11 @@ import { toast } from "react-toastify";
 
 function formatNumber(number) {
   if(number !== 0 || number !== null) {
-    return number.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
+    return "R " + number.toLocaleString('en-US', {
         maximumFractionDigits: 2
     });
   } else {
-    return 0;
+    return "R 0";
   }
 }
 

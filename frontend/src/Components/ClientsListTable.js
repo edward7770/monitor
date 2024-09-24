@@ -15,12 +15,11 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 function formatNumber(number) {
   if(number !== 0 || number !== null) {
-    return number.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
+    return "R " + number.toLocaleString('en-US', {
         maximumFractionDigits: 2
     });
   } else {
-    return 0;
+    return "R 0";
   }
 }
 
@@ -105,7 +104,6 @@ const ClientsListTable = (props) => {
                 .map((row) => (
                   <React.Fragment key={row.id}>
                     <TableRow
-                      // hover
                       className={
                         openId === row.id
                           ? "bg-gray-200 w-full"
