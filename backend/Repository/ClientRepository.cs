@@ -116,13 +116,14 @@ namespace backend.Repository
 
             var transactions = await (from t in _context.ClientTransactions
                                       where clientIds.Contains(t.ClientId)
-                                      select new ClientTransactionDto
+                                      select new ClientActivityDto
                                       {
                                           Id = t.Id,
                                           ClientId = t.ClientId,
                                           MatchId = t.MatchId,
                                           Records = t.Records,
                                           FileName = t.FileName,
+                                          Type = "Transaction",
                                           Monitor = t.Monitor,
                                           BillValue = t.BillValue,
                                           Balance = t.Balance,
@@ -136,30 +137,30 @@ namespace backend.Repository
 
             var payments = await (from p in _context.ClientPayments
                                   where clientIds.Contains(p.ClientId)
-                                  select new ClientPaymentDto
+                                  select new ClientActivityDto
                                   {
                                       Id = p.Id,
                                       ClientId = p.ClientId,
                                       PaymentAmount = p.PaymentAmount,
                                       PaymentDate = p.PaymentDate,
+                                      Type = "Payment",
+                                      Balance = p.Balance,
                                       CapturedBy = (from u in _context.Users
                                                             where u.Id == p.CapturedBy
                                                             select u.Email).FirstOrDefault(),
-                                      CapturedDate = p.CapturedDate
+                                      DateCreated = p.CapturedDate
                                   }).ToListAsync();
 
 
             foreach (var client in clients)
             {
-                client.Transactions = transactions
+                var combinedActivities = transactions
                     .Where(t => t.ClientId == client.UserId)
-                    .OrderByDescending(t => t.DateCreated)
+                    .Concat(payments.Where(p => p.ClientId == client.UserId))
+                    .OrderByDescending(a => a.DateCreated)
                     .ToList();
 
-                client.Payments = payments
-                    .Where(p => p.ClientId == client.UserId)
-                    .OrderByDescending(p => p.CapturedDate)
-                    .ToList();
+                client.TransactionsWithPayments = combinedActivities;
             }
 
             return clients;

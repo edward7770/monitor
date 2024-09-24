@@ -42,5 +42,6 @@ namespace backend.Dtos.Client
         public int CreditLimit { get; set; }
         public List<ClientTransactionDto> Transactions { get; set; }
         public List<ClientPaymentDto> Payments { get; set; }
+        public List<ClientActivityDto> TransactionsWithPayments { get; set; }
     }
 }

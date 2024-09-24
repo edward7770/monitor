@@ -16,6 +16,17 @@ import { getClientsAPI } from "../Services/ClientService";
 import { createClientPaymentAPI } from "../Services/ClientPaymentService";
 import { toast } from "react-toastify";
 
+function formatNumber(number) {
+  if(number !== 0 || number !== null) {
+    return number.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+  } else {
+    return 0;
+  }
+}
+
 const CapturePayment = () => {
   const { t } = useTranslation();
   const [user, setUser] = useState(null);
@@ -26,6 +37,7 @@ const CapturePayment = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [selectedClientBalanceId, setSelectedClientBalanceId] = useState(null);
+  const [selectedClientBalanceAmount, setSelectedClientBalanceAmount] = useState(null);
   const [formAddPayment, setFormAddPayment] = useState({
     paymentAmount: 0,
     paymentDate: new Date(),
@@ -54,14 +66,16 @@ const CapturePayment = () => {
     setSearchText(e.target.value);
   };
 
-  const onClickAddPaymentBtn = (clientId, balanceId) => {
+  const onClickAddPaymentBtn = (clientId, balanceId, balanceAmount) => {
     setSelectedClientId(clientId);
     setSelectedClientBalanceId(balanceId);
+    setSelectedClientBalanceAmount(balanceAmount);
   }
 
   const handleClosePaymentDialog = () => {
     setSelectedClientId(null);
     setSelectedClientBalanceId(null);
+    setSelectedClientBalanceAmount(null);
     setFormAddPayment({
       paymentAmount: 0,
       paymentDate: new Date(),
@@ -73,6 +87,7 @@ const CapturePayment = () => {
     formAddPayment.capturedBy = user.userId;
     formAddPayment.clientId = selectedClientId;
     formAddPayment.balanceId = selectedClientBalanceId;
+    formAddPayment.balance = parseInt(formAddPayment.paymentAmount) + parseInt(selectedClientBalanceAmount);
 
     await createClientPaymentAPI(formAddPayment)
       .then(res => {
@@ -159,7 +174,7 @@ const CapturePayment = () => {
                       <TableCell className="w-1/6">Name</TableCell>
                       <TableCell className="w-1/6">Phone Number</TableCell>
                       <TableCell className="w-1/5">Email Address</TableCell>
-                      <TableCell className="w-1/6">Balance(R)</TableCell>
+                      <TableCell className="w-1/6" style={{textAlign: 'right'}}>Balance(R)</TableCell>
                       <TableCell style={{ width: "200px" }}></TableCell>
                     </TableRow>
                   </TableHead>
@@ -197,9 +212,9 @@ const CapturePayment = () => {
                                 {row.email}
                               </TableCell>
                               <TableCell
-                                style={{ border: "0px", minWidth: "120px" }}
+                                style={{ border: "0px", minWidth: "120px", textAlign: 'right' }}
                               >
-                                {row.balanceAmount}
+                                {formatNumber(row.balanceAmount)}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", width: "200px" }}
@@ -212,7 +227,7 @@ const CapturePayment = () => {
                                   Add Payment
                                 </Button> */}
                                 <button
-                                  onClick={() => onClickAddPaymentBtn(row.userId, row.balanceId)}
+                                  onClick={() => onClickAddPaymentBtn(row.userId, row.balanceId, row.balanceAmount)}
                                   type="button"
                                   className="btn btn-outline-primary btn-wave"
                                   data-bs-toggle="modal"

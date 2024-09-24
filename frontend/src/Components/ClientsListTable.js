@@ -13,6 +13,17 @@ import { useTranslation } from "react-i18next";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
+function formatNumber(number) {
+  if(number !== 0 || number !== null) {
+    return number.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+  } else {
+    return 0;
+  }
+}
+
 const ClientsListTable = (props) => {
   const { t } = useTranslation();
   const [page, setPage] = useState(0);
@@ -34,6 +45,7 @@ const ClientsListTable = (props) => {
   };
   const ClickTableRow = (row) => {
     setOpenId(row.id);
+    console.log(row);
     setSelectedClient(row);
   };
 
@@ -83,7 +95,7 @@ const ClientsListTable = (props) => {
               <TableCell className="w-1/6">Name</TableCell>
               <TableCell className="w-1/6">Phone Number</TableCell>
               <TableCell className="w-1/4">Email Address</TableCell>
-              <TableCell className="w-1/6">Balance(R)</TableCell>
+              <TableCell className="w-1/6" style={{textAlign: 'right', paddingRight: '20px'}}>Balance(R)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody className="clients-list-table">
@@ -166,16 +178,16 @@ const ClientsListTable = (props) => {
                             ? (event) => closeCollapse(event)
                             : () => ClickTableRow(row)
                         }
-                        style={{ border: "0px", minWidth: "120px" }}
+                        style={{ border: "0px", minWidth: "120px", textAlign: 'right', paddingRight: '20px' }}
                       >
-                        {row.balanceAmount}
+                        {formatNumber(row.balanceAmount)}
                       </TableCell>
                     </TableRow>
                     {openId === row.id && (
                       <>
                         <TableRow className="w-full ">
                           <TableCell colSpan={6} style={{ padding: "0px", border: 'none' }}>
-                            {selectedClient && selectedClient.transactions && (
+                            {selectedClient && selectedClient.transactionsWithPayments && (
                               <TableContainer
                                 sx={{
                                   border: 1,
@@ -187,7 +199,7 @@ const ClientsListTable = (props) => {
                                   marginLeft: "auto",
                                   marginRight: "auto",
                                 }}
-                                className="mt-3"
+                                className="my-3"
                               >
                                 <Table className="w-full rtl:text-right">
                                   <TableHead className="text-md border-0 bg-gray-50 client-table-header">
@@ -206,23 +218,23 @@ const ClientsListTable = (props) => {
                                       <TableCell className="w-1/8">
                                         Records Found
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
                                         Price(R)
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
                                         Total(R)
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
                                         Balance(R)
                                       </TableCell>
                                     </TableRow>
                                   </TableHead>
                                   <TableBody className="clients-list-table">
-                                    {selectedClient.transactions &&
-                                      selectedClient.transactions.map(
-                                        (transaction) => (
+                                    {selectedClient.transactionsWithPayments &&
+                                      selectedClient.transactionsWithPayments.map(
+                                        (transaction) => transaction.type === "Transaction" ? (
                                           <React.Fragment key={transaction.id}>
-                                            <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
+                                            <TableRow className="odd:bg-white group/item border-0 cursor-pointer hover:bg-gray-100 w-full">
                                               <TableCell
                                                 style={{
                                                   border: "0px",
@@ -268,6 +280,7 @@ const ClientsListTable = (props) => {
                                                 style={{
                                                   border: "0px",
                                                   minWidth: "120px",
+                                                  textAlign: 'right'
                                                 }}
                                               >
                                                 199
@@ -276,31 +289,78 @@ const ClientsListTable = (props) => {
                                                 style={{
                                                   border: "0px",
                                                   minWidth: "120px",
+                                                  textAlign: 'right'
                                                 }}
                                               >
-                                                {transaction.billValue}
+                                                {formatNumber(transaction.billValue)}
                                               </TableCell>
                                               <TableCell
                                                 style={{
                                                   border: "0px",
                                                   minWidth: "120px",
+                                                  textAlign: 'right'
                                                 }}
                                               >
-                                                {transaction.balance}
+                                                {formatNumber(transaction.balance)}
                                               </TableCell>
                                             </TableRow>
                                           </React.Fragment>
                                         )
-                                      )}
+                                       : (<React.Fragment key={transaction.id}>
+                                        <TableRow className="group/item bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
+                                          <TableCell
+                                            style={{
+                                              border: "0px",
+                                              minWidth: "200px",
+                                            }}
+                                          >
+                                            {
+                                              transaction.dateCreated.split(
+                                                "T"
+                                              )[0]
+                                            }
+                                          </TableCell>
+                                          <TableCell
+                                            colSpan={4}
+                                            style={{
+                                              border: "0px",
+                                              minWidth: "120px",
+                                            }}
+                                          >
+                                            By {transaction.capturedBy},&nbsp;&nbsp;
+                                            Payment Date: {transaction.paymentDate.split(
+                                                "T"
+                                              )[0]}
+                                          </TableCell>
+                                          <TableCell
+                                            style={{
+                                              border: "0px",
+                                              minWidth: "150px",
+                                              textAlign: 'right'
+                                            }}
+                                          >
+                                            {formatNumber(transaction.paymentAmount)}
+                                          </TableCell>
+                                          <TableCell
+                                            style={{
+                                              border: "0px",
+                                              minWidth: "120px",
+                                              textAlign: 'right'
+                                            }}
+                                          >
+                                            {formatNumber(transaction.balance)}
+                                          </TableCell>
+                                        </TableRow>
+                                      </React.Fragment>))}
                                   </TableBody>
                                 </Table>
                               </TableContainer>
                             )}
                           </TableCell>
                         </TableRow>
-                        <TableRow className="w-full ">
+                        {/* <TableRow className="w-full ">
                           <TableCell colSpan={6} style={{ padding: "0px" }}>
-                            {selectedClient && selectedClient.transactions && (
+                            {selectedClient && selectedClient.transactionsWithPayments && (
                               <TableContainer
                                 sx={{
                                   border: 1,
@@ -336,8 +396,8 @@ const ClientsListTable = (props) => {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody className="clients-list-table">
-                                    {selectedClient.payments &&
-                                      selectedClient.payments.map(
+                                    {selectedClient.transactionsWithPayments &&
+                                      selectedClient.transactionsWithPayments.map(
                                         (payment) => (
                                           <React.Fragment key={payment.id}>
                                             <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
@@ -348,7 +408,7 @@ const ClientsListTable = (props) => {
                                                 }}
                                               >
                                                 {
-                                                  payment.capturedDate.split(
+                                                  payment.date.split(
                                                     "T"
                                                   )[0]
                                                 }
@@ -383,19 +443,12 @@ const ClientsListTable = (props) => {
                                           </React.Fragment>
                                         )
                                       )}
-                                    {/* {emptyRows > 0 && (
-                                    <TableRow
-                                      style={{ height: 53 * emptyRows }}
-                                    >
-                                      <TableCell colSpan={8} />
-                                    </TableRow>
-                                  )} */}
                                   </TableBody>
                                 </Table>
                               </TableContainer>
                             )}
                           </TableCell>
-                        </TableRow>
+                        </TableRow> */}
                       </>
                     )}
                   </React.Fragment>
