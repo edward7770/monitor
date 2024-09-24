@@ -59,5 +59,19 @@ namespace backend.Repository
 
             return clientBalance;
         }
+
+        public async Task<ClientBalance> UpdateCreditLimit(int balanceId, int creditLimit)
+        {
+            var clientBalance =  await _context.ClientBalances.FindAsync(balanceId);
+
+            if(clientBalance != null)
+            {
+                clientBalance.CreditLimit = creditLimit;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return clientBalance;
+        }
     }
 }

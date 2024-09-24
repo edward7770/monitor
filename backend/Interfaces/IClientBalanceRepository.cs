@@ -12,5 +12,6 @@ namespace backend.Interfaces
         Task<ClientBalance> AddAsync(ClientBalance clientBalance);
         Task<ClientBalance> UpdateAsync(int balanceId, int transactionAmount);
         Task<ClientBalance> UpdateBalanceType(string clientId, string balanceType);
+        Task<ClientBalance> UpdateCreditLimit(int balanceId, int creditLimit);
     }
 }

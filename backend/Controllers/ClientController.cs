@@ -88,5 +88,18 @@ namespace backend.Controllers
 
             return Ok(clientBalance);
         }
+
+        [HttpPost("update/creditLimit")]
+        public async Task<IActionResult> UpdateCreditLimit([FromBody] UpdateClientCreditLimitRequestDto updateClientCreditLimitRequestDto)
+        {
+            var clientBalance = await _clientBalanceRepo.UpdateCreditLimit(updateClientCreditLimitRequestDto.BalanceId, updateClientCreditLimitRequestDto.CreditLimit);
+
+            if(clientBalance == null)
+            {
+                return BadRequest("Failed to update credit limit.");
+            }
+
+            return Ok(clientBalance);
+        }
     }
 }

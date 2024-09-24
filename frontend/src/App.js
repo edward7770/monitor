@@ -28,7 +28,6 @@ import History from "./Pages/History";
 import AccountSettings from "./Pages/AccountSettings";
 import TransactionHistory from "./Pages/TransactionHistory";
 import CapturePayment from "./Pages/CapturePayment";
-import IncreaseCredit from "./Pages/IncreaseCredit";
 import CreditLimit from "./Pages/CreditLimit";
 
 import axios from 'axios';
@@ -123,7 +122,6 @@ function App() {
               <Route path="/account-settings" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} />
               <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory/></ProtectedRoute>} />
               <Route path="/capture-payment" element={<ProtectedRoute><CapturePayment/></ProtectedRoute>} />
-              <Route path="/increase-credit" element={<ProtectedRoute><IncreaseCredit/></ProtectedRoute>} />
               <Route path="/credit-limit" element={<ProtectedRoute><CreditLimit/></ProtectedRoute>} />
             </Route>
           )}

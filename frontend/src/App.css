@@ -20,6 +20,12 @@
     font-family: "Poppins", sans-serif;
 }
 
+.clients-list-table-1 .css-1ex1afd-MuiTableCell-root {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-family: "Poppins", sans-serif;
+}
+
 .client-table-header th {
     color: #181d1f !important;
     font-family: "Poppins", sans-serif;
