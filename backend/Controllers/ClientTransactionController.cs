@@ -24,7 +24,32 @@ namespace backend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateClientTransactionRequestDto createClientTransactionRequestDto)
         {
-            var newClientTransaction = new ClientTransaction {
+            var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(createClientTransactionRequestDto.ClientId);
+
+            if (clientBalance == null)
+            {
+                return StatusCode(403, "Failed to get client balance.");
+            }
+
+            if (createClientTransactionRequestDto.BalanceType == "prepaid" && clientBalance.Balance < createClientTransactionRequestDto.BillValue)
+            {
+                return StatusCode(403, "To download this file, you need to deposit R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance) + "!");
+            }
+
+            if (createClientTransactionRequestDto.BalanceType == "postpaid" && clientBalance.Balance + clientBalance.CreditLimit < createClientTransactionRequestDto.BillValue)
+            {
+                return StatusCode(403, "The cost of the file exceeds your balance of R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance - clientBalance.CreditLimit) + "!");
+            }
+
+            var updatedClientBalance = await _clientBalanceRepo.UpdateAsync(createClientTransactionRequestDto.BalanceId, createClientTransactionRequestDto.BillValue);
+
+            if (updatedClientBalance == null)
+            {
+                return StatusCode(403, "Failed to update client balance.");
+            }
+
+            var newClientTransaction = new ClientTransaction
+            {
                 ClientId = createClientTransactionRequestDto.ClientId,
                 BalanceId = createClientTransactionRequestDto.BalanceId,
                 MatchId = createClientTransactionRequestDto.MatchId,
@@ -40,29 +65,10 @@ namespace backend.Controllers
 
             var clientTransaction = await _clientTransactionRepo.AddAsync(newClientTransaction);
 
-            if(clientTransaction == null)
+            if (clientTransaction == null)
             {
                 return StatusCode(403, "Failed to create client transaction.");
             }
-
-            var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(createClientTransactionRequestDto.ClientId);
-
-            if(clientBalance == null)
-            {
-                return StatusCode(403, "Failed to get client balance.");
-            }
-
-            if(createClientTransactionRequestDto.BalanceType == "prepaid" && clientBalance.Balance < createClientTransactionRequestDto.BillValue)
-            {
-                return StatusCode(403, "To download this file, you need to deposit R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance) + "!");
-            }
-            
-            if(createClientTransactionRequestDto.BalanceType == "postpaid" && clientBalance.Balance + clientBalance.CreditLimit < createClientTransactionRequestDto.BillValue)
-            {
-                return StatusCode(403, "The cost of the file exceeds your balance of R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance - clientBalance.CreditLimit) + "!");
-            }
-
-            await _clientBalanceRepo.UpdateAsync(createClientTransactionRequestDto.BalanceId, createClientTransactionRequestDto.BillValue);
 
             return Ok(clientTransaction);
         }
