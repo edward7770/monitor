@@ -13,5 +13,8 @@ namespace backend.Models
         public string Name { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
+        public virtual Client Client { get; set; }
+        public virtual ClientBalance ClientBalance { get; set; }
+        public ICollection<Match> Matches { get; set; }
     }
 }

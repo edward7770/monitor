@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,5 +17,7 @@ namespace backend.Models
         public DateTime DateMatched { get; set; }
         public int MatchedStep { get; set; } = 0;
         public DateTime DownloadDate { get; set; }
+        [ForeignKey("MatchId")]
+        public Match Match { get; set; }
     }
 }

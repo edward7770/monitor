@@ -212,10 +212,12 @@ const History = (props) => {
         invoiceNumber: null,
         invoiceStatus: null,
       };
-
+      console.log(clientTransactionObj);
       await createClientTransactionAPI(clientTransactionObj)
         .then(async (res) => {
+          console.log(res);
           if (res) {
+            console.log(matchResultsIds);
             var response = await updateDownloadDates(matchResultsIds);
 
             if (response) {

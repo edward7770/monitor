@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,5 +20,7 @@ namespace backend.Models
         public DateTime DateCreated { get; set; }
         public string InvoiceNumber { get; set; }
         public string InvoiceStatus { get; set; }
+        [ForeignKey("BalanceId")]
+        public ClientBalance ClientBalance { get; set; }
     }
 }

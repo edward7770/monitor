@@ -20,7 +20,7 @@ namespace backend.Data
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<UserReset> UserResets { get; set; }
-        public DbSet<Match> Matches { get; set;}
+        public DbSet<Match> Matches { get; set; }
         public DbSet<MatchData> MatchDatas { get; set; }
         public DbSet<MatchResult> MatchResults { get; set; }
         public DbSet<ClientBalance> ClientBalances { get; set; }
@@ -44,6 +44,43 @@ namespace backend.Data
                         NormalizedName = "CLIENT"
                     }
                 );
+            builder.Entity<Client>()
+                .HasOne(c => c.AppUser)
+                .WithOne(u => u.Client)
+                .HasForeignKey<Client>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ClientBalance>()
+                .HasOne(c => c.AppUser)
+                .WithOne(cb => cb.ClientBalance)
+                .HasForeignKey<ClientBalance>(cb => cb.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            builder.Entity<ClientBalance>()
+                 .HasMany(b => b.Transactions)
+                 .WithOne(t => t.ClientBalance)
+                 .HasForeignKey(t => t.BalanceId);
+
+            builder.Entity<ClientBalance>()
+                .HasMany(b => b.Payments)
+                .WithOne(p => p.ClientBalance)
+                .HasForeignKey(p => p.BalanceId);
+
+            builder.Entity<Match>()
+                .HasMany(m => m.MatchDatas)
+                .WithOne(p => p.Match)
+                .HasForeignKey(p => p.MatchId);
+
+            builder.Entity<Match>()
+                .HasMany(m => m.MatchResult)
+                .WithOne(p => p.Match)
+                .HasForeignKey(p => p.MatchId);
+
+            builder.Entity<AppUser>()
+                .HasMany(u => u.Matches)
+                .WithOne(m => m.AppUser)
+                .HasForeignKey(m => m.ClientId)
+                .OnDelete(DeleteBehavior.Cascade); 
         }
     }
 

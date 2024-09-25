@@ -30,6 +30,7 @@ namespace backend.Controllers
                 PaymentDate = createClientPaymentRequestDto.PaymentDate,
                 CapturedBy = createClientPaymentRequestDto.CapturedBy,
                 CapturedDate = DateTime.Now,
+                BalanceId = createClientPaymentRequestDto.BalanceId,
                 Balance = createClientPaymentRequestDto.Balance,
                 Note = createClientPaymentRequestDto.Note
             };

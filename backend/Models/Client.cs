@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,7 +30,9 @@ namespace backend.Models
         public string AddressLine4 { get; set; }
         [StringLength(15)]
         public string AddressPostalCode { get; set; }
+        [ForeignKey("AppUser")]
         public string UserId { get; set; }
+        public virtual AppUser AppUser { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateActivated { get; set; }
     }
