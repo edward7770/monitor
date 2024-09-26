@@ -34,6 +34,7 @@ const SearchLogs = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [isSelected, setIsSelected] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -46,23 +47,25 @@ const SearchLogs = () => {
 
   const handleSearchTextClient = (e) => {
     setSearchText(e.target.value);
+    setIsSelected(false);
   };
 
   const handleSelectClient = (e, item) => {
     e.preventDefault();
     setSelectedClient(item);
     setSearchText(item.name);
-  }
+    setIsSelected(true);
+  };
 
-//   const emptyRows =
-//     rowsPerPage -
-//     Math.min(rowsPerPage, rowData && rowData.length - page * rowsPerPage);
+  //   const emptyRows =
+  //     rowsPerPage -
+  //     Math.min(rowsPerPage, rowData && rowData.length - page * rowsPerPage);
 
   useEffect(() => {
     const fetchData = async () => {
       var clients = await getSearchLogsAPI();
       if (clients) {
-        if (searchText !== "") {
+        if (searchText !== "" && !isSelected) {
           for (let i = clients.length - 1; i >= 0; i--) {
             if (
               !clients[i].name
@@ -103,7 +106,7 @@ const SearchLogs = () => {
                         onChange={(e) => handleSearchTextClient(e)}
                         placeholder="Search a client...."
                         className="btn bg-body header-dashboards-button text-start d-flex align-items-center justify-content-between w-100"
-                        style={{color: "rgba(0, 0, 0, 0.87)"}}
+                        style={{ color: "rgba(0, 0, 0, 0.87)" }}
                         data-bs-toggle="dropdown"
                         // aria-expanded="false"
                       />
@@ -128,74 +131,86 @@ const SearchLogs = () => {
                   </div>
                 </div>
               </div>
-              <TableContainer
-                sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
-              >
-                <Table className="w-full rtl:text-right">
-                  <TableHead className="text-md border-0 bg-gray-50 client-table-header">
-                    <TableRow>
-                      <TableCell
-                        className="w-1/3"
-                        style={{ minWidth: "200px" }}
-                      >
-                        Date
-                      </TableCell>
-                      <TableCell className="w-2/3">Search String</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody className="clients-list-table-1">
-                    {selectedClient &&
-                      selectedClient.searchLogs
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row) => (
-                          <React.Fragment key={row.id}>
-                            <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
-                              <TableCell
-                                style={{ border: "0px", minWidth: "120px" }}
-                              >
-                                {row.date && row.date.split("T")[0]}
-                              </TableCell>
-                              <TableCell
-                                style={{ border: "0px", minWidth: "120px" }}
-                              >
-                                {row.searchString}
-                              </TableCell>
-                            </TableRow>
-                          </React.Fragment>
-                        ))}
-                    {/* {emptyRows > 0 && (
+              {selectedClient && (
+                <>
+                  <TableContainer
+                    sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                  >
+                    <Table className="w-full rtl:text-right">
+                      <TableHead className="text-md border-0 bg-gray-50 client-table-header">
+                        <TableRow>
+                          <TableCell
+                            className="w-1/3"
+                            style={{ minWidth: "200px" }}
+                          >
+                            Date
+                          </TableCell>
+                          <TableCell className="w-2/3">Search String</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody className="clients-list-table-1">
+                        {selectedClient &&
+                          selectedClient.searchLogs
+                            .slice(
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage
+                            )
+                            .map((row) => (
+                              <React.Fragment key={row.id}>
+                                <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
+                                  <TableCell
+                                    style={{ border: "0px", minWidth: "120px" }}
+                                  >
+                                    {row.date &&
+                                      row.date.split("T")[0] +
+                                        " " +
+                                        row.date.split(".")[0].split("T")[1]}
+                                  </TableCell>
+                                  <TableCell
+                                    style={{ border: "0px", minWidth: "120px" }}
+                                  >
+                                    {row.searchString}
+                                  </TableCell>
+                                </TableRow>
+                              </React.Fragment>
+                            ))}
+                        {/* {emptyRows > 0 && (
                       <TableRow style={{ height: 50 * emptyRows }}>
                         <TableCell colSpan={6} />
                       </TableRow>
                     )} */}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <div className="gridjs-footer1">
-                <div className="gridjs-pagination d-flex justify-content-between align-items-center">
-                  <div className="gridjs-summary pl-4 hidden md:block">
-                    Showing <b>{rowsPerPage * page + 1}</b> to{" "}
-                    <b>{rowsPerPage * (page + 1)}</b> of{" "}
-                    <b>{selectedClient && selectedClient.searchLogs.length}</b> results
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <div className="gridjs-footer1">
+                    <div className="gridjs-pagination d-flex justify-content-between align-items-center">
+                      <div className="gridjs-summary pl-4 hidden md:block">
+                        Showing <b>{rowsPerPage * page + 1}</b> to{" "}
+                        <b>{rowsPerPage * (page + 1)}</b> of{" "}
+                        <b>
+                          {selectedClient && selectedClient.searchLogs.length}
+                        </b>{" "}
+                        results
+                      </div>
+                      <div className="dashboard-data-table">
+                        <TablePagination
+                          rowsPerPageOptions={[5, 10, 20]}
+                          component="div"
+                          count={
+                            selectedClient && selectedClient.searchLogs.length
+                          }
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
+                          labelRowsPerPage={t("rows_per_page")}
+                          style={{ marginRight: "10px" }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="dashboard-data-table">
-                    <TablePagination
-                      rowsPerPageOptions={[5, 10, 20]}
-                      component="div"
-                      count={selectedClient && selectedClient.searchLogs.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      labelRowsPerPage={t("rows_per_page")}
-                      style={{ marginRight: "10px" }}
-                    />
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>
