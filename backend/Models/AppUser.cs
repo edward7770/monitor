@@ -16,5 +16,6 @@ namespace backend.Models
         public virtual Client Client { get; set; }
         public virtual ClientBalance ClientBalance { get; set; }
         public ICollection<Match> Matches { get; set; }
+        public ICollection<SearchLog> SearchLogs { get; set; }
     }
 }

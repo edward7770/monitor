@@ -29,6 +29,7 @@ import AccountSettings from "./Pages/AccountSettings";
 import TransactionHistory from "./Pages/TransactionHistory";
 import CapturePayment from "./Pages/CapturePayment";
 import CreditLimit from "./Pages/CreditLimit";
+import SearchLogs from "./Pages/SeachLogs";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -123,6 +124,7 @@ function App() {
               <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory/></ProtectedRoute>} />
               <Route path="/capture-payment" element={<ProtectedRoute><CapturePayment/></ProtectedRoute>} />
               <Route path="/credit-limit" element={<ProtectedRoute><CreditLimit/></ProtectedRoute>} />
+              <Route path="/search-logs" element={<ProtectedRoute><SearchLogs/></ProtectedRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

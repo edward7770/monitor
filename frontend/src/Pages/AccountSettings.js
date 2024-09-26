@@ -7,7 +7,6 @@ const AccountSettings = () => {
   const [user, setUser] = useState(null);
 
   const handleConvertBalanceType = async (type) => {
-    console.log(type);
     await updateBalanceTypeAPI(user.userId, {balanceType: type})
       .then((res) => {
         if (res) {

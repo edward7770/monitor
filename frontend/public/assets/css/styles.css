@@ -12720,7 +12720,7 @@ h1.nft-title {
   border: 0px;
   padding: 0.5rem 0.85rem;
   border-radius: 0.5rem;
-  color: var(--header-prime-color) !important;
+  /* color: var(--header-prime-color) !important; */
   font-weight: 300;
   min-height: 2.3994rem;
   font-size: 13px;

@@ -26,6 +26,7 @@ namespace backend.Data
         public DbSet<ClientBalance> ClientBalances { get; set; }
         public DbSet<ClientTransaction> ClientTransactions { get; set; }
         public DbSet<ClientPayment> ClientPayments { get; set; }
+        public DbSet<SearchLog> SearchLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -55,7 +56,7 @@ namespace backend.Data
                 .WithOne(cb => cb.ClientBalance)
                 .HasForeignKey<ClientBalance>(cb => cb.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             builder.Entity<ClientBalance>()
                  .HasMany(b => b.Transactions)
                  .WithOne(t => t.ClientBalance)
@@ -80,7 +81,13 @@ namespace backend.Data
                 .HasMany(u => u.Matches)
                 .WithOne(m => m.AppUser)
                 .HasForeignKey(m => m.ClientId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<AppUser>()
+                .HasMany(c => c.SearchLogs)
+                .WithOne(u => u.AppUser)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

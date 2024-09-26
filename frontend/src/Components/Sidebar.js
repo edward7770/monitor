@@ -183,6 +183,14 @@ const Sidebar = (props) => {
                   )}
                 </ul>
               </li>
+              {role && role === "Superadmin" && (
+                <li className="slide">
+                  <Link to="/search-logs" className="side-menu__item">
+                    <i className="bi bi-search side-menu__icon"></i>
+                    <span className="side-menu__label">Search Logs</span>
+                  </Link>
+                </li>
+              )}
             </ul>
             <div className="slide-right" id="slide-right">
               <svg

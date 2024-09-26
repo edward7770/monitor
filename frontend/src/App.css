@@ -57,6 +57,15 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+.header-dashboards-button::placeholder {
+    color: rgba(0, 0, 0, 0.87);
+    opacity: 1; 
+}
+
+.header-dashboards-button {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
+
 @media (max-width: 768px) {
     .dashboard-data-table .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
         padding: 0;

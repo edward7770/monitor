@@ -8,6 +8,7 @@ import {
   getForm193RecordsAPI,
   getForm187RecordsAPI,
 } from "../Services/FormDataService";
+import { createSearchLogAPI } from "../Services/FormDataService";
 import RawRecordCellRenderer from "../Components/RawRecordCellRenderer";
 
 const debounce = (func, delay) => {
@@ -403,11 +404,19 @@ const Dashboard = () => {
           searchText
         );
 
-        extractForm193Data(response);
+        let searchLog = {
+          userId: user.userId,
+          searchString: searchText
+        }
+
+        if(response) {
+          extractForm193Data(response);
+          await createSearchLogAPI(searchLog);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }, 500),
+    }, 1000),
     [currentPage, pageSize]
   );
 
@@ -454,11 +463,20 @@ const Dashboard = () => {
           searchText1
         );
 
-        extractForm187Data(response);
+        let searchLog = {
+          userId: user.userId,
+          searchString: searchText
+        }
+
+        if(response) {
+          extractForm187Data(response);
+          await createSearchLogAPI(searchLog);
+        }
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }, 500),
+    }, 1000),
     [currentPage1, pageSize1]
   );
 
