@@ -50,7 +50,9 @@ namespace backend.Controllers
                 AddressLine4 = supplierDto.AddressLine4,
                 AddressPostalCode = supplierDto.AddressPostalCode,
                 DateCreated = DateTime.Now,
-                UserId = supplierDto.UserId
+                UserId = supplierDto.UserId,
+                PriceListId = 1,
+                PricingId = 5
             };
 
             var client = await _clientRepo.AddAsync(newClient);

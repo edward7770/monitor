@@ -191,6 +191,22 @@ const Sidebar = (props) => {
                   </Link>
                 </li>
               )}
+              {role && role !== "Superadmin" && (
+                <li className="slide">
+                  <Link to="/pricing-menu" className="side-menu__item">
+                    <i className="bi bi-layout-text-window side-menu__icon"></i>
+                    <span className="side-menu__label">Pricing</span>
+                  </Link>
+                </li>
+              )}
+              {role && role === "Superadmin" && (
+                <li className="slide">
+                  <Link to="/pricing-list" className="side-menu__item">
+                    <i className="bi bi-layout-text-window side-menu__icon"></i>
+                    <span className="side-menu__label">Pricing List</span>
+                  </Link>
+                </li>
+              )}
             </ul>
             <div className="slide-right" id="slide-right">
               <svg

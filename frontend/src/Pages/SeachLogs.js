@@ -11,20 +11,6 @@ import {
 import { useTranslation } from "react-i18next";
 import "react-datepicker/dist/react-datepicker.css";
 import { getSearchLogsAPI } from "../Services/FormDataService";
-import { getClientsAPI } from "../Services/ClientService";
-
-function formatNumber(number) {
-  if (number !== 0 || number !== null) {
-    return (
-      "R " +
-      number.toLocaleString("en-US", {
-        maximumFractionDigits: 2,
-      })
-    );
-  } else {
-    return "R 0";
-  }
-}
 
 const SearchLogs = () => {
   const { t } = useTranslation();
@@ -82,7 +68,7 @@ const SearchLogs = () => {
     };
 
     fetchData();
-  }, [searchText]);
+  }, [isSelected, searchText]);
 
   useEffect(() => {
     document.title = "Monitor | Search Logs";
@@ -115,8 +101,8 @@ const SearchLogs = () => {
                         role="menu"
                       >
                         {rowData &&
-                          rowData.map((x) => (
-                            <li>
+                          rowData.map((x, index) => (
+                            <li key={index}>
                               <a
                                 className="dropdown-item dashboards-dropdown-item w-100"
                                 href="/#"

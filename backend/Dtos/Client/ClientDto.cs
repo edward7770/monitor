@@ -40,6 +40,8 @@ namespace backend.Dtos.Client
         public string BalanceType { get; set; }
         public int BalanceAmount { get; set; }
         public int CreditLimit { get; set; }
+        public int PricingId { get; set; }
+        public int PriceListId { get; set; }
         public List<ClientTransactionDto> Transactions { get; set; }
         public List<ClientPaymentDto> Payments { get; set; }
         public List<ClientActivityDto> TransactionsWithPayments { get; set; }

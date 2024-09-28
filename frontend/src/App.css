@@ -64,6 +64,7 @@
 
 .header-dashboards-button {
     color: rgba(0, 0, 0, 0.87) !important;
+    font-weight: 400 !important;
 }
 
 @media (max-width: 768px) {

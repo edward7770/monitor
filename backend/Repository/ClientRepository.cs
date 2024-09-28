@@ -106,6 +106,8 @@ namespace backend.Repository
                                      AddressLine3 = c.AddressLine3,
                                      AddressLine4 = c.AddressLine4,
                                      AddressPostalCode = c.AddressPostalCode,
+                                     PricingId = c.PricingId,
+                                     PriceListId = c.PriceListId,
                                      BalanceId = cm.Id,
                                      BalanceType = cm.Type,
                                      BalanceAmount = cm.Balance,

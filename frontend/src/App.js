@@ -13,7 +13,7 @@ import ProtectedRoute from "./Routes/ProtectedRoute";
 // import ProtectedRoleRoute from "./Routes/ProtectedRoleRoute";
 import ProtectedLoginRoute from "./Routes/ProtectedLoginRoute";
 // import ProtectedAdminRoute from "./Routes/ProtectedAdminRoute";
-// import ProtectedSuperadminRoute from "./Routes/ProtectedSuperadminRoute";
+import ProtectedSuperadminRoute from "./Routes/ProtectedSuperadminRoute";
 // import ProtectedUsermanagementRoute from "./Routes/ProtectedUsermanagementRoute";
 import { useAuth } from "./context/useAuth";
 import NotFound from "./Pages/NotFound";
@@ -30,6 +30,8 @@ import TransactionHistory from "./Pages/TransactionHistory";
 import CapturePayment from "./Pages/CapturePayment";
 import CreditLimit from "./Pages/CreditLimit";
 import SearchLogs from "./Pages/SeachLogs";
+import Pricing from "./Pages/Pricing";
+import AdminPricesList from "./Pages/AdminPricesList";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -122,9 +124,11 @@ function App() {
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/account-settings" element={<ProtectedRoute><AccountSettings/></ProtectedRoute>} />
               <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory/></ProtectedRoute>} />
-              <Route path="/capture-payment" element={<ProtectedRoute><CapturePayment/></ProtectedRoute>} />
-              <Route path="/credit-limit" element={<ProtectedRoute><CreditLimit/></ProtectedRoute>} />
-              <Route path="/search-logs" element={<ProtectedRoute><SearchLogs/></ProtectedRoute>} />
+              <Route path="/capture-payment" element={<ProtectedSuperadminRoute><CapturePayment/></ProtectedSuperadminRoute>} />
+              <Route path="/credit-limit" element={<ProtectedSuperadminRoute><CreditLimit/></ProtectedSuperadminRoute>} />
+              <Route path="/search-logs" element={<ProtectedSuperadminRoute><SearchLogs/></ProtectedSuperadminRoute>} />
+              <Route path="/pricing-menu" element={<ProtectedRoute><Pricing/></ProtectedRoute>} />
+              <Route path="/pricing-list" element={<ProtectedSuperadminRoute><AdminPricesList/></ProtectedSuperadminRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

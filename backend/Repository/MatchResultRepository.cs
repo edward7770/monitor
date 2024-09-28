@@ -50,6 +50,19 @@ namespace backend.Repository
             return lastMatchedDto;
         }
 
+        public async Task<int> GetMatchedResultsCountByClient(string userId, DateTime startDate, DateTime endDate)
+        {
+            var matchedResultCount = await _context.MatchResults
+                .Join(_context.Matches,
+                    matchedResult => matchedResult.MatchId,
+                    match => match.Id,
+                    (matchedResult, match) => new { matchedResult, match })
+                .Where(x => x.match.ClientId == userId && x.matchedResult.DownloadDate >= startDate && x.matchedResult.DownloadDate <= endDate)
+                .CountAsync();
+
+            return matchedResultCount;
+        }
+
         public async Task<MatchResult> UpdateAsync(int matchResultId)
         {
             var matchResult = await _context.MatchResults.FindAsync(matchResultId);

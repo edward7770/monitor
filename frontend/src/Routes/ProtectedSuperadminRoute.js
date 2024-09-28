@@ -6,16 +6,13 @@ const ProtectedSuperadminRoute = ({ children }) => {
     const location = useLocation();
     const { isLoggedIn, getUserRole, getUserManagement }  = useAuth();
     const [userRole, setUserRole] = useState(null);
-    const [userManagement, setUserManagement] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchUserRole = async () => {
             try {
                 const role = await getUserRole();
-                const userManagementstatus = await getUserManagement();
                 setUserRole(role);
-                setUserManagement(userManagementstatus);
             } catch (error) {
                 // Handle error
             } finally {
@@ -29,7 +26,7 @@ const ProtectedSuperadminRoute = ({ children }) => {
         return <div></div>;
     }
 
-    return isLoggedIn() && userManagement === true && (userRole === "Admin" || userRole === "Superadmin") ? (
+    return isLoggedIn() && userRole === "Superadmin" ? (
         <>{children}</>
     ) : (
         <>

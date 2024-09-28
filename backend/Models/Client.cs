@@ -32,7 +32,11 @@ namespace backend.Models
         public string AddressPostalCode { get; set; }
         [ForeignKey("AppUser")]
         public string UserId { get; set; }
+        [ForeignKey("Pricing")]
+        public int PricingId { get; set; }
+        public int PriceListId { get; set; }
         public virtual AppUser AppUser { get; set; }
+        public virtual Pricing Pricing { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateActivated { get; set; }
         public ICollection<SearchLog> SearchLogs { get; set; }

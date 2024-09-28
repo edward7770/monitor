@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Hangfire;
 
 namespace backend.Controllers
 {
@@ -31,11 +32,13 @@ namespace backend.Controllers
         private readonly IClientRepository _clientRepo;
         private readonly IClientBalanceRepository _clientBalanceRepo;
         private readonly IUserResetRepository _userResetRepo;
+        private readonly IMonthlyBillCalculationServiceRepository _monthlyBillCalculationServiceRepo;
+        private readonly IPricingRepository _pricingRepo;
         private readonly SignInManager<AppUser> _signInManager;
         // private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
-        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IClientBalanceRepository clientBalanceRepo, IConfiguration config)
+        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IClientBalanceRepository clientBalanceRepo, IMonthlyBillCalculationServiceRepository monthlyBillCalculationServiceRepo, IPricingRepository pricingRepo, IConfiguration config)
         {
             _userManager = userManager;
             _supplierRepo = supplierRepo;
@@ -45,6 +48,8 @@ namespace backend.Controllers
             _signInManager = signInManager;
             _clientBalanceRepo = clientBalanceRepo;
             _smtpService = smtpService;
+            _pricingRepo = pricingRepo;
+            _monthlyBillCalculationServiceRepo = monthlyBillCalculationServiceRepo;
             // _httpContextAccessor = httpContextAccessor;
             _config = config;
         }
@@ -120,13 +125,14 @@ namespace backend.Controllers
             var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(userId);
 
             var province = "";
+            var client = await _clientRepo.GetByUserIdAsync(userId);
             if (role == "Client")
             {
-                var client = await _clientRepo.GetByUserIdAsync(userId);
                 province = client.AddressLine4;
             }
 
             var isUsermanagementRole = await _userManager.IsInRoleAsync(user, "Usermanagement");
+            var pricing = await _pricingRepo.GetPricingById(client.PricingId);
 
             return Ok(
                 new NewUserDto
@@ -142,7 +148,10 @@ namespace backend.Controllers
                     Province = province,
                     BalanceId = clientBalance.Id,
                     BalanceType = clientBalance.Type,
-                    BalanceAmount = clientBalance.Balance
+                    BalanceAmount = clientBalance.Balance,
+                    PricingId = client.PricingId,
+                    PriceListId = client.PriceListId,
+                    Price = pricing.Price
                 }
             );
         }
@@ -212,6 +221,9 @@ namespace backend.Controllers
                                 {
                                     return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
                                 }
+
+                                DateTime registrationDate = appUser.DateCreated;
+                                ScheduleBillCalculationJob(appUser.Id, registrationDate);
 
                                 // return Ok("Successfully registered and sent activation email");
                                 return Ok(
@@ -572,6 +584,19 @@ namespace backend.Controllers
                 return BadRequest("remove_role_fail_msg");
             }
             return Ok(user);
+        }
+
+        [NonAction]
+        private void ScheduleBillCalculationJob(string clientId, DateTime registrationDate)
+        {
+            DateTime firstRunDate = registrationDate.AddMonths(1);
+
+            RecurringJob.AddOrUpdate(
+                $"process-matches-for-client-{clientId}",
+                () => _monthlyBillCalculationServiceRepo.ProcessMonthlyCalculation(clientId),
+                Cron.Monthly(firstRunDate.Day),
+                TimeZoneInfo.Local
+            );
         }
     }
 }

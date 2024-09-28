@@ -196,7 +196,7 @@ const History = (props) => {
       );
       downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
-      var balanceAmount = user.balanceAmount - matchResultsIds.length * 199;
+      var balanceAmount = user.balanceAmount - matchResultsIds.length * user.price;
 
       var clientTransactionObj = {
         clientId: userId,
@@ -206,7 +206,7 @@ const History = (props) => {
         fileName: selectedMatchResult.fileName,
         monitor: index + 1,
         records: matchResultsIds.length,
-        billValue: matchResultsIds.length * 199,
+        billValue: matchResultsIds.length * user.price,
         balance: balanceAmount,
         dateCreated: new Date(),
         invoiceNumber: null,

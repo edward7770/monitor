@@ -120,6 +120,8 @@ builder.Services.AddScoped<IClientBalanceRepository, ClientBalanceRepository>();
 builder.Services.AddScoped<IClientTransactionRepository, ClientTransactionRepository>();
 builder.Services.AddScoped<IClientPaymentRepository, ClientPaymentRepository>();
 builder.Services.AddScoped<ISearchLogRepository, SearchLogRepository>();
+builder.Services.AddScoped<IPricingRepository, PricingRepository>();
+builder.Services.AddScoped<IMonthlyBillCalculationServiceRepository, MonthlyBillCalculationService>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage());

@@ -281,7 +281,7 @@ const ClientsListTable = (props) => {
                                                   textAlign: 'right'
                                                 }}
                                               >
-                                                199
+                                                {parseInt(transaction.billValue / transaction.records)}
                                               </TableCell>
                                               <TableCell
                                                 style={{

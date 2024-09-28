@@ -45,7 +45,7 @@ const AccountSettings = () => {
             </h1>
           </div>
         </div>
-        <div className="row">
+        {/* <div className="row">
           <div className="col-xl-12">
             <div className="card custom-card">
               <div className="card-body">
@@ -76,7 +76,7 @@ const AccountSettings = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

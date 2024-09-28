@@ -20,5 +20,8 @@ namespace backend.Dtos.User
         public int BalanceId { get; set; }
         public string BalanceType { get; set; }
         public int BalanceAmount { get; set; }
+        public int PricingId { get; set; }
+        public int PriceListId { get; set; }
+        public int Price { get; set; }
     }
 }

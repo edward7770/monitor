@@ -12,5 +12,6 @@ namespace backend.Interfaces
         Task<List<MatchResult>> AddAsync(List<MatchResult> matchResults);
         Task<MatchResult> UpdateAsync(int matchResultId);
         Task<GetLastMatchedStepDto> GetLastMatchedStepAsync(int matchId);
+        Task<int> GetMatchedResultsCountByClient(string userId, DateTime startDate, DateTime endDate);
     }
 }

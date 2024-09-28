@@ -202,5 +202,13 @@ namespace backend.Controllers
 
             return Ok(matchResultRequestDtos);
         }
+
+        // [HttpGet("count")]
+        // public async Task<IActionResult> GetMatchResultsCount(string clientId)
+        // {
+        //     var matchResultsCount = await _matchResultRepo.GetMatchedResultsCountByClient(clientId, DateTime.Now.AddMonths(-1) ,DateTime.Now);
+
+        //     return Ok(matchResultsCount);
+        // }
     }
 }

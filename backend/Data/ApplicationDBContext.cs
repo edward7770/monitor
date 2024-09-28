@@ -27,6 +27,7 @@ namespace backend.Data
         public DbSet<ClientTransaction> ClientTransactions { get; set; }
         public DbSet<ClientPayment> ClientPayments { get; set; }
         public DbSet<SearchLog> SearchLogs { get; set; }
+        public DbSet<Pricing> Pricings { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -45,6 +46,15 @@ namespace backend.Data
                         NormalizedName = "CLIENT"
                     }
                 );
+            
+            builder.Entity<Pricing>().HasData(
+                new Pricing { Id = 1, List = 1, ListName = "Default", Tier = 1, Description = "1-99", Start = 1, End = 99, Price = 199 },
+                new Pricing { Id = 2, List = 1, ListName = "Default", Tier = 2, Description = "100-199", Start = 100, End = 199, Price = 189 },
+                new Pricing { Id = 3, List = 1, ListName = "Default", Tier = 3, Description = "200-499", Start = 200, End = 499, Price = 149 },
+                new Pricing { Id = 4, List = 1, ListName = "Default", Tier = 4, Description = "500-999", Start = 500, End = 999, Price = 129 },
+                new Pricing { Id = 5, List = 1, ListName = "Default", Tier = 5, Description = "1000-999999", Start = 1000, End = 999999, Price = 99 }
+            );
+
             builder.Entity<Client>()
                 .HasOne(c => c.AppUser)
                 .WithOne(u => u.Client)
@@ -88,6 +98,12 @@ namespace backend.Data
                 .WithOne(u => u.AppUser)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Client>()
+                .HasOne(c => c.Pricing)
+                .WithMany()
+                .HasForeignKey(c => c.PricingId)
+                .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 
