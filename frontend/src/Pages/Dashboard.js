@@ -406,6 +406,7 @@ const Dashboard = () => {
 
         let searchLog = {
           userId:  user && user.userId,
+          type: "J193",
           searchString: searchText
         }
 
@@ -465,6 +466,7 @@ const Dashboard = () => {
         
         let searchLog = {
           userId:  user && user.userId,
+          type: "J187",
           searchString: searchText1
         }
 

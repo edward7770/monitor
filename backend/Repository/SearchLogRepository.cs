@@ -53,6 +53,7 @@ namespace backend.Repository
                         {
                             Id = log.Id,
                             SearchString = log.SearchString,
+                            Type = log.Type,
                             UserId = log.UserId,
                             Date = log.Date
                         }).ToList()

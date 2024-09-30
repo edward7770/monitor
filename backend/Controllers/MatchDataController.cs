@@ -47,18 +47,21 @@ namespace backend.Controllers
                 return StatusCode(403, "Failed to store match datas");
             }
 
-            var clientJobs = new ConcurrentDictionary<int, List<string>>();
-            foreach (var match in matchDataRequestDtos)
-            {
-                var jobId = BackgroundJob.Enqueue(() => ProcessMatchDataAsync(match.MatchId, match.IdNumber));
-                clientJobs.AddOrUpdate(match.MatchId, new List<string> { jobId }, (key, list) => { list.Add(jobId); return list; });
-            }
+            // var clientJobs = new ConcurrentDictionary<int, List<string>>();
+            // foreach (var match in matchDataRequestDtos)
+            // {
+            //     var jobId = BackgroundJob.Enqueue(() => ProcessMatchDataAsync(match.MatchId, match.IdNumber));
+            //     clientJobs.AddOrUpdate(match.MatchId, new List<string> { jobId }, (key, list) => { list.Add(jobId); return list; });
+            // }
 
-            foreach (var clientId in clientJobs.Keys)
-            {
-                var jobIds = clientJobs[clientId];
-                BackgroundJob.ContinueWith(jobIds.Last(), () => NotifyClientWhenAllJobsComplete(matchDataRequestDtos[0].MatchId));
-            }
+            // foreach (var clientId in clientJobs.Keys)
+            // {
+            //     var jobIds = clientJobs[clientId];
+            //     BackgroundJob.ContinueWith(jobIds.Last(), () => NotifyClientWhenAllJobsComplete(matchDataRequestDtos[0].MatchId));
+            // }
+
+            var jobId = BackgroundJob.Enqueue(() => ProcessMatchDataAsync(matchDataRequestDtos));
+            BackgroundJob.ContinueWith(jobId, () => NotifyClientWhenAllJobsComplete(matchDataRequestDtos[0].MatchId));
 
             // foreach (var matchData in matchDataRequestDtos)
             // {
@@ -70,11 +73,14 @@ namespace backend.Controllers
 
         // Background processing method
         [NonAction]
-        public async Task ProcessMatchDataAsync(int matchId, string idNumber)
+        public async Task ProcessMatchDataAsync(List<CreateMatchDataRequestDto> matchDataRequestDtos)
         {
-            var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(matchId, idNumber);
+            foreach (var match in matchDataRequestDtos)
+            {
+                var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(match.MatchId, match.IdNumber);
 
-            await _matchResultRepo.AddAsync(filteredRecords);
+                await _matchResultRepo.AddAsync(filteredRecords);
+            }
         }
 
         [NonAction]

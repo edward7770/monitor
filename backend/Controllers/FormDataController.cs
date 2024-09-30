@@ -70,6 +70,7 @@ namespace backend.Controllers
         {
             var newSearchLog = new SearchLog {
                 UserId = createSearchLogRequestDto.UserId,
+                Type = createSearchLogRequestDto.Type,
                 SearchString = createSearchLogRequestDto.SearchString,
                 Date = DateTime.Now,
             };

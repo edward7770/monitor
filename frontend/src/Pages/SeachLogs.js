@@ -131,7 +131,8 @@ const SearchLogs = () => {
                           >
                             Date
                           </TableCell>
-                          <TableCell className="w-2/3">Search String</TableCell>
+                          <TableCell className="w-1/4">Type</TableCell>
+                          <TableCell>Search String</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody className="clients-list-table-1">
@@ -151,6 +152,11 @@ const SearchLogs = () => {
                                       row.date.split("T")[0] +
                                         " " +
                                         row.date.split(".")[0].split("T")[1]}
+                                  </TableCell>
+                                  <TableCell
+                                    style={{ border: "0px", minWidth: "120px" }}
+                                  >
+                                    {row.type}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}

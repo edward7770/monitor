@@ -9,5 +9,6 @@ namespace backend.Dtos.SearchLog
     {
         public string SearchString { get; set; }
         public string UserId { get; set; }
+        public string Type { get; set; }
     }
 }

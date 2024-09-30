@@ -12,6 +12,7 @@ namespace backend.Models
         public string SearchString { get; set; }
         [ForeignKey("AppUser")]
         public string UserId { get; set; }
+        public string Type { get; set; }
         public DateTime Date { get; set; }
         public virtual AppUser AppUser { get; set; }
     }
