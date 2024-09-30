@@ -358,7 +358,7 @@ const History = (props) => {
           .split("(4)")[1]
           .split("(5)")[0]
           .replace(/;/g, "");
-        period = rawRecord.split("(5)")[1].split("(6)")[0].replace(/[^0-9\s]/g, '');
+        period = rawRecord.split("(5)")[1].split("(6)")[0].replace('.', '');
         advertiserDetails = response.data.rawRecord.split("(6)")[1];
         executorName = advertiserDetails.split("; ")[0];
         if (advertiserDetails.includes("Tel: ")) {
@@ -390,7 +390,7 @@ const History = (props) => {
             .replace(/;/g, "");
         }
         if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
-          period = rawRecord.split("(5)")[1].split("(6)")[0].replace(/[^0-9\s]/g, '');
+          period = rawRecord.split("(5)")[1].split("(6)")[0].replace('.', '');
           advertiserDetails = response.data.rawRecord.split("(6)")[1];
           executorName = advertiserDetails.split("; ")[0];
           if (advertiserDetails.includes("Tel: ")) {
