@@ -27,10 +27,10 @@ const UploadPage = () => {
         const rows = text.split("\n").map((row) => row.split(","));
 
         if (
-          rows[0][0].trim() === "IdNo" ||
-          rows[0][0].trim() === "ID Number" ||
-          rows[0][0].trim() === "IDNUmber " ||
-          rows[0][0].trim() === "ID"
+          rows[0][0].trim().toLowerCase() === "idno" ||
+          rows[0][0].trim().toLowerCase() === "id number" ||
+          rows[0][0].trim().toLowerCase() === "idnumber " ||
+          rows[0][0].trim().toLowerCase() === "id"
         ) {
           const tempRows = rows.slice(1);
           if (tempRows.length > 0) {

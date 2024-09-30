@@ -417,7 +417,7 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
       }
     }, 1000),
-    [currentPage, pageSize]
+    [currentPage, pageSize, user]
   );
 
   useEffect(() => {
@@ -465,7 +465,7 @@ const Dashboard = () => {
         
         let searchLog = {
           userId:  user && user.userId,
-          searchString: searchText
+          searchString: searchText1
         }
 
         if(response) {
@@ -477,7 +477,7 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
       }
     }, 1000),
-    [currentPage1, pageSize1]
+    [currentPage1, pageSize1, user]
   );
 
   useEffect(() => {

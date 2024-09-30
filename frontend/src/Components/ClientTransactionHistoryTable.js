@@ -137,7 +137,10 @@ const ClientsTransactionHistoryTable = (props) => {
                             textAlign: "right",
                           }}
                         >
-                          R {parseInt(transaction.billValue / transaction.records)}
+                          R{" "}
+                          {parseInt(
+                            transaction.billValue / transaction.records
+                          )}
                         </TableCell>
                         <TableCell
                           style={{
@@ -168,7 +171,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "200px",
                           }}
                         >
-                          {transaction.dateCreated.split("T")[0]}
+                          {transaction.paymentDate.split("T")[0]}
                         </TableCell>
                         <TableCell
                           colSpan={4}
@@ -177,9 +180,8 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "120px",
                           }}
                         >
-                          By {transaction.capturedBy}
-                          ,&nbsp;&nbsp; Payment Date:{" "}
-                          {transaction.paymentDate.split("T")[0]}
+                          Captured By {transaction.capturedBy}&nbsp; on{" "}
+                          {transaction.dateCreated.split("T")[0]}
                         </TableCell>
                         <TableCell
                           style={{
@@ -211,13 +213,20 @@ const ClientsTransactionHistoryTable = (props) => {
           <div className="gridjs-summary pl-4 hidden md:block">
             Showing <b>{rowsPerPage * page + 1}</b> to{" "}
             <b>{rowsPerPage * (page + 1)}</b> of{" "}
-            <b>{props.currentClientData && props.currentClientData.transactionsWithPayments.length}</b> results
+            <b>
+              {props.currentClientData &&
+                props.currentClientData.transactionsWithPayments.length}
+            </b>{" "}
+            results
           </div>
           <div className="dashboard-data-table">
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
               component="div"
-              count={props.currentClientData && props.currentClientData.transactionsWithPayments.length}
+              count={
+                props.currentClientData &&
+                props.currentClientData.transactionsWithPayments.length
+              }
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

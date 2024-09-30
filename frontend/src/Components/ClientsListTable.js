@@ -313,7 +313,7 @@ const ClientsListTable = (props) => {
                                             }}
                                           >
                                             {
-                                              transaction.dateCreated.split(
+                                              transaction.paymentDate.split(
                                                 "T"
                                               )[0]
                                             }
@@ -325,8 +325,8 @@ const ClientsListTable = (props) => {
                                               minWidth: "120px",
                                             }}
                                           >
-                                            By {transaction.capturedBy},&nbsp;&nbsp;
-                                            Payment Date: {transaction.paymentDate.split(
+                                            Captured By {transaction.capturedBy}&nbsp;
+                                            on {transaction.dateCreated.split(
                                                 "T"
                                               )[0]}
                                           </TableCell>
