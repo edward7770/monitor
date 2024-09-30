@@ -285,7 +285,7 @@ const History = (props) => {
         caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
         particulars = rawRecord.split("(2)")[1].split("(3)")[0];
         idNumber = particulars.split(", ")[3];
-        name = particulars.split(", ")[1];
+        name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
         noticeDate = response.data.noticeDate.split("T")[0];
       } else {
         caseNumber = rawRecord.split(", ")[0];
@@ -358,12 +358,12 @@ const History = (props) => {
           .split("(4)")[1]
           .split("(5)")[0]
           .replace(/;/g, "");
-        period = rawRecord.split("(5)")[1].split("(6)")[0];
+        period = rawRecord.split("(5)")[1].split("(6)")[0].replace(/[^0-9\s]/g, '');
         advertiserDetails = response.data.rawRecord.split("(6)")[1];
         executorName = advertiserDetails.split("; ")[0];
         if (advertiserDetails.includes("Tel: ")) {
           executorPhone = advertiserDetails.split("Tel: ")[1];
-          executorPhone = executorPhone.trim();
+          executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, '');
         }
 
         executorEmail = extractEmail(advertiserDetails)
@@ -390,12 +390,12 @@ const History = (props) => {
             .replace(/;/g, "");
         }
         if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
-          period = rawRecord.split("(5)")[1].split("(6)")[0];
+          period = rawRecord.split("(5)")[1].split("(6)")[0].replace(/[^0-9\s]/g, '');
           advertiserDetails = response.data.rawRecord.split("(6)")[1];
           executorName = advertiserDetails.split("; ")[0];
           if (advertiserDetails.includes("Tel: ")) {
             executorPhone = advertiserDetails.split("Tel: ")[1];
-            executorPhone = executorPhone.trim();
+            executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, '');
           }
           executorEmail = extractEmail(advertiserDetails)
             ?.trim()
