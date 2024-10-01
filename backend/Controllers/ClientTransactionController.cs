@@ -31,12 +31,7 @@ namespace backend.Controllers
                 return StatusCode(403, "Failed to get client balance.");
             }
 
-            if (createClientTransactionRequestDto.BalanceType == "prepaid" && clientBalance.Balance < createClientTransactionRequestDto.BillValue)
-            {
-                return StatusCode(403, "To download this file, you need to deposit R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance) + "!");
-            }
-
-            if (createClientTransactionRequestDto.BalanceType == "postpaid" && clientBalance.Balance + clientBalance.CreditLimit < createClientTransactionRequestDto.BillValue)
+            if (clientBalance.Balance + clientBalance.CreditLimit < createClientTransactionRequestDto.BillValue)
             {
                 return StatusCode(403, "The cost of the file exceeds your balance of R " + (createClientTransactionRequestDto.BillValue - clientBalance.Balance - clientBalance.CreditLimit) + "!");
             }
