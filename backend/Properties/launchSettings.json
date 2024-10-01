@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5128;http://172.20.101.21:5128;",
+      "applicationUrl": "http://api.superlinq.com:2002;http://192.168.1.30:2002;",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -24,7 +24,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://172.20.101.21:5128;http://localhost:5128",
+      "applicationUrl": "http://192.168.1.30:2002;http://api.superlinq.com:2002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
