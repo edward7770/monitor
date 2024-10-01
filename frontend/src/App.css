@@ -67,12 +67,20 @@
     font-weight: 400 !important;
 }
 
+.ag-paging-row-summary-panel {
+    display: block;
+}
+
 @media (max-width: 768px) {
     .dashboard-data-table .css-78c6dr-MuiToolbar-root-MuiTablePagination-toolbar {
         padding: 0;
     }
 
     .dashboard-data-table .css-pdct74-MuiTablePagination-selectLabel {
+        display: none;
+    }
+
+    .ag-paging-row-summary-panel {
         display: none;
     }
 }

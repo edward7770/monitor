@@ -75,11 +75,17 @@ namespace backend.Controllers
         [NonAction]
         public async Task ProcessMatchDataAsync(List<CreateMatchDataRequestDto> matchDataRequestDtos)
         {
+            int index = 1;
+            
             foreach (var match in matchDataRequestDtos)
             {
                 var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(match.MatchId, match.IdNumber);
 
+                await _matchRepo.UpdateProcessProgressAsync(match.MatchId, index);
+
                 await _matchResultRepo.AddAsync(filteredRecords);
+
+                index++;
             }
         }
 

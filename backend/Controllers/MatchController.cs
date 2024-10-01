@@ -48,14 +48,13 @@ namespace backend.Controllers
             var newMatchRecord = new Match {
                 ClientId = createMatchRequestDto.ClientId,
                 Records = createMatchRequestDto.Records,
-                Matched = "",
                 Status = "Processing",
                 FileName = createMatchRequestDto.FileName,
                 UniqueFileName = uniqueFileName,
                 UploadedBy = createMatchRequestDto.UploadedBy,
                 UploadDate = DateTime.Now,
                 ProcessingStartDate = DateTime.Now,
-                ProcessingEndedDate = DateTime.Now
+                ProcessingEndedDate = null
             };
 
             var match = await _matchRepo.AddAsync(newMatchRecord);
