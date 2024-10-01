@@ -312,6 +312,8 @@ const History = (props) => {
       } else {
         caseNumber = rawRecord.split(", ")[0];
         particulars =
+          rawRecord.split(", ")[0] +
+          " " +
           rawRecord.split(", ")[1] +
           " " +
           rawRecord.split(", ")[2] +
