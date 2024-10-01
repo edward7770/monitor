@@ -372,7 +372,7 @@ const History = (props) => {
         caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
         particulars = rawRecord.split("(2)")[1].split("(3)")[0];
         idNumber = extractFirst13DigitNumber(rawRecord);
-        name = particulars.split(", ")[1].split(" (")[0];
+        name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
         description = response.data.rawRecord
           .split("(3)")[1]
           .split("(4)")[0]
@@ -399,7 +399,7 @@ const History = (props) => {
         }
         if (rawRecord.includes("(3)")) {
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-          name = particulars.split(", ")[1].split(" (")[0];
+          name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
         }
         if (rawRecord.includes("(4)" && rawRecord.includes("(3)"))) {
           description = response.data.rawRecord
