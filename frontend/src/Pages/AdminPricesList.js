@@ -319,7 +319,7 @@ const AdminPricesList = () => {
   }, [selectedClientPriceListId]);
 
   useEffect(() => {
-    document.title = "Monitor | Prices List";
+    document.title = "Monitor | Price List";
   }, []);
 
   return (
@@ -328,7 +328,7 @@ const AdminPricesList = () => {
         <div className="col-xl-12">
           <div className="card custom-card">
             <div className="card-header justify-between">
-              <div className="card-title">Prices List</div>
+              <div className="card-title">Price List</div>
               <div className="card-btns flex">
                 <button
                   className="btn btn-primary-light btn-wave me-2 waves-effect waves-light"
