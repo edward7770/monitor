@@ -250,18 +250,9 @@ const History = (props) => {
 
   const DownloadCellRenderer = (params) => {
     let processProgress = 0;
-    processProgress = (
-      (params.data.processProgressRecords / params.data.countIdNumbers) *
-      100
-    ).toFixed(2);
+    processProgress = ((params.data.processProgressRecords / params.data.countIdNumbers) * 100).toFixed(2);
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: 'center' }}>
         {params.data.status === "Processed" ? (
           <IconButton
             onClick={() => handleDownloadBtn(params.data.id)}
@@ -275,10 +266,10 @@ const History = (props) => {
             <DownloadIcon style={{ fontSize: "20px" }} />
           </IconButton>
         ) : (
-          <div className="flex w-full" style={{ flexDirection: "column" }}>
+          <div className="flex w-full" style={{flexDirection: 'column'}}>
             <div
               className="progress"
-              style={{ width: "100%", marginTop: "5px" }}
+              style={{width: '100%', marginTop: '5px'}}
               role="progressbar"
               aria-valuenow="10"
               aria-valuemin="0"
@@ -289,12 +280,8 @@ const History = (props) => {
                 style={{ width: processProgress + "%" }}
               ></div>
             </div>
-            <span className="text-center" style={{ lineHeight: "20px" }}>
-              {params.data.processProgressRecords}/{params.data.countIdNumbers}:
-              &nbsp;
-              <span style={{ fontWeight: "500" }}>{processProgress}%</span>
-            </span>
-          </div>
+            <span className="text-center" style={{lineHeight: '20px'}}>{params.data.processProgressRecords}/{params.data.countIdNumbers}: &nbsp;<span style={{fontWeight: '500'}}>{processProgress}%</span></span>
+          </div>  
         )}
       </div>
     );
@@ -340,7 +327,7 @@ const History = (props) => {
           rawRecord.split(", ")[6] +
           " " +
           rawRecord.split(", ")[7];
-        name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
+        name = rawRecord.split(", ")[0] + " , " + rawRecord.split(", ")[1];
         idNumber = rawRecord.split(", ")[3];
         noticeDate = response.data.noticeDate.split("T")[0];
       }
@@ -580,16 +567,14 @@ const History = (props) => {
             countJ193: countJ193,
             fileDatas: fileDatas,
             status: result.status,
-            processProgressRecords: result.processProgressRecords,
+            processProgressRecords: result.processProgressRecords
           };
 
           tempMatchResults.push(matchItem);
         });
 
-        var processingIndex = response.data
-          .map((item) => item.status)
-          .indexOf("Processing");
-        if (processingIndex > -1) {
+        var processingIndex = response.data.map(item => item.status).indexOf("Processing");
+        if(processingIndex > -1) {
           if (intervalId) {
             clearInterval(intervalId);
           }
