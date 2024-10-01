@@ -201,9 +201,9 @@ const Sidebar = (props) => {
               )}
               {role && role === "Superadmin" && (
                 <li className="slide">
-                  <Link to="/pricing-list" className="side-menu__item">
+                  <Link to="/price-list" className="side-menu__item">
                     <i className="bi bi-layout-text-window side-menu__icon"></i>
-                    <span className="side-menu__label">Pricing List</span>
+                    <span className="side-menu__label">Price List</span>
                   </Link>
                 </li>
               )}

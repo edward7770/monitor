@@ -128,7 +128,7 @@ function App() {
               <Route path="/credit-limit" element={<ProtectedSuperadminRoute><CreditLimit/></ProtectedSuperadminRoute>} />
               <Route path="/search-logs" element={<ProtectedSuperadminRoute><SearchLogs/></ProtectedSuperadminRoute>} />
               <Route path="/pricing-menu" element={<ProtectedRoute><Pricing/></ProtectedRoute>} />
-              <Route path="/pricing-list" element={<ProtectedSuperadminRoute><AdminPricesList/></ProtectedSuperadminRoute>} />
+              <Route path="/price-list" element={<ProtectedSuperadminRoute><AdminPricesList/></ProtectedSuperadminRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />
