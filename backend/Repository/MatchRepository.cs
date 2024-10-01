@@ -34,7 +34,7 @@ namespace backend.Repository
         public async Task<List<MatchWithResultsDto>> GetMatchWithResultsByClientId(string clientId)
         {
             var matchResults = await _context.Matches
-                .Where(x => x.ClientId == clientId && x.Status == "Processed")
+                .Where(x => x.ClientId == clientId)
                 .Include(s => s.MatchResult)
                 .Select(x => new MatchWithResultsDto
                 {
@@ -45,6 +45,7 @@ namespace backend.Repository
                     FileName = x.FileName,
                     UploadedBy = x.UploadedBy,
                     UploadDate = x.UploadDate,
+                    ProcessProgressRecords = x.ProcessProgressRecords,
                     ProcessingStartDate = x.ProcessingStartDate,
                     ProcessingEndedDate = x.ProcessingEndedDate,
                     MatchResults = x.MatchResult.Select(result => new MatchResultDto
@@ -84,6 +85,16 @@ namespace backend.Repository
             await _context.SaveChangesAsync();
 
             return matchRecord;
+        }
+
+        public async Task<Match> UpdateProcessProgressAsync(int matchId, int count)
+        {
+            var match = await _context.Matches.FindAsync(matchId);
+
+            match.ProcessProgressRecords = count;
+
+            await _context.SaveChangesAsync();
+            return match;
         }
     }
 }

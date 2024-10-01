@@ -16,8 +16,9 @@ namespace backend.Dtos.Match
         public string FileName { get; set; }
         public string UploadedBy { get; set; }
         public DateTime UploadDate { get; set; }
+        public int ProcessProgressRecords { get; set; }
         public DateTime ProcessingStartDate { get; set; }
-        public DateTime ProcessingEndedDate { get; set; }
+        public DateTime? ProcessingEndedDate { get; set; }
         public List<MatchResultDto> MatchResults { get; set;}
     }
 }

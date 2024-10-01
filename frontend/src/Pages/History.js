@@ -196,7 +196,8 @@ const History = (props) => {
       );
       downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
-      var balanceAmount = user.balanceAmount - matchResultsIds.length * user.price;
+      var balanceAmount =
+        user.balanceAmount - matchResultsIds.length * user.price;
 
       var clientTransactionObj = {
         clientId: userId,
@@ -212,7 +213,7 @@ const History = (props) => {
         invoiceNumber: null,
         invoiceStatus: null,
       };
-      console.log(clientTransactionObj);
+
       await createClientTransactionAPI(clientTransactionObj)
         .then(async (res) => {
           console.log(res);
@@ -248,19 +249,40 @@ const History = (props) => {
   };
 
   const DownloadCellRenderer = (params) => {
+    let processProgress = 0;
+    processProgress = ((params.data.processProgressRecords / params.data.countIdNumbers) * 100).toFixed(2);
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <IconButton
-          onClick={() => handleDownloadBtn(params.data.id)}
-          style={{
-            cursor: "pointer",
-            color: "#387CFE",
-            margin: "auto",
-          }}
-          title="Download File"
-        >
-          <DownloadIcon style={{ fontSize: "20px" }} />
-        </IconButton>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: 'center' }}>
+        {params.data.status === "Processed" ? (
+          <IconButton
+            onClick={() => handleDownloadBtn(params.data.id)}
+            style={{
+              cursor: "pointer",
+              color: "#387CFE",
+              margin: "auto",
+            }}
+            title="Download File"
+          >
+            <DownloadIcon style={{ fontSize: "20px" }} />
+          </IconButton>
+        ) : (
+          <div className="flex w-full" style={{flexDirection: 'column'}}>
+            <div
+              className="progress"
+              style={{width: '100%', marginTop: '5px'}}
+              role="progressbar"
+              aria-valuenow="10"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <div
+                className="progress-bar progress-bar-striped"
+                style={{ width: processProgress + "%" }}
+              ></div>
+            </div>
+            <span className="text-center" style={{lineHeight: '20px'}}>{params.data.processProgressRecords}/{params.data.countIdNumbers}: &nbsp;<span style={{fontWeight: '500'}}>{processProgress}%</span></span>
+          </div>  
+        )}
       </div>
     );
   };
@@ -358,12 +380,12 @@ const History = (props) => {
           .split("(4)")[1]
           .split("(5)")[0]
           .replace(/;/g, "");
-        period = rawRecord.split("(5)")[1].split("(6)")[0].replace('.', '');
+        period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
         advertiserDetails = response.data.rawRecord.split("(6)")[1];
         executorName = advertiserDetails.split("; ")[0];
         if (advertiserDetails.includes("Tel: ")) {
           executorPhone = advertiserDetails.split("Tel: ")[1];
-          executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, '');
+          executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
         }
 
         executorEmail = extractEmail(advertiserDetails)
@@ -390,12 +412,12 @@ const History = (props) => {
             .replace(/;/g, "");
         }
         if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
-          period = rawRecord.split("(5)")[1].split("(6)")[0].replace('.', '');
+          period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
           advertiserDetails = response.data.rawRecord.split("(6)")[1];
           executorName = advertiserDetails.split("; ")[0];
           if (advertiserDetails.includes("Tel: ")) {
             executorPhone = advertiserDetails.split("Tel: ")[1];
-            executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, '');
+            executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
           }
           executorEmail = extractEmail(advertiserDetails)
             ?.trim()
@@ -431,6 +453,7 @@ const History = (props) => {
       field: "uploadDate",
       filter: false,
       sortable: false,
+      minWidth: 180,
       flex: 1,
     },
     {
@@ -438,6 +461,7 @@ const History = (props) => {
       field: "fileName",
       filter: false,
       sortable: false,
+      minWidth: 180,
       flex: 1,
     },
     {
@@ -445,6 +469,7 @@ const History = (props) => {
       field: "countIdNumbers",
       filter: false,
       sortable: false,
+      minWidth: 180,
       flex: 1,
     },
     {
@@ -453,6 +478,7 @@ const History = (props) => {
       cellDataType: "number",
       filter: false,
       sortable: false,
+      minWidth: 180,
       flex: 1,
     },
     {
@@ -461,6 +487,7 @@ const History = (props) => {
       cellDataType: "number",
       filter: false,
       sortable: false,
+      minWidth: 180,
       flex: 1,
     },
     {
@@ -505,6 +532,7 @@ const History = (props) => {
   }, [userId, isSetDownloaded]);
 
   useEffect(() => {
+    let intervalId;
     const fetchMatchResults = async () => {
       var response = await getMatchResultsAPI(userId);
       var tempMatchResults = [];
@@ -536,19 +564,39 @@ const History = (props) => {
             countJ187: countJ187,
             countJ193: countJ193,
             fileDatas: fileDatas,
+            status: result.status,
+            processProgressRecords: result.processProgressRecords
           };
 
           tempMatchResults.push(matchItem);
         });
+
+        var processingIndex = response.data.map(item => item.status).indexOf("Processing");
+        if(processingIndex > -1) {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+
+          intervalId = setInterval(fetchMatchResults, 1000);
+        } else {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        }
       }
 
       if (tempMatchResults.length > 0) {
-        console.log(tempMatchResults);
         setRowData(tempMatchResults);
       }
     };
 
     fetchMatchResults();
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [userId, isSetDownloaded]);
 
   return (
