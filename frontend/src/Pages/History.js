@@ -327,7 +327,7 @@ const History = (props) => {
           rawRecord.split(", ")[6] +
           " " +
           rawRecord.split(", ")[7];
-        name = rawRecord.split(", ")[0] + " , " + rawRecord.split(", ")[1];
+        name = rawRecord.split(", ")[0].split("—")[1] + " , " + rawRecord.split(", ")[1];
         idNumber = rawRecord.split(", ")[3];
         noticeDate = response.data.noticeDate.split("T")[0];
       }
