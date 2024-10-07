@@ -243,7 +243,8 @@ const Dashboard = () => {
         ) {
           caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-          idNumber = particulars.split(", ")[3];
+          // idNumber = particulars.split(", ")[3];
+          idNumber = extractFirst13DigitNumber(rawRecord);
           name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
           noticeDate = item.noticeDate.split("T")[0];
         } else {
@@ -265,7 +266,8 @@ const Dashboard = () => {
             " " +
             rawRecord.split(", ")[7];
           name = rawRecord.split(", ")[0].split("—")[1] + " , " + rawRecord.split(", ")[1];
-          idNumber = rawRecord.split(", ")[3];
+          // idNumber = rawRecord.split(", ")[3];
+          idNumber = extractFirst13DigitNumber(rawRecord);
           noticeDate = item.noticeDate.split("T")[0];
         }
 
