@@ -12,6 +12,8 @@ const Sidebar = (props) => {
   const [userId, setUserId] = useState(null);
 
   const wrapperRef = useRef(null);
+  const [accountMenu, setAccountMenu] = useState(false);
+  const [importMenu, setImportMenu] = useState(false);
 
   // const handleClick = (event) => {
   //   event.preventDefault();
@@ -59,6 +61,12 @@ const Sidebar = (props) => {
 
   const onClickSidebarMenu = (e) => {
     e.preventDefault();
+    setAccountMenu(!accountMenu);
+  };
+
+  const onClickSidebarImportMenu = (e) => {
+    e.preventDefault();
+    setImportMenu(!importMenu);
   };
 
 
@@ -177,7 +185,7 @@ const Sidebar = (props) => {
                 </li>
               )}
 
-              <li className="slide has-sub">
+              <li className={`slide has-sub ${accountMenu ? "open" : ""}`}>
                 <a
                   href="/#"
                   onClick={(e) => onClickSidebarMenu(e)}
@@ -187,7 +195,7 @@ const Sidebar = (props) => {
                   <span className="side-menu__label">Accounts</span>
                   <i className="fe fe-chevron-right side-menu__angle"></i>
                 </a>
-                <ul className="slide-menu child1">
+                <ul className="slide-menu child1" style={{display: accountMenu ? 'block' : 'none'}}>
                   <li className="slide side-menu__label1">
                     <a href="/#" onClick={(e) => onClickSidebarMenu(e)}>
                       Accounts
@@ -239,19 +247,19 @@ const Sidebar = (props) => {
                 </li>
               )}
               {role && role === "Superadmin" && (
-                <li className="slide has-sub">
+                <li className={`slide has-sub ${importMenu ? "open" : ""}`}>
                   <a
                     href="/#"
-                    onClick={(e) => onClickSidebarMenu(e)}
+                    onClick={(e) => onClickSidebarImportMenu(e)}
                     className="side-menu__item"
                   >
                     <i className="bi bi-arrow-down-square side-menu__icon"></i>
                     <span className="side-menu__label">Import</span>
                     <i className="fe fe-chevron-right side-menu__angle"></i>
                   </a>
-                  <ul className="slide-menu child1">
+                  <ul className="slide-menu child1" style={{display: importMenu ? 'block' : 'none'}}>
                     <li className="slide side-menu__label1">
-                      <a href="/#" onClick={(e) => onClickSidebarMenu(e)}>
+                      <a href="/#" onClick={(e) => onClickSidebarImportMenu(e)}>
                         Import
                       </a>
                     </li>

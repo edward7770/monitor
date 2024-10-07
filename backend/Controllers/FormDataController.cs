@@ -274,26 +274,67 @@ namespace backend.Controllers
                 // Split rawRecord by (2) to extract caseNumber and particulars
                 caseNumber = rawRecord.Split("(2)")[0].Replace("—", "");
                 particulars = rawRecord.Split("(2)")[1].Split("(3)")[0];
+                idNumber = ExtractFirst13DigitNumber(rawRecord);
 
                 // Extract idNumber and name from particulars
                 string[] particularsArray = particulars.Split(", ");
                 if (particularsArray.Length > 3)
                 {
-                    idNumber = particularsArray[3];
-                    name = particularsArray[0] + " , " + particularsArray[1];
+                    name = Regex.Replace(particularsArray[0], @"[^a-zA-Z\s]", "") + " , " + Regex.Replace(particularsArray[1], @"[^a-zA-Z\s]", "");
+
+                    if(idNumber == null)
+                    {
+                        idNumber = particularsArray[3];
+                    }
                 }
+
             }
             else
             {
                 // Fallback logic if rawRecord doesn't contain all sections
                 string[] rawRecordArray = rawRecord.Split(", ");
+                idNumber = ExtractFirst13DigitNumber(rawRecord);
+                if(rawRecordArray[0].Contains("—"))
+                {
+                    caseNumber = rawRecordArray[0].Split("—")[0];
+                } else
+                {
+                    var pattern = @"^(\d{1,6}\/\d{1,4})";
+                    caseNumber = rawRecordArray[0];
+                    var match = Regex.Match(caseNumber, pattern);
+                    if (match.Success)
+                    {
+                        caseNumber = match.Groups[1].Value;
+                    }
+                }
+
+                if(rawRecordArray.Length >= 2)
+                {
+                    name = Regex.Replace(rawRecordArray[0].Split("—").Last(), @"[^a-zA-Z\s]", "")  + " , " + Regex.Replace(rawRecordArray[1], @"[^a-zA-Z\s]", "");
+                }
+
+                
                 if (rawRecordArray.Length >= 8)
                 {
-                    caseNumber = rawRecordArray[0];
-                    particulars = string.Join(" ", rawRecordArray.Take(8));
-                    name = rawRecordArray[0].Split("—").Last() + " , " + rawRecordArray[1];
-                    idNumber = rawRecordArray[3];
+                    // caseNumber = rawRecordArray[0];
+
+                    if(rawRecordArray[0].Contains("(2)") && rawRecordArray[0].Contains("(3"))
+                    {
+                        particulars = rawRecord.Split("(2)")[1].Split("(3")[0];
+                    } else
+                    {
+                        particulars = name + ", " + string.Join(", ", rawRecordArray.Skip(2).Take(5));
+                    }
+
+                    if(idNumber == null)
+                    {
+                        idNumber = rawRecordArray[3];
+                    }
+                } else
+                {
+                    particulars = rawRecord;
                 }
+
             }
 
             var itemObject = new XJ193
@@ -363,7 +404,7 @@ namespace backend.Controllers
                         var nameParts = particulars.Split(", ");
                         if (nameParts.Length >= 2)
                         {
-                            name = $"{nameParts[0]} , {nameParts[1].Split(" (")[0]}"; // Extract name
+                            name = $"{nameParts[0]} , {nameParts[1].Split(" (")[0].Replace(" ", "")}"; // Extract name
                         }
                         string afterSection3 = splitBySection3[1];
 
