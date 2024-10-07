@@ -14,17 +14,12 @@ const ImportHistory = () => {
   const DownloadCellRenderer = (params) => {
     let processProgress = 0;
     processProgress = ((params.data.progress / params.data.records) * 100).toFixed(2);
-    let endDate=  new Date(params.data.endDate).toISOString().split("T")[0] +
-    " " +
-    new Date(params.data.endDate)
-      .toISOString()
-      .split("T")[1]
-      .split(".")[0]
+
     return (
       <div style={{ display: "flex", alignItems: "center"}}>
         {params.data.records === params.data.progress ? (
           <>
-            {endDate}
+            {params.data.endDate}
           </>
         ) : (
           <div className="flex w-full" style={{flexDirection: 'column', justifyContent: 'center'}}>
