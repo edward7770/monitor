@@ -121,6 +121,7 @@ builder.Services.AddScoped<IClientTransactionRepository, ClientTransactionReposi
 builder.Services.AddScoped<IClientPaymentRepository, ClientPaymentRepository>();
 builder.Services.AddScoped<ISearchLogRepository, SearchLogRepository>();
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
+builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IMonthlyBillCalculationServiceRepository, MonthlyBillCalculationService>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();

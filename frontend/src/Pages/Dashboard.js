@@ -244,11 +244,13 @@ const Dashboard = () => {
           caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
           idNumber = particulars.split(", ")[3];
-          name = particulars.split(", ")[1];
+          name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
           noticeDate = item.noticeDate.split("T")[0];
         } else {
           caseNumber = rawRecord.split(", ")[0];
           particulars =
+            rawRecord.split(", ")[0] +
+            " " +
             rawRecord.split(", ")[1] +
             " " +
             rawRecord.split(", ")[2] +
@@ -262,7 +264,7 @@ const Dashboard = () => {
             rawRecord.split(", ")[6] +
             " " +
             rawRecord.split(", ")[7];
-          name = rawRecord.split(", ")[1];
+          name = rawRecord.split(", ")[0].split("—")[1] + " , " + rawRecord.split(", ")[1];
           idNumber = rawRecord.split(", ")[3];
           noticeDate = item.noticeDate.split("T")[0];
         }
@@ -313,7 +315,7 @@ const Dashboard = () => {
           caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
           particulars = rawRecord.split("(2)")[1].split("(3)")[0];
           idNumber = extractFirst13DigitNumber(rawRecord);
-          name = particulars.split(", ")[1].split(" (")[0];
+          name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
           description = item.rawRecord
             .split("(3)")[1]
             .split("(4)")[0]
@@ -323,12 +325,12 @@ const Dashboard = () => {
             .split("(4)")[1]
             .split("(5)")[0]
             .replace(/;/g, "");
-          period = rawRecord.split("(5)")[1].split("(6)")[0];
+          period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
           advertiserDetails = item.rawRecord.split("(6)")[1];
           executorName = advertiserDetails.split("; ")[0];
           if (advertiserDetails.includes("Tel: ")) {
             executorPhone = advertiserDetails.split("Tel: ")[1];
-            executorPhone = executorPhone.trim();
+            executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
           }
 
           executorEmail = extractEmail(advertiserDetails)
@@ -340,7 +342,7 @@ const Dashboard = () => {
           }
           if (rawRecord.includes("(3)")) {
             particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-            name = particulars.split(", ")[1].split(" (")[0];
+            name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
           }
           if (rawRecord.includes("(4)" && rawRecord.includes("(3)"))) {
             description = item.rawRecord
@@ -355,12 +357,12 @@ const Dashboard = () => {
               .replace(/;/g, "");
           }
           if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
-            period = rawRecord.split("(5)")[1].split("(6)")[0];
+            period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
             advertiserDetails = item.rawRecord.split("(6)")[1];
             executorName = advertiserDetails.split("; ")[0];
             if (advertiserDetails.includes("Tel: ")) {
               executorPhone = advertiserDetails.split("Tel: ")[1];
-              executorPhone = executorPhone.trim();
+              executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
             }
             executorEmail = extractEmail(advertiserDetails)
               ?.trim()

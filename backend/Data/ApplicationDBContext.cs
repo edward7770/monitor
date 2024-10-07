@@ -28,6 +28,9 @@ namespace backend.Data
         public DbSet<ClientPayment> ClientPayments { get; set; }
         public DbSet<SearchLog> SearchLogs { get; set; }
         public DbSet<Pricing> Pricings { get; set; }
+        public DbSet<XJ187> XJ187s { get; set; }
+        public DbSet<XJ193> XJ193s { get; set; }
+        public DbSet<Import> Imports { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -46,7 +49,13 @@ namespace backend.Data
                         NormalizedName = "CLIENT"
                     }
                 );
-            
+
+            builder.Entity<XJ193>()
+                .ToTable("xJ193");
+
+            builder.Entity<XJ187>()
+                .ToTable("xJ187");
+
             builder.Entity<Pricing>().HasData(
                 new Pricing { Id = 1, List = 1, ListName = "Default", Tier = 1, Description = "1-99", Start = 1, End = 99, Price = 199 },
                 new Pricing { Id = 2, List = 1, ListName = "Default", Tier = 2, Description = "100-199", Start = 100, End = 199, Price = 189 },
@@ -103,7 +112,7 @@ namespace backend.Data
                 .HasOne(c => c.Pricing)
                 .WithMany()
                 .HasForeignKey(c => c.PricingId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
