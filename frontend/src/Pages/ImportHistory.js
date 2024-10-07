@@ -139,8 +139,7 @@ const ImportHistory = () => {
           tempImportResults.push(matchItem);
         });
 
-        var processingIndex = response.map(item => item.endDate).indexOf(null);
-        if(processingIndex > -1) {
+        if(response[response.length - 1].endDate === null) {
           if (intervalId) {
             clearInterval(intervalId);
           }
