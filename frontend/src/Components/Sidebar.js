@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getUserAPI } from "../Services/AuthService";
 import { useTranslation } from "react-i18next";
 import { runMonitorActionAPI } from "../Services/MonitorService";
+import { runImport187API, runImport193API } from "../Services/FormDataService";
 import { toast } from "react-toastify";
 
 const Sidebar = (props) => {
@@ -27,9 +28,39 @@ const Sidebar = (props) => {
       });
   };
 
+  const clickImportEstate193 = async (e) => {
+    e.preventDefault();
+
+    await runImport193API({userId: userId, type: "J193"})
+    .then((res) => {
+      if(res) {
+        toast.success("Importing J193 Form records started successfully!");
+      }
+    })
+    .catch((err) => {
+      toast.success("Import was failed!");
+    });
+  };
+
+  const clickImportEstate187 = async (e) => {
+    e.preventDefault();
+
+    await runImport187API({userId: userId, type: "J187"})
+    .then((res) => {
+      if(res) {
+        toast.success("Importing J187 Form records started successfully!");
+      }
+    })
+    .catch((err) => {
+      toast.success("Import was failed!");
+    });
+
+  };
+
   const onClickSidebarMenu = (e) => {
     e.preventDefault();
   };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -205,6 +236,52 @@ const Sidebar = (props) => {
                     <i className="bi bi-layout-text-window side-menu__icon"></i>
                     <span className="side-menu__label">Price List</span>
                   </Link>
+                </li>
+              )}
+              {role && role === "Superadmin" && (
+                <li className="slide has-sub">
+                  <a
+                    href="/#"
+                    onClick={(e) => onClickSidebarMenu(e)}
+                    className="side-menu__item"
+                  >
+                    <i className="bi bi-arrow-down-square side-menu__icon"></i>
+                    <span className="side-menu__label">Import</span>
+                    <i className="fe fe-chevron-right side-menu__angle"></i>
+                  </a>
+                  <ul className="slide-menu child1">
+                    <li className="slide side-menu__label1">
+                      <a href="/#" onClick={(e) => onClickSidebarMenu(e)}>
+                        Import
+                      </a>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/#"
+                        className="side-menu__item"
+                        onClick={(e) => clickImportEstate193(e)}
+                      >
+                        Import Estate 193
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/#"
+                        className="side-menu__item"
+                        onClick={(e) => clickImportEstate187(e)}
+                      >
+                        Import Estate 187
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/import-history"
+                        className="side-menu__item"
+                      >
+                        Import History
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
               )}
             </ul>

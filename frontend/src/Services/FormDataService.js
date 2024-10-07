@@ -63,6 +63,21 @@ export const createSearchLogAPI = async (data) => {
   return res;
 };
 
+export const runImport193API = async (data) => {
+  const res = await axios.post(api + "data/import193", data);
+  return res;
+};
+
+export const runImport187API = async (data) => {
+  const res = await axios.post(api + "data/import187", data);
+  return res;
+};
+
+export const getAllImportsAPI = async () => {
+  const res = await axios.get(api + "data/import");
+  return res.data; 
+}
+
 export const getSearchLogsAPI = async () => {
   try {
     const res = await axios.get(api + "data/searchLog/");

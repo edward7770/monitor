@@ -21,6 +21,22 @@ namespace backend.Repository
             _context = context;
         }
 
+        public async Task<List<XJ187>> AddBulkFormData187Async(List<XJ187> xJ187s)
+        {
+            await _context.XJ187s.AddRangeAsync(xJ187s);
+            await _context.SaveChangesAsync();
+
+            return xJ187s;
+        }
+
+        public async Task<List<XJ193>> AddBulkFormData193Async(List<XJ193> xJ193s)
+        {
+            await _context.XJ193s.AddRangeAsync(xJ193s);
+            await _context.SaveChangesAsync();
+
+            return xJ193s;
+        }
+
         public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId, string idNumber)
         {
             var matchFormRecords = new List<MatchResult>();
@@ -184,6 +200,42 @@ namespace backend.Repository
             var formRecord = await _formDataContext.J193FormRecords.FirstOrDefaultAsync(x => x.RecordId == RecordId);
 
             return formRecord;
+        }
+
+        public async Task<List<J187FormRecord>> GetImportFormData187Async()
+        {
+            var maxDateCreated = await _context.XJ187s.MaxAsync(x => (DateTime?)x.DateCreated);
+
+            List<J187FormRecord> data = new List<J187FormRecord>();
+
+            if (maxDateCreated == null)
+            {
+                data = await _formDataContext.J187FormRecords.OrderBy(x => x.DateCreated).ToListAsync();
+            }
+            else
+            {
+                data = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > maxDateCreated).OrderBy(x => x.DateCreated).ToListAsync();
+            }
+
+            return data;
+        }
+
+        public async Task<List<J193FormRecord>> GetImportFormData193Async()
+        {
+            var maxDateCreated = await _context.XJ193s.MaxAsync(x => (DateTime?)x.DateCreated);
+
+            List<J193FormRecord> data = new List<J193FormRecord>();
+
+            if (maxDateCreated == null)
+            {
+                data = await _formDataContext.J193FormRecords.OrderBy(x => x.DateCreated).ToListAsync();
+            }
+            else
+            {
+                data = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > maxDateCreated).OrderBy(x => x.DateCreated).ToListAsync();
+            }
+
+            return data;
         }
 
         public async Task<List<J187FormRecord>> GetLatestForm187Async()

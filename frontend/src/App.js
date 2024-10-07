@@ -32,6 +32,7 @@ import CreditLimit from "./Pages/CreditLimit";
 import SearchLogs from "./Pages/SeachLogs";
 import Pricing from "./Pages/Pricing";
 import AdminPricesList from "./Pages/AdminPricesList";
+import ImportHistory from "./Pages/ImportHistory";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -129,6 +130,7 @@ function App() {
               <Route path="/search-logs" element={<ProtectedSuperadminRoute><SearchLogs/></ProtectedSuperadminRoute>} />
               <Route path="/pricing-menu" element={<ProtectedRoute><Pricing/></ProtectedRoute>} />
               <Route path="/price-list" element={<ProtectedSuperadminRoute><AdminPricesList/></ProtectedSuperadminRoute>} />
+              <Route path="/import-history" element={<ProtectedSuperadminRoute><ImportHistory/></ProtectedSuperadminRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

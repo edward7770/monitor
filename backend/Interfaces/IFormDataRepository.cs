@@ -16,5 +16,9 @@ namespace backend.Interfaces
         Task<List<J193FormRecord>> GetLatestForm193Async();
         Task<J187FormRecord> GetForm187ByRecordIdAsync(Guid RecordId);
         Task<J193FormRecord> GetForm193ByRecordIdAsync(Guid RecordId);
+        Task<List<J187FormRecord>> GetImportFormData187Async();
+        Task<List<J193FormRecord>> GetImportFormData193Async();
+        Task<List<XJ193>> AddBulkFormData193Async(List<XJ193> xJ193s);
+        Task<List<XJ187>> AddBulkFormData187Async(List<XJ187> xJ187s);
     }
 }
