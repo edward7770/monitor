@@ -51,10 +51,14 @@ namespace backend.Data
                 );
 
             builder.Entity<XJ193>()
-                .ToTable("xJ193");
+                .ToTable("xJ193")
+                .HasIndex(x => x.IdNo)
+                .HasDatabaseName("IX_XJ193_IdNo");
 
             builder.Entity<XJ187>()
-                .ToTable("xJ187");
+                .ToTable("xJ187")
+                .HasIndex(x => x.IdNo)
+                .HasDatabaseName("IX_XJ187_IdNo");
 
             builder.Entity<Pricing>().HasData(
                 new Pricing { Id = 1, List = 1, ListName = "Default", Tier = 1, Description = "1-99", Start = 1, End = 99, Price = 199 },

@@ -8,16 +8,11 @@ namespace backend.Dtos.FormData
 {
     public class FormRecordX193Dto
     {
-        public Guid Fk_RecordId { get; set; }
-        public string IdNo { get; set; }
+        public string IdNumber { get; set; }
         public string CaseNumber { get; set; }
         public string Name { get; set; }
         public string Particulars { get; set; }
         public DateOnly NoticeDate { get; set; }
         public string RawRecord { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime DateCreated { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime DateImported { get; set; }
     }
 }

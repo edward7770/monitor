@@ -46,18 +46,18 @@ const groupByMatchedStep = (arr) => {
   return Object.values(grouped);
 };
 
-function extractEmail(text) {
-  const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
-  const match = text.match(emailPattern);
+// function extractEmail(text) {
+//   const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+//   const match = text.match(emailPattern);
 
-  return match ? match[0] : null;
-}
+//   return match ? match[0] : null;
+// }
 
-function extractFirst13DigitNumber(str) {
-  const match = str.match(/\b\d{13}\b/);
+// function extractFirst13DigitNumber(str) {
+//   const match = str.match(/\b\d{13}\b/);
 
-  return match ? match[0] : null;
-}
+//   return match ? match[0] : null;
+// }
 
 function arrayToCSV(array) {
   if (array.length === 0) return "";
@@ -100,7 +100,7 @@ function arrayToCSV(array) {
 
 const downloadCSV = (array, filename = "Monitor.xlsx") => {
   const csvData = arrayToCSV(array);
-  console.log(csvData);
+
   const workbook = XLSX.utils.book_new();
 
   const worksheet1 = XLSX.utils.aoa_to_sheet(csvData.csv187Rows);
@@ -163,24 +163,23 @@ const History = (props) => {
     let matchResultsIds = [];
     await Promise.all(
       selectedMatchResult.fileDatas[index].map(async (item) => {
-        let formRecord = {};
+        // let formRecord = {};
         let extractedRecord = {};
 
         matchResultsIds.push({ id: item.id });
 
         if (item.type === "J193") {
-          formRecord = await getForm193RecordByRecordIdAPI(item.recordId);
-          extractedRecord = extractForm193Data(formRecord);
+          extractedRecord = await getForm193RecordByRecordIdAPI(item.recordId);
+          // extractedRecord = extractForm193Data(formRecord);
         } else {
-          formRecord = await getForm187RecordByRecordIdAPI(item.recordId);
-          extractedRecord = extractForm187Data(formRecord);
+          extractedRecord = await getForm187RecordByRecordIdAPI(item.recordId);
+          // extractedRecord = extractForm187Data(formRecord);
         }
 
         // item.downloadDate =
         //   new Date().toISOString().split("T")[0] +
         //   " " +
         //   new Date().toISOString().split("T")[1].split(".")[0];
-
         extractedCSVRecords.push(extractedRecord);
       })
     );
@@ -216,9 +215,7 @@ const History = (props) => {
 
       await createClientTransactionAPI(clientTransactionObj)
         .then(async (res) => {
-          console.log(res);
           if (res) {
-            console.log(matchResultsIds);
             var response = await updateDownloadDates(matchResultsIds);
 
             if (response) {
@@ -287,167 +284,167 @@ const History = (props) => {
     );
   };
 
-  const extractForm193Data = (response) => {
-    if (response.data) {
-      var rawRecord = response.data.rawRecord.replace(/-/g, "");
-      let [caseNumber, idNumber, name, particulars, noticeDate] = [
-        "",
-        "",
-        "",
-        "",
-        "",
-      ];
-      if (
-        rawRecord.includes("(2)") &&
-        rawRecord.includes("(3)") &&
-        rawRecord.includes("(4)") &&
-        rawRecord.includes("(5)") &&
-        rawRecord.includes("(6)")
-      ) {
-        caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
-        particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-        idNumber = particulars.split(", ")[3];
-        name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
-        noticeDate = response.data.noticeDate.split("T")[0];
-      } else {
-        caseNumber = rawRecord.split(", ")[0];
-        particulars =
-          rawRecord.split(", ")[0] +
-          " " +
-          rawRecord.split(", ")[1] +
-          " " +
-          rawRecord.split(", ")[2] +
-          " " +
-          rawRecord.split(", ")[3] +
-          " " +
-          rawRecord.split(", ")[4] +
-          " " +
-          rawRecord.split(", ")[5] +
-          " " +
-          rawRecord.split(", ")[6] +
-          " " +
-          rawRecord.split(", ")[7];
-        name = rawRecord.split(", ")[0].split("—")[1] + " , " + rawRecord.split(", ")[1];
-        idNumber = rawRecord.split(", ")[3];
-        noticeDate = response.data.noticeDate.split("T")[0];
-      }
+  // const extractForm193Data = (response) => {
+  //   if (response.data) {
+  //     var rawRecord = response.data.rawRecord.replace(/-/g, "");
+  //     let [caseNumber, idNumber, name, particulars, noticeDate] = [
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //     ];
+  //     if (
+  //       rawRecord.includes("(2)") &&
+  //       rawRecord.includes("(3)") &&
+  //       rawRecord.includes("(4)") &&
+  //       rawRecord.includes("(5)") &&
+  //       rawRecord.includes("(6)")
+  //     ) {
+  //       caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
+  //       particulars = rawRecord.split("(2)")[1].split("(3)")[0];
+  //       idNumber = particulars.split(", ")[3];
+  //       name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1];
+  //       noticeDate = response.data.noticeDate.split("T")[0];
+  //     } else {
+  //       caseNumber = rawRecord.split(", ")[0];
+  //       particulars =
+  //         rawRecord.split(", ")[0] +
+  //         " " +
+  //         rawRecord.split(", ")[1] +
+  //         " " +
+  //         rawRecord.split(", ")[2] +
+  //         " " +
+  //         rawRecord.split(", ")[3] +
+  //         " " +
+  //         rawRecord.split(", ")[4] +
+  //         " " +
+  //         rawRecord.split(", ")[5] +
+  //         " " +
+  //         rawRecord.split(", ")[6] +
+  //         " " +
+  //         rawRecord.split(", ")[7];
+  //       name = rawRecord.split(", ")[0].split("—")[1] + " , " + rawRecord.split(", ")[1];
+  //       idNumber = rawRecord.split(", ")[3];
+  //       noticeDate = response.data.noticeDate.split("T")[0];
+  //     }
 
-      let itemObject = {
-        caseNumber: caseNumber,
-        idNumber: idNumber,
-        name: name,
-        particulars: particulars,
-        noticeDate: noticeDate,
-        rawRecord: rawRecord,
-      };
+  //     let itemObject = {
+  //       caseNumber: caseNumber,
+  //       idNumber: idNumber,
+  //       name: name,
+  //       particulars: particulars,
+  //       noticeDate: noticeDate,
+  //       rawRecord: rawRecord,
+  //     };
 
-      return itemObject;
-    }
-  };
+  //     return itemObject;
+  //   }
+  // };
 
-  const extractForm187Data = (response) => {
-    if (response.data) {
-      var rawRecord = response.data.rawRecord.replace(/-/g, "");
-      let [
-        caseNumber,
-        idNumber,
-        name,
-        particulars,
-        noticeDate,
-        description,
-        spousedetails,
-        period,
-        executorName,
-        executorPhone,
-        executorEmail,
-        advertiserDetails,
-      ] = ["", "", "", "", "", "", "", "", "", "", "", ""];
-      if (
-        rawRecord.includes("(2)") &&
-        rawRecord.includes("(3)") &&
-        rawRecord.includes("(4)") &&
-        rawRecord.includes("(5)") &&
-        rawRecord.includes("(6)")
-      ) {
-        caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
-        particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-        idNumber = extractFirst13DigitNumber(rawRecord);
-        name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
-        description = response.data.rawRecord
-          .split("(3)")[1]
-          .split("(4)")[0]
-          .replace(/;/g, "");
-        noticeDate = response.data.noticeDate.split("T")[0];
-        spousedetails = rawRecord
-          .split("(4)")[1]
-          .split("(5)")[0]
-          .replace(/;/g, "");
-        period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
-        advertiserDetails = response.data.rawRecord.split("(6)")[1];
-        executorName = advertiserDetails.split("; ")[0];
-        if (advertiserDetails.includes("Tel: ")) {
-          executorPhone = advertiserDetails.split("Tel: ")[1];
-          executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
-        }
+  // const extractForm187Data = (response) => {
+  //   if (response.data) {
+  //     var rawRecord = response.data.rawRecord.replace(/-/g, "");
+  //     let [
+  //       caseNumber,
+  //       idNumber,
+  //       name,
+  //       particulars,
+  //       noticeDate,
+  //       description,
+  //       spousedetails,
+  //       period,
+  //       executorName,
+  //       executorPhone,
+  //       executorEmail,
+  //       advertiserDetails,
+  //     ] = ["", "", "", "", "", "", "", "", "", "", "", ""];
+  //     if (
+  //       rawRecord.includes("(2)") &&
+  //       rawRecord.includes("(3)") &&
+  //       rawRecord.includes("(4)") &&
+  //       rawRecord.includes("(5)") &&
+  //       rawRecord.includes("(6)")
+  //     ) {
+  //       caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
+  //       particulars = rawRecord.split("(2)")[1].split("(3)")[0];
+  //       idNumber = extractFirst13DigitNumber(rawRecord);
+  //       name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
+  //       description = response.data.rawRecord
+  //         .split("(3)")[1]
+  //         .split("(4)")[0]
+  //         .replace(/;/g, "");
+  //       noticeDate = response.data.noticeDate.split("T")[0];
+  //       spousedetails = rawRecord
+  //         .split("(4)")[1]
+  //         .split("(5)")[0]
+  //         .replace(/;/g, "");
+  //       period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
+  //       advertiserDetails = response.data.rawRecord.split("(6)")[1];
+  //       executorName = advertiserDetails.split("; ")[0];
+  //       if (advertiserDetails.includes("Tel: ")) {
+  //         executorPhone = advertiserDetails.split("Tel: ")[1];
+  //         executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
+  //       }
 
-        executorEmail = extractEmail(advertiserDetails)
-          ?.trim()
-          .replace(/;/g, "");
-      } else {
-        if (rawRecord.includes("(2)")) {
-          caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
-        }
-        if (rawRecord.includes("(3)")) {
-          particulars = rawRecord.split("(2)")[1].split("(3)")[0];
-          name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
-        }
-        if (rawRecord.includes("(4)" && rawRecord.includes("(3)"))) {
-          description = response.data.rawRecord
-            .split("(3)")[1]
-            .split("(4)")[0]
-            .replace(/;/g, "");
-        }
-        if (rawRecord.includes("(5)") && rawRecord.includes("(4)")) {
-          spousedetails = rawRecord
-            .split("(4)")[1]
-            .split("(5)")[0]
-            .replace(/;/g, "");
-        }
-        if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
-          period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
-          advertiserDetails = response.data.rawRecord.split("(6)")[1];
-          executorName = advertiserDetails.split("; ")[0];
-          if (advertiserDetails.includes("Tel: ")) {
-            executorPhone = advertiserDetails.split("Tel: ")[1];
-            executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
-          }
-          executorEmail = extractEmail(advertiserDetails)
-            ?.trim()
-            .replace(/;/g, "");
-        }
+  //       executorEmail = extractEmail(advertiserDetails)
+  //         ?.trim()
+  //         .replace(/;/g, "");
+  //     } else {
+  //       if (rawRecord.includes("(2)")) {
+  //         caseNumber = rawRecord.split("(2)")[0].replace(/—/g, "");
+  //       }
+  //       if (rawRecord.includes("(3)")) {
+  //         particulars = rawRecord.split("(2)")[1].split("(3)")[0];
+  //         name = particulars.split(", ")[0] + " , " + particulars.split(", ")[1].split(" (")[0];
+  //       }
+  //       if (rawRecord.includes("(4)" && rawRecord.includes("(3)"))) {
+  //         description = response.data.rawRecord
+  //           .split("(3)")[1]
+  //           .split("(4)")[0]
+  //           .replace(/;/g, "");
+  //       }
+  //       if (rawRecord.includes("(5)") && rawRecord.includes("(4)")) {
+  //         spousedetails = rawRecord
+  //           .split("(4)")[1]
+  //           .split("(5)")[0]
+  //           .replace(/;/g, "");
+  //       }
+  //       if (rawRecord.includes("(5)") && rawRecord.includes("(6)")) {
+  //         period = rawRecord.split("(5)")[1].split("(6)")[0].replace(".", "");
+  //         advertiserDetails = response.data.rawRecord.split("(6)")[1];
+  //         executorName = advertiserDetails.split("; ")[0];
+  //         if (advertiserDetails.includes("Tel: ")) {
+  //           executorPhone = advertiserDetails.split("Tel: ")[1];
+  //           executorPhone = executorPhone.trim().replace(/[^0-9\s]/g, "");
+  //         }
+  //         executorEmail = extractEmail(advertiserDetails)
+  //           ?.trim()
+  //           .replace(/;/g, "");
+  //       }
 
-        idNumber = extractFirst13DigitNumber(rawRecord);
-        noticeDate = response.data.noticeDate.split("T")[0];
-      }
+  //       idNumber = extractFirst13DigitNumber(rawRecord);
+  //       noticeDate = response.data.noticeDate.split("T")[0];
+  //     }
 
-      let itemObject = {
-        caseNumber: caseNumber,
-        idNumber: idNumber,
-        name: name,
-        particulars: particulars,
-        noticeDate: noticeDate,
-        description,
-        spousedetails,
-        period,
-        executorName,
-        executorPhone,
-        executorEmail,
-        rawRecord: rawRecord,
-      };
+  //     let itemObject = {
+  //       caseNumber: caseNumber,
+  //       idNumber: idNumber,
+  //       name: name,
+  //       particulars: particulars,
+  //       noticeDate: noticeDate,
+  //       description,
+  //       spousedetails,
+  //       period,
+  //       executorName,
+  //       executorPhone,
+  //       executorEmail,
+  //       rawRecord: rawRecord,
+  //     };
 
-      return itemObject;
-    }
-  };
+  //     return itemObject;
+  //   }
+  // };
 
   const columnDefs = [
     {

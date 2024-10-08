@@ -50,12 +50,12 @@ export const getForm187RecordsAPI = async (
 
 export const getForm193RecordByRecordIdAPI = async (recordId) => {
   const res = await axios.get(api + "data/form193/" + recordId);
-  return res;
+  return res.data;
 };
 
 export const getForm187RecordByRecordIdAPI = async (recordId) => {
   const res = await axios.get(api + "data/form187/" + recordId);
-  return res;
+  return res.data;
 };
 
 export const createSearchLogAPI = async (data) => {
