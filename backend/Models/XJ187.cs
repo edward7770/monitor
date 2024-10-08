@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace backend.Models
     {
         public Guid Id { get; set; }
         public Guid Fk_RecordId { get; set; }
+        [StringLength(255)]
         public string IdNo { get; set; }
         public string CaseNumber { get; set; }
         public string Name { get; set; }
