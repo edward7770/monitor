@@ -357,8 +357,8 @@ namespace backend.Controllers
         public string ExtractEmail(string text)
         {
             // Email regex pattern
-            const string emailPattern = @"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b";
-            var match = Regex.Match(text, emailPattern);
+            const string emailPattern = @"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}";
+            var match = Regex.Match(text, emailPattern, RegexOptions.IgnoreCase);
 
             return match.Success ? match.Value : null;
         }
@@ -415,25 +415,32 @@ namespace backend.Controllers
                             string afterSection4 = splitBySection4[1];
 
                             string[] splitBySection5 = afterSection4.Split("(5)");
+                            string[] splitBySection51 = form187.RawRecord.Split("(5)");
                             if (splitBySection5.Length > 1)
                             {
                                 spousedetails = splitBySection5[0].Replace(";", "").Trim(); // Extract spouse details
-                                string afterSection5 = splitBySection5[1];
+                                string afterSection5 = splitBySection51[1];
 
                                 string[] splitBySection6 = afterSection5.Split("(6)");
+                                string[] splitBySection61 = form187.RawRecord.Split("(6)");
                                 if (splitBySection6.Length > 1)
                                 {
                                     period = splitBySection6[0].Replace(".", "").Trim(); // Extract period
-                                    advertiserDetails = splitBySection6[1].Trim(); // Extract advertiser details
+                                    advertiserDetails = splitBySection61[1].Trim(); // Extract advertiser details
 
                                     executorName = advertiserDetails.Split("; ")[0]; // Extract executor name
 
-                                    if (advertiserDetails.Contains("Tel: "))
+                                    if (form187.RawRecord.Contains("Tel:"))
                                     {
-                                        executorPhone = Regex.Replace(advertiserDetails.Split("Tel: ")[1].Replace(".", "").Trim(), "[^0-9]", ""); // Extract phone number
+                                        // executorPhone = Regex.Replace(form187.RawRecord.Split("Tel:")[1].Replace(".", "").Trim(), "[^0-9]", ""); // Extract phone number
+                                        var match = Regex.Match(form187.RawRecord, @"Tel:\s*([\d\s]+)");
+                                        if (match.Success)
+                                        {
+                                            executorPhone = match.Groups[1].Value;
+                                        }
                                     }
 
-                                    executorEmail = ExtractEmail(advertiserDetails)?.Trim().Replace(";", ""); // Extract email
+                                    executorEmail = ExtractEmail(form187.RawRecord)?.Trim().Replace(";", ""); // Extract email
                                 }
                             }
                         }

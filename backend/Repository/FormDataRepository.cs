@@ -37,38 +37,99 @@ namespace backend.Repository
             return xJ193s;
         }
 
-        public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId, string idNumber)
+        // public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId, string idNumber)
+        // {
+        //     var matchFormRecords = new List<MatchResult>();
+
+        //     try
+        //     {
+        //         // Check if IdNumber is null or empty before proceeding
+        //         if (string.IsNullOrEmpty(idNumber))
+        //         {
+        //             return matchFormRecords; // Return empty list as no IdNumber is provided
+        //         }
+
+        //         // Retrieve the current date only once
+        //         var currentDate = DateTime.Now;
+
+        //         // Query both J187 and J193 records with filters applied
+        //         var form187Records = await _context.XJ187s
+        //             .Where(record => record.IdNo == idNumber)
+        //             .ToListAsync();
+
+        //         var form193Records = await _context.XJ193s
+        //             .Where(record => record.IdNo == idNumber)
+        //             .ToListAsync();
+
+        //         // Map J187 records to MatchResult
+        //         matchFormRecords.AddRange(form187Records.Select(form187 => new MatchResult
+        //         {
+        //             MatchId = matchId,
+        //             IdNumber = idNumber,
+        //             Type = "J187",
+        //             RecordId = form187.Fk_RecordId,
+        //             RawRecord = form187.RawRecord,
+        //             DateMatched = currentDate,
+        //             MatchedStep = 0
+        //         }));
+
+        //         // Map J193 records to MatchResult
+        //         matchFormRecords.AddRange(form193Records.Select(form193 => new MatchResult
+        //         {
+        //             MatchId = matchId,
+        //             IdNumber = idNumber,
+        //             Type = "J193",
+        //             RecordId = form193.Fk_RecordId,
+        //             RawRecord = form193.RawRecord,
+        //             DateMatched = currentDate,
+        //             MatchedStep = 0
+        //         }));
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // Log the exception if a logger is available (assuming _logger is injected)
+
+        //         // Optionally rethrow or handle the exception
+        //         throw;
+        //     }
+
+        //     return matchFormRecords;
+        // }
+
+        public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId)
         {
             var matchFormRecords = new List<MatchResult>();
 
             try
             {
-                // Check if IdNumber is null or empty before proceeding
-                if (string.IsNullOrEmpty(idNumber))
-                {
-                    return matchFormRecords; // Return empty list as no IdNumber is provided
-                }
-
                 // Retrieve the current date only once
                 var currentDate = DateTime.Now;
 
                 // Query both J187 and J193 records with filters applied
                 var form187Records = await _context.XJ187s
-                    .Where(record => record.IdNo == idNumber)
+                    .Join(_context.MatchDatas,
+                       xJ187 => xJ187.IdNo,
+                       matchData => matchData.IdNumber,
+                       (xJ187, matchData) => new {xJ187, matchData})
+                    .Where(x => x.matchData.MatchId == matchId)
                     .ToListAsync();
 
                 var form193Records = await _context.XJ193s
-                    .Where(record => record.IdNo == idNumber)
+                    .Join(_context.MatchDatas,
+                       xJ193 => xJ193.IdNo,
+                       matchData => matchData.IdNumber,
+                       (xJ193, matchData) => new {xJ193, matchData})
+                    .Where(x => x.matchData.MatchId == matchId)
                     .ToListAsync();
 
                 // Map J187 records to MatchResult
                 matchFormRecords.AddRange(form187Records.Select(form187 => new MatchResult
                 {
                     MatchId = matchId,
-                    IdNumber = idNumber,
+                    IdNumber = form187.matchData.IdNumber,
                     Type = "J187",
-                    RecordId = form187.Fk_RecordId,
-                    RawRecord = form187.RawRecord,
+                    RecordId = form187.xJ187.Fk_RecordId,
+                    RawRecord = form187.xJ187.RawRecord,
                     DateMatched = currentDate,
                     MatchedStep = 0
                 }));
@@ -77,10 +138,10 @@ namespace backend.Repository
                 matchFormRecords.AddRange(form193Records.Select(form193 => new MatchResult
                 {
                     MatchId = matchId,
-                    IdNumber = idNumber,
+                    IdNumber = form193.matchData.IdNumber,
                     Type = "J193",
-                    RecordId = form193.Fk_RecordId,
-                    RawRecord = form193.RawRecord,
+                    RecordId = form193.xJ193.Fk_RecordId,
+                    RawRecord = form193.xJ193.RawRecord,
                     DateMatched = currentDate,
                     MatchedStep = 0
                 }));

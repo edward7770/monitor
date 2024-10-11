@@ -11,7 +11,7 @@ namespace backend.Interfaces
     {
         Task<PagedResult<FormRecordX187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search);
         Task<PagedResult<FormRecordX193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search);
-        Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId, string IdNumber);
+        Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId);
         Task<List<J187FormRecord>> GetLatestForm187Async();
         Task<List<J193FormRecord>> GetLatestForm193Async();
         Task<FormRecordX187Dto> GetForm187ByRecordIdAsync(Guid RecordId);
