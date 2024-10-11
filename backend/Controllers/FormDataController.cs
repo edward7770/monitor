@@ -282,10 +282,10 @@ namespace backend.Controllers
                 {
                     name = Regex.Replace(particularsArray[0], @"[^a-zA-Z\s]", "") + " , " + Regex.Replace(particularsArray[1], @"[^a-zA-Z\s]", "");
 
-                    if(idNumber == null)
-                    {
-                        idNumber = particularsArray[3];
-                    }
+                    // if(idNumber == null)
+                    // {
+                    //     idNumber = particularsArray[3];
+                    // }
                 }
 
             }
@@ -326,10 +326,10 @@ namespace backend.Controllers
                         particulars = name + ", " + string.Join(", ", rawRecordArray.Skip(2).Take(5));
                     }
 
-                    if(idNumber == null)
-                    {
-                        idNumber = rawRecordArray[3];
-                    }
+                    // if(idNumber == null)
+                    // {
+                    //     idNumber = rawRecordArray[3];
+                    // }
                 } else
                 {
                     particulars = rawRecord;
