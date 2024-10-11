@@ -60,7 +60,12 @@ namespace backend.Controllers
             //     BackgroundJob.ContinueWith(jobIds.Last(), () => NotifyClientWhenAllJobsComplete(matchDataRequestDtos[0].MatchId));
             // }
 
-            var jobId = BackgroundJob.Enqueue(() => ProcessMatchDataAsync(matchDataRequestDtos));
+            if(matchDataRequestDtos.Count == 0 || matchDataRequestDtos == null)
+            {
+                return StatusCode(403, "There is no matched records");
+            }
+
+            var jobId = BackgroundJob.Enqueue(() => ProcessMatchDataAsync(matchDataRequestDtos[0].MatchId));
             BackgroundJob.ContinueWith(jobId, () => NotifyClientWhenAllJobsComplete(matchDataRequestDtos[0].MatchId));
 
             // foreach (var matchData in matchDataRequestDtos)
@@ -73,20 +78,15 @@ namespace backend.Controllers
 
         // Background processing method
         [NonAction]
-        public async Task ProcessMatchDataAsync(List<CreateMatchDataRequestDto> matchDataRequestDtos)
+        public async Task ProcessMatchDataAsync(int matchId)
         {
-            int index = 1;
-            
-            foreach (var match in matchDataRequestDtos)
-            {
-                var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(match.MatchId, match.IdNumber);
+            // int index = 1;
 
-                await _matchRepo.UpdateProcessProgressAsync(match.MatchId, index);
+            var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(matchId);
 
-                await _matchResultRepo.AddAsync(filteredRecords);
+            // await _matchRepo.UpdateProcessProgressAsync(match.MatchId, index);
 
-                index++;
-            }
+            await _matchResultRepo.AddAsync(filteredRecords);
         }
 
         [NonAction]
