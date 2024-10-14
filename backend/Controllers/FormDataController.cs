@@ -357,7 +357,7 @@ namespace backend.Controllers
         public string ExtractEmail(string text)
         {
             // Email regex pattern
-            const string emailPattern = @"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}";
+            const string emailPattern = @"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b";
             var match = Regex.Match(text, emailPattern, RegexOptions.IgnoreCase);
 
             return match.Success ? match.Value : null;
@@ -429,6 +429,7 @@ namespace backend.Controllers
                                     advertiserDetails = splitBySection61[1].Trim(); // Extract advertiser details
 
                                     executorName = advertiserDetails.Split("; ")[0]; // Extract executor name
+                                    executorEmail = ExtractEmail(form187.RawRecord)?.Trim().Replace(";", ""); // Extract email
 
                                     if (form187.RawRecord.Contains("Tel:"))
                                     {
@@ -438,9 +439,11 @@ namespace backend.Controllers
                                         {
                                             executorPhone = match.Groups[1].Value;
                                         }
+                                    } else
+                                    {
+                                        executorPhone = form187.RawRecord.Split(executorEmail)[1].Trim().Replace(",", "");
                                     }
 
-                                    executorEmail = ExtractEmail(form187.RawRecord)?.Trim().Replace(";", ""); // Extract email
                                 }
                             }
                         }

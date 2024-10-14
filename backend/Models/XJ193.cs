@@ -11,7 +11,7 @@ namespace backend.Models
     {
         public Guid Id { get; set; }
         public Guid Fk_RecordId { get; set; }
-        [StringLength(255)]
+        [StringLength(50)]
         public string IdNo { get; set; }
         public string CaseNumber { get; set; }
         public string Name { get; set; }

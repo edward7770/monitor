@@ -551,13 +551,7 @@ const History = (props) => {
 
           let matchItem = {
             id: result.id,
-            uploadDate:
-              new Date(result.uploadDate).toISOString().split("T")[0] +
-              " " +
-              new Date(result.uploadDate)
-                .toISOString()
-                .split("T")[1]
-                .split(".")[0],
+            uploadDate: new Date(result.uploadDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
             fileName: result.fileName,
             countIdNumbers: result.records,
             countJ187: countJ187,

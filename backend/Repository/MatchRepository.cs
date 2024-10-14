@@ -36,6 +36,7 @@ namespace backend.Repository
             var matchResults = await _context.Matches
                 .Where(x => x.ClientId == clientId)
                 .Include(s => s.MatchResult)
+                .OrderByDescending(y => y.UploadDate)
                 .Select(x => new MatchWithResultsDto
                 {
                     Id = x.Id,
