@@ -62,8 +62,8 @@ const groupByMatchedStep = (arr) => {
 function arrayToCSV(array) {
   if (array.length === 0) return "";
   const J187headers = [
-    "Case Number",
     "Id Number",
+    "Case Number",
     "Name",
     "Particulars",
     "Notice Date",
@@ -76,8 +76,8 @@ function arrayToCSV(array) {
     "Raw Record",
   ];
   const J193headers = [
-    "Case Number",
     "Id Number",
+    "Case Number",
     "Name",
     "Particulars",
     "Notice Date",
