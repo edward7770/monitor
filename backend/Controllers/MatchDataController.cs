@@ -84,7 +84,7 @@ namespace backend.Controllers
 
             var filteredRecords = await _formDataRepo.FilterByIdNumberAsync(matchId);
 
-            // await _matchRepo.UpdateProcessProgressAsync(match.MatchId, index);
+            // await _matchRepo.UpdateProcessProgressAsync(matchId, filteredRecords.Count);
 
             await _matchResultRepo.AddAsync(filteredRecords);
         }

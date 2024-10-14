@@ -49,7 +49,7 @@ namespace backend.Repository
                         AddressLine3 = client.AddressLine3,
                         AddressLine4 = client.AddressLine4,
                         AddressPostalCode = client.AddressPostalCode,
-                        SearchLogs = searchLogs.Select(log => new SearchLogDto
+                        SearchLogs = searchLogs.OrderByDescending(log => log.Date).Select(log => new SearchLogDto
                         {
                             Id = log.Id,
                             SearchString = log.SearchString,
