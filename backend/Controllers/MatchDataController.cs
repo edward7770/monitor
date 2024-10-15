@@ -339,8 +339,8 @@ namespace backend.Controllers
 
             if (user != null)
             {
-                // await _smtpService.SendMonitorActionMailbySmtp(user.Email, user.Name);
-                await _smtpService.SendMonitorActionMailbySmtp("edwardthomas7770@gmail.com", user.Name);
+                await _smtpService.SendMonitorActionMailbySmtp(user.Email, user.Name);
+                // await _smtpService.SendMonitorActionMailbySmtp("edwardthomas7770@gmail.com", user.Name);
             }
         }
 
