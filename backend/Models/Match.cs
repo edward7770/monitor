@@ -13,6 +13,8 @@ namespace backend.Models
         public string ClientId { get; set; }
         public int Records { get; set; }
         public string Status { get; set; }
+        public int J193MatchedCount { get; set; }
+        public int J187MatchedCount { get; set; }
         public string FileName { get; set; }
         public string UniqueFileName { get; set; }
         public string UploadedBy { get; set; }
@@ -21,6 +23,7 @@ namespace backend.Models
         public DateTime ProcessingStartDate { get; set; }
         public DateTime? ProcessingEndedDate { get; set; }
         public List<MatchResult> MatchResult { get; set; }
+        public string ResultFileName { get; set; }
         public ICollection<MatchData> MatchDatas { get; set; }
         public virtual AppUser AppUser { get; set; }
     }

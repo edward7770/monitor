@@ -117,19 +117,9 @@ const ImportHistory = () => {
           let matchItem = {
             id: result.id,
             startDate:
-              new Date(result.startDate).toISOString().split("T")[0] +
-              " " +
-              new Date(result.startDate)
-                .toISOString()
-                .split("T")[1]
-                .split(".")[0],
+              new Date(result.startDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
             endDate:
-              new Date(result.endDate).toISOString().split("T")[0] +
-              " " +
-              new Date(result.endDate)
-                .toISOString()
-                .split("T")[1]
-                .split(".")[0],
+              new Date(result.endDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
             type: result.type,
             records: result.records,
             name: result.name,

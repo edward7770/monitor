@@ -60,6 +60,10 @@ namespace backend.Data
                 .HasIndex(x => x.IdNo)
                 .HasDatabaseName("IX_XJ187_IdNo");
 
+            builder.Entity<MatchData>()
+                .HasIndex(x => x.IdNumber)
+                .HasDatabaseName("IX_MatchData_IdNo");
+
             builder.Entity<Pricing>().HasData(
                 new Pricing { Id = 1, List = 1, ListName = "Default", Tier = 1, Description = "1-99", Start = 1, End = 99, Price = 199 },
                 new Pricing { Id = 2, List = 1, ListName = "Default", Tier = 2, Description = "100-199", Start = 100, End = 199, Price = 189 },

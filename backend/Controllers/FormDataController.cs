@@ -429,22 +429,33 @@ namespace backend.Controllers
                                     advertiserDetails = splitBySection61[1].Trim(); // Extract advertiser details
 
                                     executorName = advertiserDetails.Split("; ")[0]; // Extract executor name
-                                    executorEmail = ExtractEmail(form187.RawRecord)?.Trim().Replace(";", ""); // Extract email
-
-                                    if (form187.RawRecord.Contains("Tel:"))
-                                    {
-                                        // executorPhone = Regex.Replace(form187.RawRecord.Split("Tel:")[1].Replace(".", "").Trim(), "[^0-9]", ""); // Extract phone number
-                                        var match = Regex.Match(form187.RawRecord, @"Tel:\s*([\d\s]+)");
-                                        if (match.Success)
-                                        {
-                                            executorPhone = match.Groups[1].Value;
-                                        }
-                                    } else
-                                    {
-                                        executorPhone = form187.RawRecord.Split(executorEmail)[1].Trim().Replace(",", "");
-                                    }
-
                                 }
+                            }
+                        }
+                    }
+
+                    executorEmail = ExtractEmail(form187.RawRecord)?.Trim().Replace(";", ""); // Extract email
+
+                    if (form187.RawRecord.Contains("Tel:"))
+                    {
+                        // executorPhone = Regex.Replace(form187.RawRecord.Split("Tel:")[1].Replace(".", "").Trim(), "[^0-9]", ""); // Extract phone number
+                        var match = Regex.Match(form187.RawRecord, @"Tel:\s*([\d\s]+)");
+                        if (match.Success)
+                        {
+                            executorPhone = match.Groups[1].Value;
+                        }
+                    } else
+                    {
+                        if(!string.IsNullOrEmpty(executorEmail))
+                        {
+                            var parts = form187.RawRecord.Split(executorEmail);
+                            if (parts.Length > 1)
+                            {
+                                executorPhone = parts[1].Trim().Replace(",", "").Replace(".", "");
+                            }
+                            else
+                            {
+                                _logger.LogWarning($"Phone number extraction failed after splitting by email for record: {rawRecord}");
                             }
                         }
                     }

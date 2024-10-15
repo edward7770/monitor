@@ -14,5 +14,7 @@ namespace backend.Interfaces
         Task<Match> UpdateMatchAsync(int matchId);
         Task<List<MatchWithResultsDto>> GetMatchWithResultsByClientId(string clientId);
         Task<Match> UpdateProcessProgressAsync(int matchId, int count);
+        Task<Match> UpdateResultFileNameAsync(int matchId, string fileName);
+        Task<List<Match>> GetAllMatchesAsync();
     }
 }

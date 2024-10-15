@@ -11,6 +11,7 @@ namespace backend.Models
     {
         public int Id { get; set; }
         public int MatchId { get; set; }
+        [StringLength(50)]
         public string IdNumber { get; set; }
         [MaxLength(500)]
         public string OtherData { get; set; }
