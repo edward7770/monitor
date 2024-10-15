@@ -7,6 +7,7 @@ namespace backend.Dtos.MatchResult
 {
     public class UpdateDownloadDateDto
     {
-        public int Id { get; set; }
+        public int MatchId { get; set; }
+        public int Step { get; set; }
     }
 }

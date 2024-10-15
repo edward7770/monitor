@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using backend.Data;
 using backend.Dtos.FormData;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace backend.Repository
 {
@@ -14,11 +16,13 @@ namespace backend.Repository
     {
         FormDataDbContext _formDataContext;
         ApplicationDBContext _context;
+        readonly private IWebHostEnvironment _hostEnvironment;
 
-        public FormDataRepository(FormDataDbContext formDataDbContext, ApplicationDBContext context)
+        public FormDataRepository(FormDataDbContext formDataDbContext, ApplicationDBContext context, IWebHostEnvironment hostEnvironment)
         {
             _formDataContext = formDataDbContext;
             _context = context;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<List<XJ187>> AddBulkFormData187Async(List<XJ187> xJ187s)
@@ -99,9 +103,17 @@ namespace backend.Repository
         public async Task<List<MatchResult>> FilterByIdNumberAsync(int matchId)
         {
             var matchFormRecords = new List<MatchResult>();
+            var matchedFolderPath = Path.Combine(_hostEnvironment.ContentRootPath, "Uploads", "MatchedFiles");
+            string matchedFileName = Guid.NewGuid().ToString() + ".xlsx";
+            var filePath = Path.Combine(matchedFolderPath, matchedFileName);
 
             try
             {
+                if (!Directory.Exists(matchedFolderPath))
+                {
+                    Directory.CreateDirectory(matchedFolderPath);
+                }
+
                 // Retrieve the current date only once
                 var currentDate = DateTime.Now;
 
@@ -121,6 +133,64 @@ namespace backend.Repository
                        (xJ193, matchData) => new {xJ193, matchData})
                     .Where(x => x.matchData.MatchId == matchId)
                     .ToListAsync();
+
+                using (var package = new ExcelPackage())
+                {
+                    // Add J187 sheet
+                    var worksheetJ187 = package.Workbook.Worksheets.Add("J187");
+                    worksheetJ187.Cells[1, 1].Value = "IdNo";
+                    worksheetJ187.Cells[1, 2].Value = "CaseNumber";
+                    worksheetJ187.Cells[1, 3].Value = "Name";
+                    worksheetJ187.Cells[1, 4].Value = "Particulars";
+                    worksheetJ187.Cells[1, 5].Value = "NoticeDate";
+                    worksheetJ187.Cells[1, 6].Value = "AccountDescription";
+                    worksheetJ187.Cells[1, 7].Value = "SurvivingSpouse";
+                    worksheetJ187.Cells[1, 8].Value = "InspectionPeriod";
+                    worksheetJ187.Cells[1, 9].Value = "ExecutorName";
+                    worksheetJ187.Cells[1, 10].Value = "ExecutorPhoneNumber";
+                    worksheetJ187.Cells[1, 11].Value = "ExecutorEmail";
+                    worksheetJ187.Cells[1, 12].Value = "RawRecord";
+
+                    for (int i = 0; i < form187Records.Count; i++)
+                    {
+                        var record = form187Records[i].xJ187;
+                        worksheetJ187.Cells[i + 2, 1].Value = record.IdNo;
+                        worksheetJ187.Cells[i + 2, 2].Value = record.CaseNumber;
+                        worksheetJ187.Cells[i + 2, 3].Value = record.Name;
+                        worksheetJ187.Cells[i + 2, 4].Value = record.Particulars;
+                        worksheetJ187.Cells[i + 2, 5].Value = record.NoticeDate;
+                        worksheetJ187.Cells[i + 2, 6].Value = record.AccountDescription;
+                        worksheetJ187.Cells[i + 2, 7].Value = record.SurvivingSpouse;
+                        worksheetJ187.Cells[i + 2, 8].Value = record.InspectionPeriod;
+                        worksheetJ187.Cells[i + 2, 9].Value = record.ExecutorName;
+                        worksheetJ187.Cells[i + 2, 10].Value = record.ExecutorPhoneNumber;
+                        worksheetJ187.Cells[i + 2, 11].Value = record.ExecutorEmail;
+                        worksheetJ187.Cells[i + 2, 12].Value = record.RawRecord;
+                    }
+
+                    // Add J193 sheet
+                    var worksheetJ193 = package.Workbook.Worksheets.Add("J193");
+                    worksheetJ193.Cells[1, 1].Value = "IdNo";
+                    worksheetJ193.Cells[1, 2].Value = "CaseNumber";
+                    worksheetJ193.Cells[1, 3].Value = "Name";
+                    worksheetJ193.Cells[1, 4].Value = "Particulars";
+                    worksheetJ193.Cells[1, 5].Value = "NoticeDate";
+                    worksheetJ193.Cells[1, 6].Value = "RawRecord";
+
+                    for (int i = 0; i < form193Records.Count; i++)
+                    {
+                        var record = form193Records[i].xJ193;
+                        worksheetJ193.Cells[i + 2, 1].Value = record.IdNo;
+                        worksheetJ193.Cells[i + 2, 2].Value = record.CaseNumber;
+                        worksheetJ193.Cells[i + 2, 3].Value = record.Name;
+                        worksheetJ193.Cells[i + 2, 4].Value = record.Particulars;
+                        worksheetJ193.Cells[i + 2, 5].Value = record.NoticeDate;
+                        worksheetJ193.Cells[i + 2, 6].Value = record.RawRecord;
+                    }
+
+                    // Save the Excel package to the specified file path
+                    await SaveExcelPackageAsync(package, filePath);
+                }
 
                 // Map J187 records to MatchResult
                 matchFormRecords.AddRange(form187Records.Select(form187 => new MatchResult
@@ -145,6 +215,12 @@ namespace backend.Repository
                     DateMatched = currentDate,
                     MatchedStep = 0
                 }));
+
+                var matchedRecord = await _context.Matches.FindAsync(matchId);
+                matchedRecord.J187MatchedCount = form187Records.Count;
+                matchedRecord.J193MatchedCount = form193Records.Count;
+                matchedRecord.ResultFileName = matchedFileName;
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -155,6 +231,11 @@ namespace backend.Repository
             }
 
             return matchFormRecords;
+        }
+
+        private async Task SaveExcelPackageAsync(ExcelPackage package, string filePath)
+        {
+            await Task.Run(() => package.SaveAs(new FileInfo(filePath)));
         }
 
 
@@ -414,7 +495,7 @@ namespace backend.Repository
             return data;
         }
 
-        public async Task<List<J187FormRecord>> GetLatestForm187Async()
+        public async Task<List<XJ187>> GetLatestForm187Async()
         {
             var allMatchedResults = await _context.MatchResults.ToListAsync();
 
@@ -425,25 +506,25 @@ namespace backend.Repository
                 if (maxMatchedStep == 0)
                 {
                     var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
-                    var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    var latestRecords = await _context.XJ187s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                     return latestRecords;
                 }
                 else
                 {
                     var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
-                    var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    var latestRecords = await _context.XJ187s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                     return latestRecords;
                 }
             }
             else
             {
                 var lastMonitorDate = DateTime.Now.AddDays(-3);
-                var latestRecords = await _formDataContext.J187FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                var latestRecords = await _context.XJ187s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                 return latestRecords;
             }
         }
 
-        public async Task<List<J193FormRecord>> GetLatestForm193Async()
+        public async Task<List<XJ193>> GetLatestForm193Async()
         {
             var allMatchedResults = await _context.MatchResults.ToListAsync();
 
@@ -454,20 +535,20 @@ namespace backend.Repository
                 if (maxMatchedStep == 0)
                 {
                     var lastMonitorDate = await _context.MatchResults.MinAsync(x => x.DateMatched);
-                    var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    var latestRecords = await _context.XJ193s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                     return latestRecords;
                 }
                 else
                 {
                     var lastMonitorDate = await _context.MatchResults.Where(x => x.MatchedStep != 0).MaxAsync(x => x.DateMatched);
-                    var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                    var latestRecords = await _context.XJ193s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                     return latestRecords;
                 }
             }
             else
             {
                 var lastMonitorDate = DateTime.Now.AddDays(-3);
-                var latestRecords = await _formDataContext.J193FormRecords.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
+                var latestRecords = await _context.XJ193s.Where(x => x.DateCreated > lastMonitorDate).ToListAsync();
                 return latestRecords;
             }
         }

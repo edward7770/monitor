@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 // import { TablePagination } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { getMatchResultsAPI } from "../Services/UploadService";
-import {
-  getForm187RecordByRecordIdAPI,
-  getForm193RecordByRecordIdAPI,
-} from "../Services/FormDataService";
+// import {
+//   getForm187RecordByRecordIdAPI,
+//   getForm193RecordByRecordIdAPI,
+// } from "../Services/FormDataService";
 import {
   IconButton,
   Dialog,
@@ -23,94 +23,81 @@ import { createClientTransactionAPI } from "../Services/ClientTransactionService
 import { getUserAPI } from "../Services/AuthService";
 import { toast } from "react-toastify";
 
-const groupByMatchedStep = (arr) => {
-  const grouped = {};
+// const groupByMatchedStep = (arr) => {
+//   const grouped = {};
 
-  arr
-    .sort((a, b) => new Date(a.matchedStep) - new Date(b.matchedStep))
-    .forEach((item) => {
-      if (item.downloadDate === "0001-01-01T00:00:00") {
-        item.downloadDate = null;
-      } else {
-        item.downloadDate =
-          item.downloadDate?.split("T")[0] +
-          " " +
-          item.downloadDate?.split("T")[1].split(".")[0];
-      }
-      if (!grouped[item.matchedStep]) {
-        grouped[item.matchedStep] = [];
-      }
-      grouped[item.matchedStep].push(item);
-    });
+//   arr
+//     .sort((a, b) => new Date(a.matchedStep) - new Date(b.matchedStep))
+//     .forEach((item) => {
+//       if (item.downloadDate === "0001-01-01T00:00:00") {
+//         item.downloadDate = null;
+//       } else {
+//         item.downloadDate =
+//           item.downloadDate?.split("T")[0] +
+//           " " +
+//           item.downloadDate?.split("T")[1].split(".")[0];
+//       }
+//       if (!grouped[item.matchedStep]) {
+//         grouped[item.matchedStep] = [];
+//       }
+//       grouped[item.matchedStep].push(item);
+//     });
 
-  return Object.values(grouped);
-};
+//   return Object.values(grouped);
+// };
 
-// function extractEmail(text) {
-//   const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
-//   const match = text.match(emailPattern);
+// function arrayToCSV(array) {
+//   if (array.length === 0) return "";
+//   const J187headers = [
+//     "Id Number",
+//     "Case Number",
+//     "Name",
+//     "Particulars",
+//     "Notice Date",
+//     "Description of Account",
+//     "Surviving Spouse Details",
+//     "Period Of Inspection",
+//     "Executor Name",
+//     "Executor Phone Number",
+//     "Executor Email",
+//     "Raw Record",
+//   ];
+//   const J193headers = [
+//     "Id Number",
+//     "Case Number",
+//     "Name",
+//     "Particulars",
+//     "Notice Date",
+//     "Raw Record",
+//   ];
 
-//   return match ? match[0] : null;
+//   const valuesJ187Array = array
+//     .filter((x) => Object.values(x).length === 12)
+//     .map((obj) => Object.values(obj));
+//   const valuesJ193Array = array
+//     .filter((x) => Object.values(x).length === 6)
+//     .map((obj) => Object.values(obj));
+
+//   const csv187Rows = [J187headers, ...valuesJ187Array];
+
+//   const csv193Rows = [J193headers, ...valuesJ193Array];
+
+//   return { csv187Rows: csv187Rows, csv193Rows: csv193Rows };
 // }
 
-// function extractFirst13DigitNumber(str) {
-//   const match = str.match(/\b\d{13}\b/);
+// const downloadCSV = (array, filename = "Monitor.xlsx") => {
+//   const csvData = arrayToCSV(array);
 
-//   return match ? match[0] : null;
-// }
+//   const workbook = XLSX.utils.book_new();
 
-function arrayToCSV(array) {
-  if (array.length === 0) return "";
-  const J187headers = [
-    "Id Number",
-    "Case Number",
-    "Name",
-    "Particulars",
-    "Notice Date",
-    "Description of Account",
-    "Surviving Spouse Details",
-    "Period Of Inspection",
-    "Executor Name",
-    "Executor Phone Number",
-    "Executor Email",
-    "Raw Record",
-  ];
-  const J193headers = [
-    "Id Number",
-    "Case Number",
-    "Name",
-    "Particulars",
-    "Notice Date",
-    "Raw Record",
-  ];
+//   const worksheet1 = XLSX.utils.aoa_to_sheet(csvData.csv187Rows);
+//   const worksheet2 = XLSX.utils.aoa_to_sheet(csvData.csv193Rows);
 
-  const valuesJ187Array = array
-    .filter((x) => Object.values(x).length === 12)
-    .map((obj) => Object.values(obj));
-  const valuesJ193Array = array
-    .filter((x) => Object.values(x).length === 6)
-    .map((obj) => Object.values(obj));
+//   XLSX.utils.book_append_sheet(workbook, worksheet1, "J187");
+//   XLSX.utils.book_append_sheet(workbook, worksheet2, "J193");
 
-  const csv187Rows = [J187headers, ...valuesJ187Array];
-
-  const csv193Rows = [J193headers, ...valuesJ193Array];
-
-  return { csv187Rows: csv187Rows, csv193Rows: csv193Rows };
-}
-
-const downloadCSV = (array, filename = "Monitor.xlsx") => {
-  const csvData = arrayToCSV(array);
-
-  const workbook = XLSX.utils.book_new();
-
-  const worksheet1 = XLSX.utils.aoa_to_sheet(csvData.csv187Rows);
-  const worksheet2 = XLSX.utils.aoa_to_sheet(csvData.csv193Rows);
-
-  XLSX.utils.book_append_sheet(workbook, worksheet1, "J187");
-  XLSX.utils.book_append_sheet(workbook, worksheet2, "J193");
-
-  XLSX.writeFile(workbook, filename + ".xlsx");
-};
+//   XLSX.writeFile(workbook, filename + ".xlsx");
+// };
 
 // function downloadCSV(array, filename = "Monitor.csv") {
 //   const csvData = arrayToCSV(array);
@@ -158,45 +145,71 @@ const History = (props) => {
     setSelectedMatchResult(null);
   };
 
+  const downloadMonitorFile = async (fileName, monitorNumber) => {
+    try {
+      // Fetch the file
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/Uploads/MatchedFiles/${fileName}`);
+      
+      // Check if the response is okay
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Create a Blob from the response
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary anchor element
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', "Monitor" + monitorNumber + ".xlsx"); // Set the desired file name
+
+      // Append to the body
+      document.body.appendChild(link);
+      // Programmatically click the link to trigger the download
+      link.click();
+      // Remove the link from the document
+      document.body.removeChild(link);
+      // Release the Blob URL
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
   const handleDownloadCSVFile = async (index, downloadDate) => {
-    let extractedCSVRecords = [];
-    let matchResultsIds = [];
-    await Promise.all(
-      selectedMatchResult.fileDatas[index].map(async (item) => {
-        // let formRecord = {};
-        let extractedRecord = {};
+    // let extractedCSVRecords = [];
+    // await Promise.all(
+    //   selectedMatchResult.fileDatas[index].map(async (item) => {
+    //     let extractedRecord = {};
 
-        matchResultsIds.push({ id: item.id });
+    //     if (item.type === "J193") {
+    //       extractedRecord = await getForm193RecordByRecordIdAPI(item.recordId);
+    //     } else {
+    //       extractedRecord = await getForm187RecordByRecordIdAPI(item.recordId);
+    //     }
 
-        if (item.type === "J193") {
-          extractedRecord = await getForm193RecordByRecordIdAPI(item.recordId);
-          // extractedRecord = extractForm193Data(formRecord);
-        } else {
-          extractedRecord = await getForm187RecordByRecordIdAPI(item.recordId);
-          // extractedRecord = extractForm187Data(formRecord);
-        }
-
-        // item.downloadDate =
-        //   new Date().toISOString().split("T")[0] +
-        //   " " +
-        //   new Date().toISOString().split("T")[1].split(".")[0];
-        extractedCSVRecords.push(extractedRecord);
-      })
-    );
+    //     extractedCSVRecords.push(extractedRecord);
+    //   })
+    // );
 
     if (downloadDate !== null) {
-      await Promise.all(
-        selectedMatchResult.fileDatas[index].map(async (item) => {
-          item.downloadDate =
-            new Date().toISOString().split("T")[0] +
-            " " +
-            new Date().toISOString().split("T")[1].split(".")[0];
-        })
-      );
-      downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
+      var response = await updateDownloadDates(selectedMatchResult.id, index);
+
+      if (response) { 
+        await Promise.all(
+          selectedMatchResult.resultMonitorFiles[index].downloadDate = response.data.downloadDate.split("+")[0]
+        );
+
+        await downloadMonitorFile(selectedMatchResult.resultMonitorFiles[index].fileName, index+1);
+      }
+
+      // downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
+      var matchedRecordsCount = selectedMatchResult.countJ187 + selectedMatchResult.countJ193;
+
       var balanceAmount =
-        user.balanceAmount - matchResultsIds.length * user.price;
+        user.balanceAmount - matchedRecordsCount * user.price;
 
       var clientTransactionObj = {
         clientId: userId,
@@ -205,8 +218,8 @@ const History = (props) => {
         matchId: selectedMatchResult.id,
         fileName: selectedMatchResult.fileName,
         monitor: index + 1,
-        records: matchResultsIds.length,
-        billValue: matchResultsIds.length * user.price,
+        records: matchedRecordsCount,
+        billValue: matchedRecordsCount * user.price,
         balance: balanceAmount,
         dateCreated: new Date(),
         invoiceNumber: null,
@@ -216,24 +229,22 @@ const History = (props) => {
       await createClientTransactionAPI(clientTransactionObj)
         .then(async (res) => {
           if (res) {
-            var response = await updateDownloadDates(matchResultsIds);
+            var response = await updateDownloadDates(selectedMatchResult.id, index);
 
             if (response) {
               await Promise.all(
-                selectedMatchResult.fileDatas[index].map(async (item) => {
-                  item.downloadDate =
-                    new Date().toISOString().split("T")[0] +
-                    " " +
-                    new Date().toISOString().split("T")[1].split(".")[0];
-                })
+                selectedMatchResult.resultMonitorFiles[index].downloadDate = response.data.downloadDate.split("+")[0]
               );
+                    
+              await downloadMonitorFile(selectedMatchResult.resultMonitorFiles[index].fileName, index+1);
 
               setIsSetDownloaded(!isSetDownloaded);
               props.handleChangeBalance(balanceAmount);
-              downloadCSV(
-                extractedCSVRecords,
-                "Monitor " + parseInt(index + 1)
-              );
+              // downloadCSV(
+              //   extractedCSVRecords,
+              //   "Monitor " + parseInt(index + 1)
+              // );
+
             }
           }
         })
@@ -538,25 +549,14 @@ const History = (props) => {
 
       if (response.data.length > 0) {
         response.data.forEach((result) => {
-          var fileDatas = groupByMatchedStep(result.matchResults);
-
-          var countJ187 =
-            result.matchResults.length > 0
-              ? result.matchResults.filter((x) => x.type === "J187").length
-              : 0;
-          var countJ193 =
-            result.matchResults.length > 0
-              ? result.matchResults.filter((x) => x.type === "J193").length
-              : 0;
-
           let matchItem = {
             id: result.id,
             uploadDate: new Date(result.uploadDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
             fileName: result.fileName,
             countIdNumbers: result.records,
-            countJ187: countJ187,
-            countJ193: countJ193,
-            fileDatas: fileDatas,
+            countJ187: result.j187MatchedCount,
+            countJ193: result.j193MatchedCount,
+            resultMonitorFiles: result.resultMonitorFiles,
             status: result.status,
             processProgressRecords: result.processProgressRecords
           };
@@ -564,8 +564,7 @@ const History = (props) => {
           tempMatchResults.push(matchItem);
         });
 
-        var processingIndex = response.data.map(item => item.status).indexOf("Processing");
-        if(processingIndex > -1) {
+        if(response[response.length - 1]?.status === 'Processing') {
           if (intervalId) {
             clearInterval(intervalId);
           }
@@ -612,29 +611,6 @@ const History = (props) => {
                     paginationPageSizeSelector={paginationPageSizeSelector}
                     paginationPageSize={10}
                   />
-                  {/* <div className="gridjs-footer1">
-                    <div className="gridjs-pagination d-flex justify-content-between align-items-center">
-                      <div className="gridjs-summary pl-4 hidden md:block">
-                        Showing <b>{pageSize * currentPage + 1}</b> to{" "}
-                        <b>{pageSize * (currentPage + 1)}</b> of{" "}
-                        <b>{rowData.length}</b> results
-                      </div>
-                      <div className="dashboard-data-table">
-                        <TablePagination
-                          rowsPerPageOptions={[10, 20, 50]}
-                          component="div"
-                          count={rowData.length}
-                          rowsPerPage={pageSize}
-                          onGridReady={onGridReady}
-                          page={currentPage}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                          labelRowsPerPage={t("rows_per_page")}
-                          style={{ marginRight: "10px" }}
-                        />
-                      </div>
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
@@ -656,10 +632,10 @@ const History = (props) => {
         <DialogContent>
           <div className="w-100">
             {selectedMatchResult &&
-              selectedMatchResult.fileDatas.map((file, index) => (
+              selectedMatchResult.resultMonitorFiles.map((file, index) => (
                 <div
                   className={`${
-                    !file[0]?.downloadDate
+                    !file.downloadDate
                       ? "shadow-md bg-slate-100"
                       : "bg-slate-50"
                   } flex items-center justify-between p-2 mt-2 rounded-md`}
@@ -672,9 +648,11 @@ const History = (props) => {
                       <h5 className="text-md" style={{ fontSize: "16px" }}>
                         Monitor {parseInt(index + 1)}
                       </h5>
-                      {file[0]?.downloadDate && (
+                      {file.downloadDate && (
                         <p className="text-sm" style={{ fontSize: "12px" }}>
-                          Last Downloaded Date: {file[0]?.downloadDate}
+                          Last Downloaded Date: {file.downloadDate
+                            ? new Date(file.downloadDate + 'Z').toISOString().split("T").join(" ").split(".")[0] 
+                            : 'Invalid Date'}
                         </p>
                       )}
                     </div>
@@ -682,7 +660,7 @@ const History = (props) => {
                   <div className="float-right">
                     <IconButton
                       onClick={() =>
-                        handleDownloadCSVFile(index, file[0]?.downloadDate)
+                        handleDownloadCSVFile(index, file.downloadDate)
                       }
                       style={{
                         cursor: "pointer",

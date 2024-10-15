@@ -17,7 +17,7 @@ namespace backend.Repository
         {
             _context = context;
         }
-        public async Task<List<MatchResult>> AddAsync(List<MatchResult> matchResults)
+        public async Task<List<MatchResult>> AddAsync(int matchId, List<MatchResult> matchResults)
         {
             foreach (var matchResult in matchResults)
             {
@@ -27,6 +27,13 @@ namespace backend.Repository
                 // {
                 // }
                 await _context.MatchResults.AddAsync(matchResult);
+            }
+
+            if(matchId != 0)
+            {
+                var match = await _context.Matches.FindAsync(matchId);
+
+                match.ProcessProgressRecords = matchResults.Count;
             }
 
             await _context.SaveChangesAsync();
@@ -63,12 +70,14 @@ namespace backend.Repository
             return matchedResultCount;
         }
 
-        public async Task<MatchResult> UpdateAsync(int matchResultId)
+        public async Task<MatchResult> UpdateAsync(UpdateDownloadDateDto updateDownloadDateDto)
         {
-            var matchResult = await _context.MatchResults.FindAsync(matchResultId);
-            matchResult.DownloadDate = DateTime.Now;
+            var matchResult = await _context.MatchResults.FirstOrDefaultAsync(x => x.MatchId == updateDownloadDateDto.MatchId && x.MatchedStep == updateDownloadDateDto.Step);
 
+            matchResult.DownloadDate = DateTime.Now;
+            
             await _context.SaveChangesAsync();
+
             return matchResult;
         }
     }
