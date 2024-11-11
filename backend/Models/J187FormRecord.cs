@@ -31,5 +31,6 @@ namespace backend.Models
         public string SurvivingSpouseDetails { get; set; }
         public string PeriodOfInspection { get; set; }
         public string AdvertiserDetails { get; set; }
+        public virtual NoticeFile NoticeFile { get; set; }
     }
 }

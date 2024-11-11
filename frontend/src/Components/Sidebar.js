@@ -4,6 +4,8 @@ import { getUserAPI } from "../Services/AuthService";
 import { useTranslation } from "react-i18next";
 import { runMonitorActionAPI } from "../Services/MonitorService";
 import { runImport187API, runImport193API } from "../Services/FormDataService";
+import { downloadFilesAPI } from "../Services/DownloadFilesService";
+import { extractFilesAPI } from "../Services/ExtractedFilesService";
 import { toast } from "react-toastify";
 
 const Sidebar = (props) => {
@@ -29,6 +31,30 @@ const Sidebar = (props) => {
         toast.success("Monitor action running was failed.!");
       });
   };
+
+  const handleDownloadFiles = async (e) => {
+    e.preventDefault();
+
+    await downloadFilesAPI(userId)
+      .then(res => {
+        toast.success("Download Gazettes Files run successfully!")
+      })
+      .catch((err) => {
+        toast.success("Download Gazettes Files running was failed.!");
+      });
+  }
+
+  const handleExtractFiles = async (e) => {
+    e.preventDefault();
+
+    await extractFilesAPI(userId)
+      .then(res => {
+        toast.success("Extracting Gazettes Files run successfully!")
+      })
+      .catch((err) => {
+        toast.success("Extract Gazettes Files running was failed.!");
+      });
+  }
 
   const clickImportEstate193 = async (e) => {
     e.preventDefault();
@@ -254,7 +280,7 @@ const Sidebar = (props) => {
                     className="side-menu__item"
                   >
                     <i className="bi bi-arrow-down-square side-menu__icon"></i>
-                    <span className="side-menu__label">Import</span>
+                    <span className="side-menu__label">Data</span>
                     <i className="fe fe-chevron-right side-menu__angle"></i>
                   </a>
                   <ul className="slide-menu child1" style={{display: importMenu ? 'block' : 'none'}}>
@@ -287,6 +313,40 @@ const Sidebar = (props) => {
                         className="side-menu__item"
                       >
                         Import History
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <a
+                        href="/#"
+                        onClick={(e) => handleDownloadFiles(e)}
+                        className="side-menu__item"
+                      >
+                        <span className="side-menu__label">Download Gazettes</span>
+                      </a>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/download-history"
+                        className="side-menu__item"
+                      >
+                        Download History
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <a
+                        href="/#"
+                        onClick={(e) => handleExtractFiles(e)}
+                        className="side-menu__item"
+                      >
+                        <span className="side-menu__label">Extract Gazettes</span>
+                      </a>
+                    </li>
+                    <li className="slide">
+                      <Link
+                        to="/extracted-history"
+                        className="side-menu__item"
+                      >
+                        Extract History
                       </Link>
                     </li>
                   </ul>
