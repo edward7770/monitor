@@ -32,5 +32,6 @@ namespace backend.Models
         public string SurvivingSpouseDetails { get; set; }
         public string ExecutorDetails { get; set; }
         public string PeriodAllowed { get; set; }
+        public virtual NoticeFile NoticeFile { get; set; }
     }
 }

@@ -6,14 +6,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Microsoft.OpenApi.Models;
 using backend.Repository;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 using Hangfire;
 using Hangfire.MemoryStorage;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,10 +122,42 @@ builder.Services.AddScoped<ISearchLogRepository, SearchLogRepository>();
 builder.Services.AddScoped<IPricingRepository, PricingRepository>();
 builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IMonthlyBillCalculationServiceRepository, MonthlyBillCalculationService>();
+builder.Services.AddScoped<IDownloadHistoryRepository, DownloadHistoryRepository>();
+builder.Services.AddScoped<IExtractHistoryRepository, ExtractHistoryRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage());
 builder.Services.AddHangfireServer();
+
+builder.Services.AddScoped<SharePointFileDownloaderService>();
+builder.Services.AddScoped<ExtractFilesService>();
+builder.Services.AddHttpClient<SharePointFileDownloaderService>();
+
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var jobKey = new JobKey("download-sharepoint-files");
+    q.AddJob<DownloadFilesJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("download-sharepoint-files-trigger")
+        .WithCronSchedule("0 0 0 * * ?"));
+
+    var ExtractjobKey = new JobKey("extract-sharepoint-files");
+        q.AddJob<ExtractFilesJob>(opts => opts.WithIdentity(ExtractjobKey));
+        q.AddTrigger(opts => opts
+            .ForJob(ExtractjobKey)
+            .WithIdentity("extract-sharepoint-files-trigger")
+            .WithCronSchedule("5 5 0 * * ?"));
+});
+
+// Register the Quartz hosted service
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true; 
+});
 
 
 var app = builder.Build();
@@ -142,16 +173,9 @@ app.UseHttpsRedirection();
 
 app.UseForwardedHeaders();
 
-// app.UseStaticFiles(new StaticFileOptions
-// {
-//     FileProvider = new PhysicalFileProvider(
-//            Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
-//     RequestPath = "/Uploads"
-// });
 
 // Use Hangfire Dashboard (optional, good for debugging background jobs)
 app.UseHangfireDashboard();
-
 
 app.UseCors(x => x
     .AllowAnyMethod()
@@ -189,3 +213,34 @@ app.UseStaticFiles(new StaticFileOptions
 app.MapControllers();
 
 app.Run();
+
+
+public class DownloadFilesJob : IJob
+{
+    private readonly SharePointFileDownloaderService _sharePointService;
+
+    public DownloadFilesJob(SharePointFileDownloaderService sharePointService)
+    {
+        _sharePointService = sharePointService;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
+        BackgroundJob.Enqueue(() => _sharePointService.DownloadFilesAsync("Schedule", null));
+    }
+}
+
+public class ExtractFilesJob : IJob
+{
+    private readonly ExtractFilesService _extractFilesService;
+
+    public ExtractFilesJob(ExtractFilesService extractFilesService)
+    {
+        _extractFilesService = extractFilesService;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
+        BackgroundJob.Enqueue(() => _extractFilesService.ExtractRecordsFromFiles("Schedule", null));
+    }
+}

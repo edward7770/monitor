@@ -31,6 +31,10 @@ namespace backend.Data
         public DbSet<XJ187> XJ187s { get; set; }
         public DbSet<XJ193> XJ193s { get; set; }
         public DbSet<Import> Imports { get; set; }
+        public DbSet<DownloadHistory> DownloadHistories { get; set; }
+        public DbSet<DownloadFile> DownloadFiles { get; set; }
+        public DbSet<ExtractHistory> ExtractHistories { get; set; }
+        public DbSet<ExtractedFile> ExtractedFiles { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -104,6 +108,16 @@ namespace backend.Data
                 .WithOne(p => p.Match)
                 .HasForeignKey(p => p.MatchId);
 
+            builder.Entity<DownloadHistory>()
+                .HasMany(m => m.DownloadFiles)
+                .WithOne(p => p.DownloadHistory)
+                .HasForeignKey(p => p.HistoryId);
+
+            builder.Entity<ExtractHistory>()
+                .HasMany(m => m.ExtractedFiles)
+                .WithOne(p => p.ExtractHistory)
+                .HasForeignKey(p => p.HistoryId);
+
             builder.Entity<AppUser>()
                 .HasMany(u => u.Matches)
                 .WithOne(m => m.AppUser)
@@ -129,5 +143,6 @@ namespace backend.Data
         public FormDataDbContext(DbContextOptions<FormDataDbContext> options) : base(options) { }
         public DbSet<J187FormRecord> J187FormRecords { get; set; }
         public DbSet<J193FormRecord> J193FormRecords { get; set; }
+        public DbSet<NoticeFile> NoticeFiles { get; set; }
     }
 }

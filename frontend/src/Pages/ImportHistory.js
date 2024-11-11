@@ -119,7 +119,7 @@ const ImportHistory = () => {
             startDate:
               new Date(result.startDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
             endDate:
-              new Date(result.endDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
+              result.endDate ? new Date(result.endDate + 'Z').toISOString().split("T").join(" ").split(".")[0] : null,
             type: result.type,
             records: result.records,
             name: result.name,
