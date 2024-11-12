@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using sharepoint.Dto;
 using backend.Data;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class SharePointFileDownloaderService
 {
@@ -65,6 +66,15 @@ public class SharePointFileDownloaderService
 
             var downloadFiles = ReadDownloadedFiles();
 
+            var existingHistory = await _context.DownloadHistories
+                .FirstOrDefaultAsync(h => h.EndTime == null && h.ByAction == action && h.UserId == userId);
+
+            if (existingHistory != null)
+            {
+                Console.WriteLine("An extraction process is already running for this user and action.");
+                return null;
+            }
+
             var filesCount = 0;
             var newDownloadHistory = new DownloadHistory {
                 FilesCount = 0,
@@ -113,11 +123,12 @@ public class SharePointFileDownloaderService
                 await _context.DownloadFiles.AddAsync(newDownloadFile);
             }
 
-            var downloadHistory = await _context.DownloadHistories.FindAsync(newDownloadHistory.Id);
+            // var downloadHistory = await _context.DownloadHistories.FindAsync(newDownloadHistory.Id);
             
-            downloadHistory.FilesCount = filesCount;
-            downloadHistory.EndTime = DateTime.Now;
+            newDownloadHistory.FilesCount = filesCount;
+            newDownloadHistory.EndTime = DateTime.Now;
 
+            _context.DownloadHistories.Update(newDownloadHistory);
             await _context.SaveChangesAsync();
         }
 
