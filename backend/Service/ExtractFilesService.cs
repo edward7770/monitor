@@ -177,7 +177,7 @@ namespace backend.Service
 
         private async Task ProcessFormType(string formType, string pdfText, DateTime noticeDate, string fileName, byte[] fileContents, Guid noticeFileId)
         {
-            string startTerm = formType;
+            string startTerm = formType.Insert(1, " ");
             string endTerm = "Form/Vorm";
 
             int startIndex = pdfText.LastIndexOf(startTerm, StringComparison.OrdinalIgnoreCase);
@@ -207,6 +207,27 @@ namespace backend.Service
                     : pdfText.Substring(startIndex);
 
                 var records = ExtractRecords(extractedText);
+
+                if(records.Count == 0) {
+                    if (startTerm.Contains(" "))
+                    {
+                        startIndex = pdfText.LastIndexOf(startTerm.Replace(" ", ""), StringComparison.OrdinalIgnoreCase);
+                    }
+                    else
+                    {
+                        startTerm = startTerm.Insert(1, " ");
+                        startIndex = pdfText.LastIndexOf(startTerm, StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    int endIndex1 = pdfText.IndexOf(endTerm, startIndex, StringComparison.OrdinalIgnoreCase);
+
+                    // If endTerm is not found, extract to the end of the text
+                    string extractedText1 = (endIndex1 != -1)
+                        ? pdfText.Substring(startIndex, endIndex1 - startIndex)
+                        : pdfText.Substring(startIndex);
+
+                    records = ExtractRecords(extractedText1);
+                }
 
                 // Save records based on form type
                 if (formType == "J193")

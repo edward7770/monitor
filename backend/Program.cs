@@ -100,6 +100,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://www.superlinq.com:2000")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -183,6 +191,7 @@ app.UseCors(x => x
     .AllowCredentials()
     .SetIsOriginAllowed(origin => true)
 );
+// app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
