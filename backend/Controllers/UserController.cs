@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Hangfire;
+using backend.Dtos.ProspectVoucher;
 
 namespace backend.Controllers
 {
@@ -34,11 +35,12 @@ namespace backend.Controllers
         private readonly IUserResetRepository _userResetRepo;
         private readonly IMonthlyBillCalculationServiceRepository _monthlyBillCalculationServiceRepo;
         private readonly IPricingRepository _pricingRepo;
+        private readonly IProspectVoucherRepository _prospectVoucherRepo;
         private readonly SignInManager<AppUser> _signInManager;
         // private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
-        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IClientBalanceRepository clientBalanceRepo, IMonthlyBillCalculationServiceRepository monthlyBillCalculationServiceRepo, IPricingRepository pricingRepo, IConfiguration config)
+        public UserController(UserManager<AppUser> userManager, IClientRepository supplierRepo, IClientRepository clientRepo, IUserResetRepository userResetRepo, ITokenService tokenService, ISmtpService smtpService, SignInManager<AppUser> signInManager, IClientBalanceRepository clientBalanceRepo, IMonthlyBillCalculationServiceRepository monthlyBillCalculationServiceRepo, IPricingRepository pricingRepo, IProspectVoucherRepository prospectVoucherRepo, IConfiguration config)
         {
             _userManager = userManager;
             _supplierRepo = supplierRepo;
@@ -49,6 +51,7 @@ namespace backend.Controllers
             _clientBalanceRepo = clientBalanceRepo;
             _smtpService = smtpService;
             _pricingRepo = pricingRepo;
+            _prospectVoucherRepo = prospectVoucherRepo;
             _monthlyBillCalculationServiceRepo = monthlyBillCalculationServiceRepo;
             // _httpContextAccessor = httpContextAccessor;
             _config = config;
@@ -276,6 +279,160 @@ namespace backend.Controllers
             {
                 return BadRequest(e.Message);
             }
+        }
+
+        [HttpPost("register-voucher")]
+        public async Task<IActionResult> RegisterWithVoucher([FromBody] RegisterWithVoucherDto registerWithVoucherDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var username = registerWithVoucherDto.Email.Replace("@", "AT");
+                var emailConfirmed = false;
+
+                if (registerWithVoucherDto.Role == "Admin")
+                {
+                    emailConfirmed = true;
+                }
+
+                var prospectVoucher = await _prospectVoucherRepo.GetProspectVoucherByNumberAsync(registerWithVoucherDto.VoucherNumber);
+
+                if (prospectVoucher == null)
+                {
+                    return NotFound("Voucher not found.");
+                }
+
+                if (DateTime.Now > prospectVoucher.ExpirationDate)
+                {
+                    return BadRequest("Sorry, your voucher has expired.");
+                }
+
+                var appUser = new AppUser
+                {
+                    Name = registerWithVoucherDto.Username,
+                    UserName = username,
+                    Email = registerWithVoucherDto.Email,
+                    PhoneNumber = registerWithVoucherDto.Phone,
+                    EmailConfirmed = emailConfirmed,
+                    Status = 1
+                };
+
+                var existUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == appUser.Email);
+
+                if (existUser != null)
+                {
+                    return StatusCode(409, "That email already exists.");
+                }
+
+                var createdUser = await _userManager.CreateAsync(appUser, registerWithVoucherDto.Password);
+
+                if (createdUser.Succeeded)
+                {
+                    var newClientBalance = new ClientBalance
+                    {
+                        ClientId = appUser.Id,
+                        Type = "prepaid",
+                        Balance = prospectVoucher.VoucherValue,
+                    };
+
+                    var createClientBalance = await _clientBalanceRepo.AddAsync(newClientBalance);
+
+                    if (createClientBalance != null)
+                    {
+                        await _prospectVoucherRepo.UpdateClaimEventAsync(prospectVoucher.ProspectVoucherListId, prospectVoucher.Id);
+
+                        if (registerWithVoucherDto.Role != "User")
+                        {
+                            var roleResult = await _userManager.AddToRoleAsync(appUser, registerWithVoucherDto.Role);
+
+                            if (roleResult.Succeeded)
+                            {
+                                var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                                // var confirmationLink = Url.Action(nameof(ConfirmEmail), "User", new { code, userId = appUser.Id}, Request.Scheme);
+                                var confirmationLink = "http://www.superlinq.com:2000/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
+
+                                var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
+                                if (!emailSent)
+                                {
+                                    return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
+                                }
+
+                                DateTime registrationDate = appUser.DateCreated;
+                                ScheduleBillCalculationJob(appUser.Id, registrationDate);
+
+                                return Ok(
+                                    new NewUserDto
+                                    {
+                                        UserId = appUser.Id,
+                                        UserName = appUser.Name,
+                                        Email = appUser.Email,
+                                        BalanceId = createClientBalance.Id
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                return BadRequest(roleResult.Errors);
+                            }
+                        }
+                        else
+                        {
+                            var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                            var confirmationLink = "http://www.superlinq.com:2000/confirm-email?token=" + token + "&userId=" + appUser.Id + "&email=" + appUser.Email;
+                            var emailSent = await _smtpService.ActivateMailbySmtp(appUser.Email, appUser.Name, confirmationLink);
+                            if (!emailSent)
+                            {
+                                return StatusCode(500, new { Status = "Error", Message = "mail_send_fail_msg" });
+                            }
+
+                            return Ok(
+                                new NewUserDto
+                                {
+                                    UserId = appUser.Id,
+                                    UserName = appUser.Name,
+                                    Email = appUser.Email,
+                                    BalanceId = createClientBalance.Id
+                                }
+                            );
+                        }
+                    } else
+                    {
+                        return BadRequest("Failed to create client balance");
+                    }
+
+                }
+                else
+                {
+                    return BadRequest(createdUser.Errors);
+                }
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("update-voucher-click")]
+        public async Task<IActionResult> UpdateVoucherClickEvent([FromBody] UpdateVoucherClickEventDto updateVoucherClickEventDto)
+        {
+            var prospectVoucher = await _prospectVoucherRepo.GetProspectVoucherByNumberAsync(updateVoucherClickEventDto.VoucherNumber);
+
+            if (prospectVoucher == null)
+            {
+                return NotFound("Voucher not found.");
+            }
+
+            if (DateTime.Now > prospectVoucher.ExpirationDate)
+            {
+                return BadRequest("Sorry, your voucher has expired.");
+            }
+
+            await _prospectVoucherRepo.UpdateClickEventAsync(prospectVoucher.ProspectVoucherListId, prospectVoucher.Id);
+
+            return Ok(prospectVoucher);
         }
 
         [HttpPost("login")]

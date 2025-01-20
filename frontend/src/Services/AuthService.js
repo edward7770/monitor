@@ -43,6 +43,18 @@ export const registerAPI = async (username, email, password, role, phone) => {
 
 }
 
+export const registerWithVoucherAPI = async (username, email, password, role, phone, voucherNumber) => {
+    const data = await axios.post(api + 'user/register-voucher', {
+        username: username,
+        email: email,
+        password: password,
+        role: role,
+        phone: phone,
+        voucherNumber: voucherNumber
+    });
+    return data;
+}
+
 export const forgotPasswordAPI = async (email) => {
     const data = await axios.post(api + 'user/forgotPassword', {email});
     return data;

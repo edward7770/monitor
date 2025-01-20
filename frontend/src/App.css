@@ -84,3 +84,7 @@
         display: none;
     }
 }
+
+.custom-input::placeholder {
+    color: #888; /* Your desired placeholder color */
+  }

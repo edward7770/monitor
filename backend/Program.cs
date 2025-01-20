@@ -108,6 +108,14 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://www.superlinq.com:2000")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -132,6 +140,8 @@ builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IMonthlyBillCalculationServiceRepository, MonthlyBillCalculationService>();
 builder.Services.AddScoped<IDownloadHistoryRepository, DownloadHistoryRepository>();
 builder.Services.AddScoped<IExtractHistoryRepository, ExtractHistoryRepository>();
+builder.Services.AddScoped<IProspectRepository, ProspectRepository>();
+builder.Services.AddScoped<IProspectVoucherRepository, ProspectVoucherRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage());
