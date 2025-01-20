@@ -16,6 +16,7 @@ const Sidebar = (props) => {
   const wrapperRef = useRef(null);
   const [accountMenu, setAccountMenu] = useState(false);
   const [importMenu, setImportMenu] = useState(false);
+  const [marketingMenu, setMarketingMenu] = useState(false);
 
   // const handleClick = (event) => {
   //   event.preventDefault();
@@ -95,6 +96,10 @@ const Sidebar = (props) => {
     setImportMenu(!importMenu);
   };
 
+  const onClickSidebarMarketingMenu = (e) => {
+    e.preventDefault();
+    setMarketingMenu(!marketingMenu);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -347,6 +352,36 @@ const Sidebar = (props) => {
                         className="side-menu__item"
                       >
                         Extract History
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
+              {role && role === "Superadmin" && (
+                <li className={`slide has-sub ${marketingMenu ? "open" : ""}`}>
+                  <a
+                    href="/#"
+                    onClick={(e) => onClickSidebarMarketingMenu(e)}
+                    className="side-menu__item"
+                  >
+                    <i className="bi bi-envelope-paper side-menu__icon"></i>
+                    <span className="side-menu__label">Marketing</span>
+                    <i className="fe fe-chevron-right side-menu__angle"></i>
+                  </a>
+                  <ul className="slide-menu child1" style={{display: marketingMenu ? 'block' : 'none'}}>
+                    <li className="slide">
+                      <Link to="/new-campaign" className="side-menu__item">
+                        New Campaign
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link to="/campaign-history" className="side-menu__item">
+                        Campaign History
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link to="/prospects" className="side-menu__item">
+                        Prospects
                       </Link>
                     </li>
                   </ul>

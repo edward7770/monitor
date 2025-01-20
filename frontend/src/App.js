@@ -35,6 +35,9 @@ import AdminPricesList from "./Pages/AdminPricesList";
 import ImportHistory from "./Pages/ImportHistory";
 import DownloadHistory from "./Pages/DownloadHistory";
 import ExtractedHisotry from "./Pages/ExtractedHisotry";
+import NewCampaignPage from "./Pages/NewCampaignPage";
+import CampaignHistory from "./Pages/CampaignHistory";
+import Prospects from "./Pages/Prospects";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -135,6 +138,9 @@ function App() {
               <Route path="/import-history" element={<ProtectedSuperadminRoute><ImportHistory/></ProtectedSuperadminRoute>} />
               <Route path="/download-history" element={<ProtectedSuperadminRoute><DownloadHistory/></ProtectedSuperadminRoute>} />
               <Route path="/extracted-history" element={<ProtectedSuperadminRoute><ExtractedHisotry/></ProtectedSuperadminRoute>} />
+              <Route path="/new-campaign" element={<ProtectedSuperadminRoute><NewCampaignPage/></ProtectedSuperadminRoute>} />
+              <Route path="/campaign-history" element={<ProtectedSuperadminRoute><CampaignHistory/></ProtectedSuperadminRoute>} />
+              <Route path="/prospects" element={<ProtectedSuperadminRoute><Prospects/></ProtectedSuperadminRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

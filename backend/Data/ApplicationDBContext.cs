@@ -35,6 +35,11 @@ namespace backend.Data
         public DbSet<DownloadFile> DownloadFiles { get; set; }
         public DbSet<ExtractHistory> ExtractHistories { get; set; }
         public DbSet<ExtractedFile> ExtractedFiles { get; set; }
+        public DbSet<Prospect> Prospects { get; set; }
+        public DbSet<ProspectList> ProspectLists { get; set; }
+        public DbSet<ProspectNote> ProspectNotes { get; set; }
+        public DbSet<ProspectVoucher> ProspectVouchers { get; set; }
+        public DbSet<ProspectVoucherList> ProspectVoucherLists { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -135,6 +140,24 @@ namespace backend.Data
                 .WithMany()
                 .HasForeignKey(c => c.PricingId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ProspectList>()
+                .HasMany(pl => pl.Prospects)
+                .WithOne(p => p.ProspectList)
+                .HasForeignKey(p => p.Fk_ProspectList_ID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Prospect>()
+                .HasMany(p => p.Notes)
+                .WithOne(n => n.Prospect)
+                .HasForeignKey(n => n.FK_Prospect_ID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ProspectVoucher>()
+                .HasOne(pv => pv.ProspectVoucherList)
+                .WithMany(pvl => pvl.Vouchers)
+                .HasForeignKey(pv => pv.ProspectVoucherListId)
+                .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 

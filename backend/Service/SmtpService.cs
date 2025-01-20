@@ -262,5 +262,87 @@ namespace backend.Service
                 return false;
             }
         }
+
+        public async Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber)
+        {
+            string App_url = _config["SmtpConfig:applicationUrl"] ?? "";
+            string serverEmail = _config["SmtpConfig:Email"] ?? "";
+            string serverPassword = _config["SmtpConfig:Password"] ?? "";
+            string stmpHost = _config["SmtpConfig:stmpHost"] ?? "";
+            int stmpPort = int.Parse(_config["SmtpConfig:stmpPort"] ?? "0");
+
+            if (!await IsDomainValidAsync(email))
+            {
+                Console.WriteLine("Invalid email domain.");
+                return false;
+            }
+
+            try
+            {
+                MailMessage mail = new MailMessage();
+                mail.To.Add(email ?? string.Empty);
+                mail.From = new MailAddress(serverEmail);
+                mail.Subject = subject;
+
+                // Split the body text by line breaks
+                string[] bodyLines = bodyText.Split(new[] { "\n" }, StringSplitOptions.None);
+
+                string mailBody = "";
+
+                foreach (string line in bodyLines)
+                {
+                    string updatedLine = line;
+
+                    updatedLine = updatedLine.Replace("{{voucherValue}}", voucherValue.ToString());
+                    updatedLine = updatedLine.Replace("{{voucherNumber}}", voucherNumber);
+
+                    if (updatedLine.Contains("CLAIM YOUR VOUCHER:"))
+                    {
+                        updatedLine = "<a href='" + App_url + "/register/?voucherNumber=" + voucherNumber + "' style='display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; font-weight: bold; border-radius: 5px;'>" + updatedLine + "</a>";
+                    }
+                    else
+                    {
+                        updatedLine = "<p>" + updatedLine + "</p>";
+                    }
+
+                    mailBody += updatedLine;
+                }
+
+                mail.Body = mailBody;
+                mail.IsBodyHtml = true;
+
+                SmtpClient smtp = new SmtpClient
+                {
+                    Port = stmpPort,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Host = stmpHost,
+                    Credentials = new NetworkCredential(serverEmail, serverPassword)
+                };
+
+                await smtp.SendMailAsync(mail);
+                return true;
+            }
+            catch (SmtpFailedRecipientException ex)
+            {
+                if (ex.StatusCode == SmtpStatusCode.MailboxUnavailable ||
+                    ex.StatusCode == SmtpStatusCode.MailboxNameNotAllowed ||
+                    ex.StatusCode == SmtpStatusCode.MailboxBusy)
+                {
+                    return false;
+                }
+                return false;
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine($"Failed to send email: SMTP error - {ex.Message}.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send email: General error - {ex.Message}.");
+                return false;
+            }
+        }
     }
 }

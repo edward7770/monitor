@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { createSupplierAPI } from "../Services/SupplierService";
-import { registerAPI } from "../Services/AuthService";
-import { Link } from "react-router-dom";
+import { registerAPI, registerWithVoucherAPI } from "../Services/AuthService";
+import { updateVoucherClickEventAPI } from "../Services/ProspectVoucherService";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
+let isSetUpdateClickEvent = false;
+
 const Register = () => {
   const { t } = useTranslation();
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const voucherNumber = queryParams.get('voucherNumber') || '';
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,66 +85,131 @@ const Register = () => {
       let username = supplierData.name + " " + supplierData.surname;
       let phone = supplierData.phone;
 
-      await registerAPI(username, email, password, "client", phone)
-        .then((res) => {
-          if (res) {
-            let formData = new FormData();
-            supplierData.contactEmail = email;
-            Object.entries(supplierData).forEach(([key, value]) => {
-              formData.append(key, value);
-            });
-            formData.append("userId", res.data.userId);
-            createSupplierAPI(formData)
-              .then((res) => {
-                // console.log("success");
-                setIsError(false);
-                setSupplierErrors({});
-                toast.success(t("register_success_msg"));
-              })
-              .catch((err) => {
-                toast.warning(err.response.data);
+      if(voucherNumber === '') {
+        await registerAPI(username, email, password, "client", phone)
+          .then((res) => {
+            if (res) {
+              let formData = new FormData();
+              supplierData.contactEmail = email;
+              Object.entries(supplierData).forEach(([key, value]) => {
+                formData.append(key, value);
               });
-          }
-        })
-        .catch((err) => {
-          if (typeof err.response.data === "string") {
-            if (err.response.data === "That email already exists.") {
-              toast.warning(t("email_exists_msg"));
-            } else {
-              toast.warning(err.response.data);
+              formData.append("userId", res.data.userId);
+              createSupplierAPI(formData)
+                .then((res) => {
+                  // console.log("success");
+                  setIsError(false);
+                  setSupplierErrors({});
+                  toast.success(t("register_success_msg"));
+                })
+                .catch((err) => {
+                  toast.warning(err.response.data);
+                });
             }
-          } else {
-            if (!Array.isArray(err.response.data)) {
-              // Object.entries(err.response.data.errors).forEach(
-              //   ([key, value]) => {
-              //     toast.warning(value[0]);
-              //   }
-              // );
-              toast.warning("Register was failed!");
-            } else {
-              if (
-                err.response.data[0].description ===
-                "Passwords must be at least 8 characters."
-              ) {
-                toast.warning(t("password_valiation_limit_num_msg"));
-              } else if (
-                err.response.data[0].description ===
-                "Passwords must have at least one non alphanumeric character."
-              ) {
-                toast.warning(t("password_valiation_alpha_msg"));
+          })
+          .catch((err) => {
+            if (typeof err.response.data === "string") {
+              if (err.response.data === "That email already exists.") {
+                toast.warning(t("email_exists_msg"));
               } else {
-                toast.warning(err.response.data[0].description);
+                toast.warning(err.response.data);
+              }
+            } else {
+              if (!Array.isArray(err.response.data)) {
+                // Object.entries(err.response.data.errors).forEach(
+                //   ([key, value]) => {
+                //     toast.warning(value[0]);
+                //   }
+                // );
+                toast.warning("Register was failed!");
+              } else {
+                if (
+                  err.response.data[0].description ===
+                  "Passwords must be at least 8 characters."
+                ) {
+                  toast.warning(t("password_valiation_limit_num_msg"));
+                } else if (
+                  err.response.data[0].description ===
+                  "Passwords must have at least one non alphanumeric character."
+                ) {
+                  toast.warning(t("password_valiation_alpha_msg"));
+                } else {
+                  toast.warning(err.response.data[0].description);
+                }
               }
             }
-          }
-        });
+          });
+      } else {
+        await registerWithVoucherAPI(username, email, password, "client", phone, voucherNumber)
+          .then((res) => {
+            if (res) {
+              let formData = new FormData();
+              supplierData.contactEmail = email;
+              Object.entries(supplierData).forEach(([key, value]) => {
+                formData.append(key, value);
+              });
+              formData.append("userId", res.data.userId);
+              createSupplierAPI(formData)
+                .then((res) => {
+                  // console.log("success");
+                  setIsError(false);
+                  setSupplierErrors({});
+                  toast.success(t("register_success_msg"));
+                })
+                .catch((err) => {
+                  toast.warning(err.response.data);
+                });
+            }
+          })
+          .catch((err) => {
+            if (typeof err.response.data === "string") {
+              if (err.response.data === "That email already exists.") {
+                toast.warning(t("email_exists_msg"));
+              } else {
+                toast.warning(err.response.data);
+              }
+            } else {
+              if (!Array.isArray(err.response.data)) {
+                toast.warning("Register was failed!");
+              } else {
+                if (
+                  err.response.data[0].description ===
+                  "Passwords must be at least 8 characters."
+                ) {
+                  toast.warning(t("password_valiation_limit_num_msg"));
+                } else if (
+                  err.response.data[0].description ===
+                  "Passwords must have at least one non alphanumeric character."
+                ) {
+                  toast.warning(t("password_valiation_alpha_msg"));
+                } else {
+                  toast.warning(err.response.data[0].description);
+                }
+              }
+            }
+          });
+      }
     }
   };
 
   useEffect(() => {
-    // logout();
     document.title = "Moniter | Register";
-  }, []);
+
+    const updateVoucherClickEvent = async () => {
+      if(voucherNumber !== '' && !isSetUpdateClickEvent) {
+        await updateVoucherClickEventAPI(voucherNumber)
+          .then(response => {
+            isSetUpdateClickEvent = true;
+            console.log('Click event updated:', response.data);
+          })
+          .catch(error => {
+            console.error('Error updating click event:', error);
+          });
+      }
+    }
+
+    updateVoucherClickEvent();
+  }, [voucherNumber]);
 
   return (
     <div className="authentication-background">

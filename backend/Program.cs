@@ -132,6 +132,8 @@ builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IMonthlyBillCalculationServiceRepository, MonthlyBillCalculationService>();
 builder.Services.AddScoped<IDownloadHistoryRepository, DownloadHistoryRepository>();
 builder.Services.AddScoped<IExtractHistoryRepository, ExtractHistoryRepository>();
+builder.Services.AddScoped<IProspectRepository, ProspectRepository>();
+builder.Services.AddScoped<IProspectVoucherRepository, ProspectVoucherRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage());
