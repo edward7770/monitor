@@ -195,9 +195,9 @@ export const UserProvider = ({children}) => {
         setToken('');
         // window.location
         navigate('/login');
-        setTimeout(() => {
-            window.location.reload();
-          }, 0);
+        // setTimeout(() => {
+        //     window.location.reload();
+        //   }, 0);
     };
 
     return (

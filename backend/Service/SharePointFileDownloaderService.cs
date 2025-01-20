@@ -23,8 +23,8 @@ public class SharePointFileDownloaderService
     private readonly string _filesUrl = "https://gpwonline.sharepoint.com/sites/gpw-web/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fgpw%2Dweb%2FShared%20Documents%2FLegal&viewid=7a8fe278%2D931f%2D49d0%2D9374%2Dc8d511d7c610";
     private readonly string _siteUrl = "https://gpwonline.sharepoint.com/";
     private readonly string _apiFilesListUrl = "https://gpwonline.sharepoint.com/sites/gpw-web/_api/web/GetFolderByServerRelativeUrl('Shared%20Documents/Legal')/Files";
-    private readonly string _folderPath = "D:\\LegalFiles";
-    private readonly string _logFolderPath = "D:\\LegalFiles\\Logs";
+    private readonly string _folderPath = "D:\\Monitor\\Gazettes\\New";
+    private readonly string _logFolderPath = "D:\\Monitor\\Gazettes\\Log";
     private readonly ApplicationDBContext _context;
 
     public SharePointFileDownloaderService(HttpClient httpClient, ApplicationDBContext context)
