@@ -263,7 +263,7 @@ namespace backend.Service
             }
         }
 
-        public async Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber)
+        public async Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber, DateTime ExpirationDate)
         {
             string App_url = _config["SmtpConfig:applicationUrl"] ?? "";
             string serverEmail = _config["SmtpConfig:Email"] ?? "";
@@ -295,6 +295,7 @@ namespace backend.Service
 
                     updatedLine = updatedLine.Replace("{{voucherValue}}", voucherValue.ToString());
                     updatedLine = updatedLine.Replace("{{voucherNumber}}", voucherNumber);
+                    updatedLine = updatedLine.Replace("{{datetime}}", ExpirationDate.ToString("dddd, MMMM dd, yyyy hh:mm tt"));
 
                     if (updatedLine.Contains("CLAIM YOUR VOUCHER:"))
                     {

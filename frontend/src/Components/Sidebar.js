@@ -148,7 +148,7 @@ const Sidebar = (props) => {
         <div className="main-sidebar-header">
           <a href="/#" className="header-logo">
             <img
-              src="../assets/images/brand-logos/desktop-logo.png"
+              src="../assets/images/brand-logos/logo1.png"
               alt="logo"
               className="desktop-logo"
             />
@@ -158,7 +158,7 @@ const Sidebar = (props) => {
               className="toggle-dark"
             />
             <img
-              src="../assets/images/brand-logos/desktop-dark.png"
+              src="../assets/images/brand-logos/logo1.png"
               alt="logo"
               className="desktop-dark"
             />

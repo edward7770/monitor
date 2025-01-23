@@ -98,7 +98,7 @@ namespace backend.Controllers
 
                 if (existEmail == null)
                 {
-                    var emailSent = await _smtpService.SendNewCampaignEmailBySmtp(prospect.Email, createProspectVoucherDto.Subject, createProspectVoucherDto.BodyText, createProspectVoucherDto.VoucherValue, newProspectVoucher.VoucherNumber);
+                    var emailSent = await _smtpService.SendNewCampaignEmailBySmtp(prospect.Email, createProspectVoucherDto.Subject, createProspectVoucherDto.BodyText, createProspectVoucherDto.VoucherValue, newProspectVoucher.VoucherNumber, DateTime.Now.AddHours(24));
                     if(emailSent)
                     {
                         emailsCount++;

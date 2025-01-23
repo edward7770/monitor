@@ -101,12 +101,12 @@ const ResendEmail = () => {
                 <div className="mb-3 d-flex justify-content-center">
                   <a href="/#">
                     <img
-                      src="../assets/images/brand-logos/desktop-logo.png"
+                      src="../assets/images/brand-logos/logo.png"
                       alt="logo"
                       className="desktop-logo"
                     />
                     <img
-                      src="../assets/images/brand-logos/desktop-dark.png"
+                      src="../assets/images/brand-logos/logo.png"
                       alt="logo"
                       className="desktop-dark"
                     />

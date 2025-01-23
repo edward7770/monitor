@@ -61,7 +61,7 @@ const Navbar = (props) => {
               <div className="horizontal-logo">
                 <a href="/#" className="header-logo">
                   <img
-                    src="../assets/images/brand-logos/desktop-logo.png"
+                    src="../assets/images/brand-logos/logo1.png"
                     alt="logo"
                     className="desktop-logo"
                   />
@@ -71,7 +71,7 @@ const Navbar = (props) => {
                     className="toggle-logo"
                   />
                   <img
-                    src="../assets/images/brand-logos/desktop-dark.png"
+                    src="../assets/images/brand-logos/logo1.png"
                     alt="logo"
                     className="desktop-dark"
                   />

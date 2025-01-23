@@ -65,7 +65,7 @@ namespace backend.Repository
 
             if(prospectVoucher.ClickedDate != null)
             {
-                throw new ArgumentException("Prospect Voucher already used!", nameof(prospectVoucherId));
+                return prospectVoucher;
             }
 
             prospectVoucherList.ClickedCount += 1;

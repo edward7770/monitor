@@ -13,6 +13,6 @@ namespace backend.Interfaces
         Task<bool> SendProcessResultMailbySmtp(string email, string name);
         Task<bool> SendMonitorActionMailbySmtp(string email, string name);
         Task ForgotPasswordMailBySmtp(string token, string email, string userName);
-        Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber);
+        Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber, DateTime ExpirationDate);
     }
 }

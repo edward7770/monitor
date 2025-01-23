@@ -8,12 +8,27 @@ import { useTranslation } from "react-i18next";
 
 let isSetUpdateClickEvent = false;
 
+function formatNumber(number) {
+  if (number !== 0 || number !== null) {
+    return (
+      "R " +
+      number.toLocaleString("en-US", {
+        maximumFractionDigits: 2,
+      })
+    );
+  } else {
+    return "R 0";
+  }
+}
+
 const Register = () => {
   const { t } = useTranslation();
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const voucherNumber = queryParams.get('voucherNumber') || '';
+  const [prospectVoucher, setProspectVoucher] = useState(null);
+  const [timeLeft, setTimeLeft] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -199,8 +214,9 @@ const Register = () => {
       if(voucherNumber !== '' && !isSetUpdateClickEvent) {
         await updateVoucherClickEventAPI(voucherNumber)
           .then(response => {
+            setProspectVoucher(response);
             isSetUpdateClickEvent = true;
-            console.log('Click event updated:', response.data);
+            console.log('Click event updated:', response);
           })
           .catch(error => {
             console.error('Error updating click event:', error);
@@ -210,6 +226,31 @@ const Register = () => {
 
     updateVoucherClickEvent();
   }, [voucherNumber]);
+
+  useEffect(() => {
+    if(prospectVoucher) {
+      const expirationTime = new Date(prospectVoucher.expirationDate).getTime();
+  
+      const timer = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const difference = expirationTime - currentTime;
+  
+        if (difference <= 0) {
+          clearInterval(timer);
+          setTimeLeft("Voucher Expired!");
+        } else {
+          const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  
+          setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+        }
+      }, 1000);
+  
+      // Cleanup timer on unmount
+      return () => clearInterval(timer);
+    }
+  }, [prospectVoucher]);
 
   return (
     <div className="authentication-background">
@@ -221,21 +262,22 @@ const Register = () => {
                 <div className="mb-3 d-flex justify-content-center">
                   <a href="/#">
                     <img
-                      src="../assets/images/brand-logos/desktop-logo.png"
+                      src="../assets/images/logo.png"
                       alt="logo"
                       className="desktop-logo"
                     />
                     <img
-                      src="../assets/images/brand-logos/desktop-dark.png"
+                      src="../assets/images/brand-logos/logo.png"
                       alt="logo"
                       className="desktop-dark"
                     />
                   </a>
                 </div>
-                <p className="h5 mb-2 text-center">Sign Up</p>
-                <p className="mb-4 text-muted op-7 fw-normal text-center">
+                <p className="h5 mb-2 text-center">{!prospectVoucher ? "Sign Up" : `Sign np now for your obligation free ${formatNumber(prospectVoucher.voucherValue)} voucher!`}</p>
+                {!prospectVoucher ? <p className="mb-4 text-muted op-7 fw-normal text-center">
                   Welcome & Join us by creating a free account !
-                </p>
+                  </p> : <p className="mb-4 text-muted op-7 fw-normal text-center">{timeLeft}</p>
+                }
                 <form onSubmit={handleSupplierSubmit}>
                   <div className="row gy-3">
                     <div className="col-xl-12">
