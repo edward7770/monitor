@@ -14,7 +14,7 @@ const NewCampaignPage = () => {
   const [newCampaignData, setNewCampaignData] = useState({
     subject: "",
     voucherValue: "",
-    bodyText: `Claim your R{{voucherValue}} credit voucher to test our Deceased Estates Database for free, zero risk!\nCLAIM YOUR VOUCHER: {{voucherNumber}} \n24hrs counter (from the time the voucher was generated, and it expires as the voucher is also on the server with the time that it was generated and it is only valid for 24hrs only.`,
+    bodyText: `Claim your R{{voucherValue}} credit voucher to test our Deceased Estates Database for free, zero risk!\nCLAIM YOUR VOUCHER: {{voucherNumber}} \nVoucher Expires: {{datetime}}`,
   });
 
   // function generateVoucherNumber() {
@@ -44,7 +44,7 @@ const NewCampaignPage = () => {
       //   return {
       //     ...prevState,
       //     [name]: value,
-      //     bodyText: `Claim your R${value} credit voucher to test our Deceased Estates Database for free, zero risk!\n\nCLAIM YOUR VOUCHER: \n${prevState.voucherNumber} (This is a button)\n24hrs counter (from the time the voucher was generated, and it expires as the voucher is also on the server with the time that it was generated and it is only valid for 24hrs only.`,
+      //     bodyText: `Claim your R${value} credit voucher to test our Deceased Estates Database for free, zero risk!\n\nCLAIM YOUR VOUCHER: \n${prevState.voucherNumber} (This is a button)\nVoucher Expires: {{datetime}}`,
       //   };
       // }
       return {
@@ -79,7 +79,7 @@ const NewCampaignPage = () => {
           setNewCampaignData({
             subject: "",
             voucherValue: "",
-            bodyText: `Claim your R{{voucherValue}} credit voucher to test our Deceased Estates Database for free, zero risk!\nCLAIM YOUR VOUCHER: {{voucherNumber}} \n24hrs counter (from the time the voucher was generated, and it expires as the voucher is also on the server with the time that it was generated and it is only valid for 24hrs only.`,
+            bodyText: `Claim your R{{voucherValue}} credit voucher to test our Deceased Estates Database for free, zero risk!\nCLAIM YOUR VOUCHER: {{voucherNumber}} \nVoucher Expires: {{datetime}}`,
           });
           setSelectedProspectListId(null);
 
