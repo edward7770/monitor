@@ -53,15 +53,14 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.CommandTimeout(180)); // Set timeout to 180 seconds
 });
 
 builder.Services.AddDbContext<FormDataDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FormRecordDataConnection"), options =>
-        {
-            options.CommandTimeout(180); // Timeout in seconds
-        });
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FormRecordDataConnection"),
+        sqlOptions => sqlOptions.CommandTimeout(180)); // Set timeout to 180 seconds
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>

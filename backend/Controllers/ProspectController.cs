@@ -70,7 +70,12 @@ namespace backend.Controllers
                 if (existEmail != null)
                 {
                     newProspect.Status = 0;
+                }
 
+                await _prospectRepo.AddProspectAsync(newProspect);
+
+                if(existEmail != null)
+                {
                     var newEmailExistNote = new ProspectNote {
                         FK_Prospect_ID = newProspect.Id,
                         Note = "Prospect already has an account",
@@ -80,8 +85,6 @@ namespace backend.Controllers
 
                     await _prospectRepo.AddProspectNoteAsync(newEmailExistNote);
                 }
-
-                await _prospectRepo.AddProspectAsync(newProspect);
             }
 
             return Ok(createProspectsDto);
