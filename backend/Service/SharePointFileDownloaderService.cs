@@ -15,12 +15,13 @@ using sharepoint.Dto;
 using backend.Data;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 public class SharePointFileDownloaderService
 {
     private readonly HttpClient _httpClient;
     private readonly string _initialUrl = "https://gpwonline.sharepoint.com/:f:/s/gpw-web/EuUVRm9dXElCjAXBiPdf2xgBAbjuQaq_s8j9c8x7qbVFzg?e=ZCkbyO";
-    private readonly string _filesUrl = "https://gpwonline.sharepoint.com/sites/gpw-web/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fgpw%2Dweb%2FShared%20Documents%2FLegal&viewid=7a8fe278%2D931f%2D49d0%2D9374%2Dc8d511d7c610";
+    private readonly string _filesUrl = "https://gpwonline.sharepoint.com/sites/gpw-web/Shared%20Documents/Forms/AllItems.aspx?ga=1&id=%2Fsites%2Fgpw%2Dweb%2FShared%20Documents%2FLegal%2F2021%2D2025&viewid=7a8fe278%2D931f%2D49d0%2D9374%2Dc8d511d7c610";
     private readonly string _siteUrl = "https://gpwonline.sharepoint.com/";
     private readonly string _apiFilesListUrl = "https://gpwonline.sharepoint.com/sites/gpw-web/_api/web/GetFolderByServerRelativeUrl('Shared%20Documents/Legal')/Files";
     private readonly string _folderPath = "D:\\Monitor\\Gazettes\\New";
@@ -34,6 +35,12 @@ public class SharePointFileDownloaderService
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
     }
 
+    public class FolderInfo
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+    }
+
     public async Task<CookieContainer> DownloadFilesAsync(string action, string userId = null)
     {
         var handler = new HttpClientHandler
@@ -44,25 +51,98 @@ public class SharePointFileDownloaderService
 
         using (var initialClient = new HttpClient(handler))
         {
+            // Step 1: Get Authentication Cookies
             var response = await initialClient.GetAsync(_initialUrl);
             response.EnsureSuccessStatusCode();
 
+            // Retrieve the cookies after the request
             var cookies = handler.CookieContainer.GetCookies(new Uri(_initialUrl));
-
-            var request = new HttpRequestMessage(HttpMethod.Get, _apiFilesListUrl);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            Console.WriteLine("Cookies retrieved from initial URL:");
 
             foreach (Cookie cookie in cookies)
             {
-                initialClient.DefaultRequestHeaders.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+                Console.WriteLine($"{cookie.Name}={cookie.Value}");
             }
 
-            var listFilesResponse = await initialClient.SendAsync(request);
-            listFilesResponse.EnsureSuccessStatusCode();
-            var listFilesContent = await listFilesResponse.Content.ReadAsStringAsync();
-            var filesJson = JsonConvert.DeserializeObject<SharePointFileListDto>(listFilesContent);
+            // Step 2: Get Folders List
+            var folderRequest = new HttpRequestMessage(HttpMethod.Get, _apiFilesListUrl.Replace("Files", "Folders"));
+            folderRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var files = filesJson.Value;
+            // Adding cookies to the request
+            foreach (Cookie cookie in cookies)
+            {
+                folderRequest.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+            }
+
+            var folderResponse = await initialClient.SendAsync(folderRequest);
+            folderResponse.EnsureSuccessStatusCode();
+
+            var folderContent = await folderResponse.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(folderContent) || folderContent.Trim() == "{}")
+            {
+                Console.WriteLine("Empty or invalid folder JSON response.");
+                return null;
+            }
+
+            var folderJson = JsonConvert.DeserializeObject<JObject>(folderContent);
+
+            var folders = (folderJson["value"] != null)
+                ? folderJson["value"]
+                    .Select(f => new FolderInfo
+                    {
+                        Name = f["Name"].ToString(),
+                        Url = f["ServerRelativeUrl"].ToString()
+                    })
+                    .ToList()
+                : new List<FolderInfo>();
+
+            if (!folders.Any())
+            {
+                Console.WriteLine("No folders found.");
+                return null;
+            }
+
+            // Select the latest folder
+            var latestFolder = folders.OrderByDescending(f => f.Name).First();
+
+            // Step 3: Get Files inside the selected folder
+            var apiFolderFilesUrl = $"{_siteUrl}sites/gpw-web/_api/web/GetFolderByServerRelativeUrl('{latestFolder.Url}')/Files";
+
+            var encodedFolderPath = Uri.EscapeDataString(latestFolder.Url);
+            var filesRequest = new HttpRequestMessage(HttpMethod.Get, $"{_siteUrl}sites/gpw-web/_api/web/GetFolderByServerRelativePath(decodedurl='{encodedFolderPath}')/Files");
+            filesRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Adding cookies to the request for fetching files
+            foreach (Cookie cookie in cookies)
+            {
+                filesRequest.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+            }
+
+            var filesResponse = await initialClient.SendAsync(filesRequest);
+
+            var filesContent = await filesResponse.Content.ReadAsStringAsync();
+
+            if (!filesResponse.Content.Headers.ContentType.MediaType.Contains("application/json"))
+            {
+                Console.WriteLine("Unexpected content type: " + filesResponse.Content.Headers.ContentType.MediaType);
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(filesContent) || filesContent.Trim() == "{}")
+            {
+                Console.WriteLine("Empty or invalid files JSON response.");
+                return null;
+            }
+
+            var filesJson = JsonConvert.DeserializeObject<SharePointFileListDto>(filesContent);
+            var files = filesJson?.Value ?? new List<SharePointFileDto>();
+
+            if (!files.Any())
+            {
+                Console.WriteLine("No files found in the selected folder.");
+                return null;
+            }
 
             var downloadFiles = ReadDownloadedFiles();
 
@@ -76,7 +156,8 @@ public class SharePointFileDownloaderService
             }
 
             var filesCount = 0;
-            var newDownloadHistory = new DownloadHistory {
+            var newDownloadHistory = new DownloadHistory
+            {
                 FilesCount = 0,
                 ByAction = action,
                 UserId = userId,
@@ -92,29 +173,37 @@ public class SharePointFileDownloaderService
                 var fileName = file.Name.ToString();
                 var fileUrl = file.ServerRelativeUrl.ToString();
 
-                if(downloadFiles.Contains(fileName))
+                if (downloadFiles.Contains(fileName))
                 {
                     Console.WriteLine($"File {fileName} has already been downloaded.");
                     continue;
                 }
 
-                var fileResponse = await initialClient.GetAsync($"{_siteUrl}{fileUrl}");
-                if(fileResponse.IsSuccessStatusCode)
+                var fileRequest = new HttpRequestMessage(HttpMethod.Get, $"{_siteUrl}{fileUrl}");
+                // Adding cookies for the file download request
+                foreach (Cookie cookie in cookies)
+                {
+                    fileRequest.Headers.Add("Cookie", $"{cookie.Name}={cookie.Value}");
+                }
+
+                var fileResponse = await initialClient.SendAsync(fileRequest);
+
+                if (fileResponse.IsSuccessStatusCode)
                 {
                     var fileBytes = await fileResponse.Content.ReadAsByteArrayAsync();
                     await System.IO.File.WriteAllBytesAsync(Path.Combine(_folderPath, fileName), fileBytes);
                     Console.WriteLine($"File {fileName} downloaded successfully");
 
                     filesCount++;
-
                     UpdateDownloadedFiles(fileName);
                 }
-                else 
+                else
                 {
                     Console.WriteLine($"Error downloading file {fileName}: {fileResponse.StatusCode}");
                 }
 
-                var newDownloadFile = new DownloadFile {
+                var newDownloadFile = new DownloadFile
+                {
                     HistoryId = newDownloadHistory.Id,
                     FileName = fileName,
                     ProcessTime = DateTime.Now
@@ -123,17 +212,15 @@ public class SharePointFileDownloaderService
                 await _context.DownloadFiles.AddAsync(newDownloadFile);
             }
 
-            // var downloadHistory = await _context.DownloadHistories.FindAsync(newDownloadHistory.Id);
-            
             newDownloadHistory.FilesCount = filesCount;
             newDownloadHistory.EndTime = DateTime.Now;
-
             _context.DownloadHistories.Update(newDownloadHistory);
             await _context.SaveChangesAsync();
         }
 
-        return null;
+        return handler.CookieContainer;
     }
+
 
     private HashSet<string> ReadDownloadedFiles()
     {
