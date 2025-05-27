@@ -40,6 +40,7 @@ namespace backend.Data
         public DbSet<ProspectNote> ProspectNotes { get; set; }
         public DbSet<ProspectVoucher> ProspectVouchers { get; set; }
         public DbSet<ProspectVoucherList> ProspectVoucherLists { get; set; }
+        public DbSet<MonitorHistory> MonitorHistories { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

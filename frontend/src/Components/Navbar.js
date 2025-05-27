@@ -94,7 +94,7 @@ const Navbar = (props) => {
               </a>
             </div>
 
-            <div className="header-element header-search d-md-block d-none">
+            {/* <div className="header-element header-search d-md-block d-none">
               <input
                 type="text"
                 className="header-search-bar form-control border-0 bg-body"
@@ -106,7 +106,7 @@ const Navbar = (props) => {
               >
                 <i className="bi bi-search"></i>
               </a>
-            </div>
+            </div> */}
             <div className="header-element ms-3 d-lg-block d-none my-auto">
               <div className="dropdown my-auto d-none">
                 <a
@@ -135,7 +135,7 @@ const Navbar = (props) => {
               </a>
             </li>
 
-            <li className="header-element country-selector">
+            {/* <li className="header-element country-selector">
               <a
                 href="javascript:void(0);"
                 className="header-link dropdown-toggle"
@@ -234,7 +234,7 @@ const Navbar = (props) => {
                   </a>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             <li className="header-element header-theme-mode">
               <a
@@ -250,7 +250,7 @@ const Navbar = (props) => {
               </a>
             </li>
 
-            <li className="header-element cart-dropdown">
+            {/* <li className="header-element cart-dropdown">
               <a
                 href="javascript:void(0);"
                 className="header-link dropdown-toggle"
@@ -692,7 +692,7 @@ const Navbar = (props) => {
                   </div>
                 </div>
               </div>
-            </li>
+            </li> */}
 
             {/* <li className="header-element header-fullscreen">
               <a
@@ -715,9 +715,9 @@ const Navbar = (props) => {
                 aria-expanded="false"
               >
                 <div className="d-flex align-items-center">
-                  <div className="me-sm-2 me-0">
+                  <div className="me-sm-2 me-0 p-1">
                     <img
-                      src="../assets/images/faces/9.jpg"
+                      src="../assets/images/user.png"
                       alt="img"
                       className="avatar avatar-sm avatar-rounded"
                     />
@@ -740,13 +740,14 @@ const Navbar = (props) => {
                 <li>
                   <Link
                     to="/profile"
+                    // onClick={() => window.location.reload()}
                     className="dropdown-item d-flex align-items-center"
                   >
                     {" "}
                     <i className="bi bi-person fs-18 me-2 op-7"></i>Profile
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     to="/account-settings"
                     className="dropdown-item d-flex align-items-center"
@@ -765,7 +766,7 @@ const Navbar = (props) => {
                       19
                     </span>
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a
                     href="/#"
@@ -779,7 +780,7 @@ const Navbar = (props) => {
               </ul>
             </li>
 
-            <li className="header-element">
+            {/* <li className="header-element">
               <a
                 href="javascript:void(0);"
                 className="header-link switcher-icon"
@@ -788,7 +789,7 @@ const Navbar = (props) => {
               >
                 <i className="bi bi-gear header-link-icon border-0"></i>
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </header>

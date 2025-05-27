@@ -96,6 +96,12 @@ namespace backend.Repository
                         var matchedRecord = await _context.MatchResults
                             .FirstOrDefaultAsync(x => x.MatchId == result.Id && x.MatchedStep == index);
 
+                        var matched187RecordsCount = await _context.MatchResults
+                            .CountAsync(x => x.MatchId == result.Id && x.MatchedStep == index && x.Type == "J187");
+                        
+                        var matched193RecordsCount = await _context.MatchResults
+                            .CountAsync(x => x.MatchId == result.Id && x.MatchedStep == index && x.Type == "J193");
+
                         // Check if matchedRecord is not null before accessing its properties
                         if (matchedRecord != null)
                         {
@@ -104,17 +110,19 @@ namespace backend.Repository
                             result.ResultMonitorFiles.Add(new ResultMonitorFileDto
                             {
                                 FileName = file,
-                                DownloadDate = downloadDate
+                                DownloadDate = downloadDate,
+                                Count187 = matched187RecordsCount,
+                                Count193 = matched193RecordsCount
                             });
                         }
                         else
                         {
-                            // Optionally handle the case where matchedRecord is null
-                            // For example, you might want to log this or set a default DownloadDate
                             result.ResultMonitorFiles.Add(new ResultMonitorFileDto
                             {
                                 FileName = file,
-                                DownloadDate = null
+                                DownloadDate = null,
+                                Count187 = matched187RecordsCount,
+                                Count193 = matched193RecordsCount
                             });
                         }
                     }

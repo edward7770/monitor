@@ -296,6 +296,14 @@ const Sidebar = (props) => {
                     </li>
                     <li className="slide">
                       <Link
+                        to="/monitor-history"
+                        className="side-menu__item"
+                      >
+                        Monitor History
+                      </Link>
+                    </li>
+                    <li className="slide">
+                      <Link
                         to="/#"
                         className="side-menu__item"
                         onClick={(e) => clickImportEstate193(e)}

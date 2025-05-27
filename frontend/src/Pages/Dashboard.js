@@ -34,6 +34,46 @@ function extractFirst13DigitNumber(str) {
 
 const Dashboard = () => {
   const { t } = useTranslation();
+  const theme = useThemeMode();
+  function useThemeMode() {
+    const [theme, setTheme] = useState(
+      document.documentElement.getAttribute("data-theme-mode") || "light"
+    );
+  
+    useEffect(() => {
+      const observer = new MutationObserver(() => {
+        const newTheme = document.documentElement.getAttribute("data-theme-mode");
+        setTheme(newTheme || "light");
+      });
+  
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme-mode"],
+      });
+  
+      return () => observer.disconnect();
+    }, []);
+  
+    return theme;
+  }
+
+  const form193SearchOptions = [
+    {label: 'All', value: ''},
+    {label: 'Case Number', value: 'CaseNumber'},
+    {label: 'Id Number', value: 'IdNo'},
+    {label: 'Name', value: 'Name'},
+    {label: 'Particulars', value: 'Particulars'},
+  ];
+
+  const form187SearchOptions = [
+    {label: 'All', value: ''},
+    {label: 'Case Number', value: 'CaseNumber'},
+    {label: 'Id Number', value: 'IdNo'},
+    {label: 'Name', value: 'Name'},
+    {label: 'Particulars', value: 'Particulars'},
+    {label: 'Executor Name', value: 'ExecutorName'},
+  ]
+
   //form193 records table
   const [rowData, setRowData] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -41,6 +81,8 @@ const Dashboard = () => {
   const [pageSize, setPageSize] = useState(10);
   // const [sortModel, setSortModel] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [searchOption, setSearchOption] = useState({label: 'All', value: ''});
+
   //form187 records table
   const [rowData1, setRowData1] = useState([]);
   const [totalRecords1, setTotalRecords1] = useState(0);
@@ -48,6 +90,7 @@ const Dashboard = () => {
   const [pageSize1, setPageSize1] = useState(10);
   // const [sortModel1, setSortModel1] = useState([]);
   const [searchText1, setSearchText1] = useState("");
+  const [searchOption1, setSearchOption1] = useState({label: 'All', value: ''});
 
   // const [filterModel, setFilterModel] = useState({});
 
@@ -101,6 +144,16 @@ const Dashboard = () => {
   const onChangeSearchText1 = (e) => {
     setSearchText1(e.target.value);
   };
+
+
+  const handleSelectSearchOption = (type, item) => {
+    if(type === "form193") {
+      console.log(item)
+      setSearchOption(item);
+    } else {
+      setSearchOption1(item);
+    }
+  }
 
   const columnDefs = [
     {
@@ -411,7 +464,8 @@ const Dashboard = () => {
           currentPage,
           pageSize,
           [],
-          searchText
+          searchText,
+          searchOption.value
         );
 
         let searchLog = {
@@ -428,7 +482,7 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
       }
     }, 1000),
-    [currentPage, pageSize, user]
+    [currentPage, pageSize, user, searchOption]
   );
 
   useEffect(() => {
@@ -462,7 +516,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [searchText, currentPage, pageSize, fetch193Data]);
+  }, [searchText, searchOption, currentPage, pageSize, fetch193Data]);
 
   const fetch187Data = useCallback(
     debounce(async (searchText1) => {
@@ -471,7 +525,8 @@ const Dashboard = () => {
           currentPage1,
           pageSize1,
           [],
-          searchText1
+          searchText1,
+          searchOption1.value
         );
         
         let searchLog = {
@@ -489,7 +544,7 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
       }
     }, 1000),
-    [currentPage1, pageSize1, user]
+    [currentPage1, pageSize1, user, searchOption1]
   );
 
   useEffect(() => {
@@ -514,7 +569,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [searchText1, currentPage1, pageSize1, fetch187Data]);
+  }, [searchText1, searchOption1, currentPage1, pageSize1, fetch187Data]);
 
   // const defaultColDef = useMemo(() => {
   //   return {
@@ -537,19 +592,41 @@ const Dashboard = () => {
               <div className="card-title">Form193 Records Table</div>
             </div>
             <div className="card-body">
-              <div className="gridjs-head">
-                <div className="gridjs-search text-right">
+              <div className="gridjs-head flex items-center justify-between mb-2 gap-2">
+                <div className="gridjs-search text-right w-full">
                   <input
                     placeholder="Type a keyword..."
                     type="search"
                     onChange={(e) => onChangeSearchText(e)}
                     value={searchText}
-                    className="gridjs-input gridjs-search-input mb-2 w-full"
+                    className="gridjs-input gridjs-search-input w-full"
                     style={{ outline: "0" }}
                   />
                 </div>
+                <div className="w-[14rem] pl-0 relative">
+                    <a
+                      href="/#"
+                      // onClick={(e) => handleSelectInput(e)}
+                      class="btn bg-body header-dashboards-button text-start d-flex align-items-center justify-content-between"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {searchOption?.label || ''}
+                    </a>
+                    <ul
+                      className="dropdown-menu dashboard-dropdown w-[14rem]"
+                      role="menu"
+                    >
+                      {form193SearchOptions &&
+                        form193SearchOptions.map((x, index) => (
+                          <li key={index} className="dropdown-item dashboards-dropdown-item w-100 cursor-pointer" onClick={() => handleSelectSearchOption('form193', x)}>
+                            {x.label}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
               </div>
-              <div className="ag-theme-quartz" style={{ width: "100%" }}>
+              <div className={`${theme ==="dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`} style={{ width: "100%" }}>
                 <AgGridReact
                   // defaultColDef={defaultColDef}
                   // pagination={true}
@@ -597,19 +674,41 @@ const Dashboard = () => {
               <div className="card-title">Form187 Records Table</div>
             </div>
             <div className="card-body">
-              <div className="gridjs-head">
-                <div className="gridjs-search text-right">
+              <div className="gridjs-head flex jutify-between items-center w-full mb-2 gap-2">
+                <div className="gridjs-search text-right w-full">
                   <input
                     placeholder="Type a keyword..."
                     type="search"
                     onChange={(e) => onChangeSearchText1(e)}
                     value={searchText1}
-                    className="gridjs-input gridjs-search-input mb-2 w-full"
+                    className="gridjs-input gridjs-search-input w-full"
                     style={{ outline: "0" }}
                   />
                 </div>
+                <div className="w-[14rem] pl-0 relative">
+                    <a
+                      href="/#"
+                      // onClick={(e) => handleSelectInput(e)}
+                      class="btn bg-body header-dashboards-button text-start d-flex align-items-center justify-content-between"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {searchOption1?.label || ''}
+                    </a>
+                    <ul
+                      className="dropdown-menu dashboard-dropdown w-[14rem]"
+                      role="menu"
+                    >
+                      {form187SearchOptions &&
+                        form187SearchOptions.map((x, index) => (
+                          <li key={index} className="dropdown-item dashboards-dropdown-item w-100 cursor-pointer" onClick={() => handleSelectSearchOption('form187', x)}>
+                            {x.label}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
               </div>
-              <div className="ag-theme-quartz" style={{ width: "100%" }}>
+              <div className={`${theme ==="dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`} style={{ width: "100%" }}>
                 <AgGridReact
                   columnDefs={columnDefs1}
                   rowData={rowData1}

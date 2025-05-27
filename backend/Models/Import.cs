@@ -16,8 +16,9 @@ namespace backend.Models
         public DateTime StartDate { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? EndDate { get; set; }
-        [ForeignKey("AppUser")]
-        public string UserId { get; set; }
-        public virtual AppUser AppUser { get; set; }
+        public string? UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
+        public virtual AppUser? AppUser { get; set; }
     }
 }

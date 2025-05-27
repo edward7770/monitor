@@ -141,7 +141,8 @@ namespace backend.Controllers
                 new NewUserDto
                 {
                     UserId = user.Id,
-                    UserName = user.Name,
+                    // UserName = user.Name,
+                    UserName = client.Name + " " + client.Surname,
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
                     Role = role,
@@ -475,12 +476,14 @@ namespace backend.Controllers
             }
 
             var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(user.Id);
+            var client = await _clientRepo.GetByUserIdAsync(user.Id);
 
             return Ok(
                 new NewUserDto
                 {
                     UserId = user.Id,
-                    UserName = user.Name,
+                    // UserName = user.Name,
+                    UserName = client.Name + " " + client.Surname,
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
                     Role = role,
@@ -653,12 +656,14 @@ namespace backend.Controllers
             }
 
             var clientBalance = await _clientBalanceRepo.GetClientBalanceByIdAsync(user.Id);
+            var client = await _clientRepo.GetByUserIdAsync(user.Id);
 
             return Ok(
                 new NewUserDto
                 {
                     UserId = user.Id,
-                    UserName = user.Name,
+                    // UserName = user.Name,
+                    UserName = client.Name + " " + client.Surname,
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
                     Role = role,

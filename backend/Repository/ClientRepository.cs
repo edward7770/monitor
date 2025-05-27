@@ -93,7 +93,7 @@ namespace backend.Repository
                                  select new ClientDto
                                  {
                                      Id = c.Id,
-                                     Name = c.Name + " " + c.Surname,
+                                     Name = c.Name,
                                      Surname = c.Surname,
                                      Email = c.ContactEmail,
                                      CompanyName = c.CompanyName,

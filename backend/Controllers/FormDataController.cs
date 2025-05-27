@@ -24,13 +24,15 @@ namespace backend.Controllers
         readonly private UserManager<AppUser> _userManager;
         readonly private ISmtpService _smtpService;
         readonly private IImportRepository _importRepo;
-        public FormDataController(ILogger<FormDataController> logger, IFormDataRepository formDataRepo, ISearchLogRepository searchLogRepo, UserManager<AppUser> userManager, ISmtpService smtpService, IImportRepository importRepo)
+        readonly private IMonitorHistoryRepository _monitorHistoryRepo;
+        public FormDataController(ILogger<FormDataController> logger, IFormDataRepository formDataRepo, ISearchLogRepository searchLogRepo, UserManager<AppUser> userManager, ISmtpService smtpService, IImportRepository importRepo, IMonitorHistoryRepository monitorHistoryRepo)
         {
             _formDataRepo = formDataRepo;
             _searchLogRepo = searchLogRepo;
             _userManager = userManager;
             _smtpService = smtpService;
             _importRepo = importRepo;
+            _monitorHistoryRepo = monitorHistoryRepo;
             _logger = logger;
         }
 
@@ -40,10 +42,11 @@ namespace backend.Controllers
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortColumn = "DateCreated",
             [FromQuery] string sortDirection = "asc",
-            [FromQuery] string search = "")
+            [FromQuery] string search = "",
+            [FromQuery] string searchOption = "")
 
         {
-            var form187Records = await _formDataRepo.GetAllForm187Async(page, pageSize, sortColumn, sortDirection, search);
+            var form187Records = await _formDataRepo.GetAllForm187Async(page, pageSize, sortColumn, sortDirection, search, searchOption);
 
             return Ok(form187Records);
         }
@@ -54,9 +57,10 @@ namespace backend.Controllers
             [FromQuery] int pageSize = 10,
             [FromQuery] string sortColumn = "DateCreated",
             [FromQuery] string sortDirection = "asc",
-            [FromQuery] string search = "")
+            [FromQuery] string search = "",
+            [FromQuery] string searchOption = "")
         {
-            var form193Records = await _formDataRepo.GetAllForm193Async(page, pageSize, sortColumn, sortDirection, search);
+            var form193Records = await _formDataRepo.GetAllForm193Async(page, pageSize, sortColumn, sortDirection, search, searchOption);
 
             return Ok(form193Records);
         }
@@ -88,6 +92,19 @@ namespace backend.Controllers
             }
 
             return Ok(imports);
+        }
+
+        [HttpGet("monitor")]
+        public async Task<IActionResult> GetAllMonitorHistoriesAsync()
+        {
+            var monitors = await _monitorHistoryRepo.GetMonitorHistoriesAsync();
+
+            if (monitors == null)
+            {
+                return StatusCode(403, "Failed to fetch monitor history");
+            }
+
+            return Ok(monitors);
         }
 
         [HttpPost("import193")]

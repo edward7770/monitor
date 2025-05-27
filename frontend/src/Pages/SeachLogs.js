@@ -121,18 +121,19 @@ const SearchLogs = () => {
                 <>
                   <TableContainer
                     sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                    className="gridjs-table-border"
                   >
                     <Table className="w-full rtl:text-right">
                       <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                         <TableRow>
                           <TableCell
-                            className="w-1/3"
+                            className="w-1/3 gridjs-th"
                             style={{ minWidth: "200px" }}
                           >
                             Date
                           </TableCell>
-                          <TableCell className="w-1/4">Type</TableCell>
-                          <TableCell>Search String</TableCell>
+                          <TableCell className="w-1/4 gridjs-th">Type</TableCell>
+                          <TableCell className="gridjs-th">Search String</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody className="clients-list-table-1">
@@ -147,6 +148,7 @@ const SearchLogs = () => {
                                 <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.date &&
                                       row.date.split("T")[0] +
@@ -155,11 +157,13 @@ const SearchLogs = () => {
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.type}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.searchString}
                                   </TableCell>
@@ -197,6 +201,7 @@ const SearchLogs = () => {
                           onRowsPerPageChange={handleChangeRowsPerPage}
                           labelRowsPerPage={t("rows_per_page")}
                           style={{ marginRight: "10px" }}
+                          className="gridjs-table-button"
                         />
                       </div>
                     </div>

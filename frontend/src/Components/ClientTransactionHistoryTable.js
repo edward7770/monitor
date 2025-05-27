@@ -59,26 +59,28 @@ const ClientsTransactionHistoryTable = (props) => {
     <>
       <TableContainer
         sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+        className="gridjs-table-border"
       >
         <Table className="w-full rtl:text-right">
           <TableHead className="text-md border-0 bg-gray-50 client-table-header">
             <TableRow>
               <TableCell
               // className="w-1/6"
+              className="gridjs-th"
               >
                 Date
               </TableCell>
-              <TableCell className="w-1/8">File Name</TableCell>
-              <TableCell className="w-1/8">Monitor</TableCell>
-              <TableCell className="w-1/8">Records Found</TableCell>
-              <TableCell className="w-1/8" style={{ textAlign: "right" }}>
+              <TableCell className="w-1/8 gridjs-th">File Name</TableCell>
+              <TableCell className="w-1/8 gridjs-th">Monitor</TableCell>
+              <TableCell className="w-1/8 gridjs-th">Records Found</TableCell>
+              <TableCell className="w-1/8 gridjs-th" style={{ textAlign: "right" }}>
                 Price(R)
               </TableCell>
-              <TableCell className="w-1/8" style={{ textAlign: "right" }}>
+              <TableCell className="w-1/8 gridjs-th" style={{ textAlign: "right" }}>
                 Total(R)
               </TableCell>
               <TableCell
-                className="w-1/8"
+                className="w-1/8 gridjs-th"
                 style={{ textAlign: "right", paddingRight: "20px" }}
               >
                 Balance(R)
@@ -98,6 +100,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "200px",
                           }}
+                          className="gridjs-td"
                         >
                           {transaction.dateCreated.split("T")[0]}
                         </TableCell>
@@ -106,6 +109,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "120px",
                           }}
+                          className="gridjs-td"
                         >
                           <a
                             className="hover:underline hover:text-[blue]"
@@ -119,6 +123,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "120px",
                           }}
+                          className="gridjs-td"
                         >
                           {transaction.monitor}
                         </TableCell>
@@ -127,6 +132,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "150px",
                           }}
+                          className="gridjs-td"
                         >
                           {transaction.records}
                         </TableCell>
@@ -136,6 +142,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "120px",
                             textAlign: "right",
                           }}
+                          className="gridjs-td"
                         >
                           R{" "}
                           {parseInt(
@@ -148,6 +155,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "120px",
                             textAlign: "right",
                           }}
+                          className="gridjs-td"
                         >
                           {formatNumber(transaction.billValue)}
                         </TableCell>
@@ -157,6 +165,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "120px",
                             textAlign: "right",
                           }}
+                          className="gridjs-td"
                         >
                           {formatNumber(transaction.balance)}
                         </TableCell>
@@ -170,6 +179,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "200px",
                           }}
+                          className="gridjs-td"
                         >
                           {transaction.paymentDate.split("T")[0]}
                         </TableCell>
@@ -179,6 +189,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             border: "0px",
                             minWidth: "120px",
                           }}
+                          className="gridjs-td"
                         >
                           Captured By {transaction.capturedBy}&nbsp; on{" "}
                           {transaction.dateCreated.split("T")[0]}
@@ -189,6 +200,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "150px",
                             textAlign: "right",
                           }}
+                          className="gridjs-td"
                         >
                           {formatNumber(transaction.paymentAmount)}
                         </TableCell>
@@ -198,6 +210,7 @@ const ClientsTransactionHistoryTable = (props) => {
                             minWidth: "120px",
                             textAlign: "right",
                           }}
+                          className="gridjs-td"
                         >
                           {formatNumber(transaction.balance)}
                         </TableCell>
@@ -233,6 +246,7 @@ const ClientsTransactionHistoryTable = (props) => {
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage={t("rows_per_page")}
               style={{ marginRight: "10px" }}
+              className="gridjs-table-button"
             />
           </div>
         </div>

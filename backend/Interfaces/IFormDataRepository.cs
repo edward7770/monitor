@@ -9,8 +9,8 @@ namespace backend.Interfaces
 {
     public interface IFormDataRepository
     {
-        Task<PagedResult<FormRecordX187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search);
-        Task<PagedResult<FormRecordX193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search);
+        Task<PagedResult<FormRecordX187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search, string searchOption);
+        Task<PagedResult<FormRecordX193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search, string searchOption);
         Task<List<MatchResult>> FilterByIdNumberAsync(int MatchId);
         Task<List<XJ187>> GetLatestForm187Async();
         Task<List<XJ193>> GetLatestForm193Async();

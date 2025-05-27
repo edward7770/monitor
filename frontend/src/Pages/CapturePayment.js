@@ -160,6 +160,7 @@ const CapturePayment = () => {
               </div>
               <TableContainer
                 sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                className="gridjs-table-border"
               >
                 <Table className="w-full rtl:text-right">
                   <TableHead className="text-md border-0 bg-gray-50 client-table-header">
@@ -167,14 +168,15 @@ const CapturePayment = () => {
                       <TableCell
                         // className="w-1/6"
                         style={{ minWidth: "200px" }}
+                        className="gridjs-th"
                       >
                         Company Name
                       </TableCell>
-                      <TableCell className="w-1/6">Name</TableCell>
-                      <TableCell className="w-1/6">Phone Number</TableCell>
-                      <TableCell className="w-1/5">Email Address</TableCell>
-                      <TableCell className="w-1/6" style={{textAlign: 'right'}}>Balance(R)</TableCell>
-                      <TableCell style={{ width: "200px" }}></TableCell>
+                      <TableCell className="w-1/6 gridjs-th">Name</TableCell>
+                      <TableCell className="w-1/6 gridjs-th">Phone Number</TableCell>
+                      <TableCell className="w-1/5 gridjs-th">Email Address</TableCell>
+                      <TableCell className="w-1/6 gridjs-th" style={{textAlign: 'right'}}>Balance(R)</TableCell>
+                      <TableCell className="gridjs-th" style={{ width: "200px" }}></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody className="clients-list-table">
@@ -192,31 +194,37 @@ const CapturePayment = () => {
                                   border: "0px",
                                   minWidth: "200px",
                                 }}
+                                className="gridjs-td"
                               >
                                 {row.companyName}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", minWidth: "120px" }}
+                                className="gridjs-td"
                               >
                                 {row.name}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", minWidth: "120px" }}
+                                className="gridjs-td"
                               >
                                 {row.phone}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", minWidth: "150px" }}
+                                className="gridjs-td"
                               >
                                 {row.email}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", minWidth: "120px", textAlign: 'right' }}
+                                className="gridjs-td"
                               >
                                 {formatNumber(row.balanceAmount)}
                               </TableCell>
                               <TableCell
                                 style={{ border: "0px", width: "200px" }}
+                                className="gridjs-td"
                               >
                                 {/* <Button
                                   onClick={() => onClickAddPaymentbtn()}
@@ -270,6 +278,7 @@ const CapturePayment = () => {
                       onRowsPerPageChange={handleChangeRowsPerPage}
                       labelRowsPerPage={t("rows_per_page")}
                       style={{ marginRight: "10px" }}
+                      className="gridjs-table-button"
                     />
                   </div>
                 </div>

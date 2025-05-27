@@ -12,6 +12,7 @@ namespace backend.Interfaces
         Task<bool> ActivateMailbySmtp(string email, string name, string confirmationLink);
         Task<bool> SendProcessResultMailbySmtp(string email, string name);
         Task<bool> SendMonitorActionMailbySmtp(string email, string name);
+        Task<bool> SendMonitorUpdatesClientMailbySmtp(string email, string name, string fileName, int J193Count, int J187Count);
         Task ForgotPasswordMailBySmtp(string token, string email, string userName);
         Task<bool> SendNewCampaignEmailBySmtp(string email, string subject, string bodyText, int voucherValue, string voucherNumber, DateTime ExpirationDate);
     }

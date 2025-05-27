@@ -38,6 +38,7 @@ import ExtractedHisotry from "./Pages/ExtractedHisotry";
 import NewCampaignPage from "./Pages/NewCampaignPage";
 import CampaignHistory from "./Pages/CampaignHistory";
 import Prospects from "./Pages/Prospects";
+import MonitorHistory from "./Pages/MonitorHistory";
 
 import axios from 'axios';
 import { Outlet } from "react-router";
@@ -141,6 +142,7 @@ function App() {
               <Route path="/new-campaign" element={<ProtectedSuperadminRoute><NewCampaignPage/></ProtectedSuperadminRoute>} />
               <Route path="/campaign-history" element={<ProtectedSuperadminRoute><CampaignHistory/></ProtectedSuperadminRoute>} />
               <Route path="/prospects" element={<ProtectedSuperadminRoute><Prospects/></ProtectedSuperadminRoute>} />
+              <Route path="/monitor-history" element={<ProtectedSuperadminRoute><MonitorHistory/></ProtectedSuperadminRoute>} />
             </Route>
           )}
           <Route path="*" element={<NotFound />} />

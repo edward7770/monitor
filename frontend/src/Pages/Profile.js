@@ -108,6 +108,7 @@ const Profile = () => {
         formData.append(key, value);
       });
       let username = supplierData.name + " " + supplierData.surname;
+
       updateSupplierAPI(supplierData.id, formData)
         .then((res) => {
           setIsError(false);
@@ -138,6 +139,7 @@ const Profile = () => {
             .map((item) => item.userId)
             .indexOf(user.userId);
           if (supplierId !== -1) {
+            console.log(suppliers[supplierId])
             setSupplierData(suppliers[supplierId]);
           }
 

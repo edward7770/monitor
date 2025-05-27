@@ -80,21 +80,23 @@ const ClientsListTable = (props) => {
       </div>
       <TableContainer
         sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+        className="gridjs-table-border"
       >
         <Table className="w-full rtl:text-right">
           <TableHead className="text-md border-0 bg-gray-50 client-table-header">
             <TableRow>
-              <TableCell style={{ width: "100px" }}></TableCell>
+              <TableCell style={{ width: "100px" }} className="gridjs-th"></TableCell>
               <TableCell
                 // className="w-1/6"
                 style={{ minWidth: "200px", paddingLeft: "0px" }}
+                className="gridjs-th"
               >
                 Company Name
               </TableCell>
-              <TableCell className="w-1/6">Name</TableCell>
-              <TableCell className="w-1/6">Phone Number</TableCell>
-              <TableCell className="w-1/4">Email Address</TableCell>
-              <TableCell className="w-1/6" style={{textAlign: 'right', paddingRight: '20px'}}>Balance(R)</TableCell>
+              <TableCell className="w-1/6 gridjs-th">Name</TableCell>
+              <TableCell className="w-1/6 gridjs-th">Phone Number</TableCell>
+              <TableCell className="w-1/4 gridjs-th">Email Address</TableCell>
+              <TableCell className="w-1/6 gridjs-th" style={{textAlign: 'right', paddingRight: '20px'}}>Balance(R)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody className="clients-list-table">
@@ -117,8 +119,9 @@ const ClientsListTable = (props) => {
                             : () => ClickTableRow(row)
                         }
                         style={{ border: "0px", width: "100px" }}
+                        className="gridjs-td"
                       >
-                        <IconButton style={{ padding: "6px" }}>
+                        <IconButton style={{ padding: "6px" }} className="gridjs-table-button">
                           {openId !== row.id ? (
                             <KeyboardArrowRightIcon />
                           ) : (
@@ -137,6 +140,7 @@ const ClientsListTable = (props) => {
                           minWidth: "200px",
                           paddingLeft: "0px",
                         }}
+                        className="gridjs-td"
                       >
                         {row.companyName}
                       </TableCell>
@@ -147,6 +151,7 @@ const ClientsListTable = (props) => {
                             : () => ClickTableRow(row)
                         }
                         style={{ border: "0px", minWidth: "120px" }}
+                        className="gridjs-td"
                       >
                         {row.name}
                       </TableCell>
@@ -157,6 +162,7 @@ const ClientsListTable = (props) => {
                             : () => ClickTableRow(row)
                         }
                         style={{ border: "0px", minWidth: "120px" }}
+                        className="gridjs-td"
                       >
                         {row.phone}
                       </TableCell>
@@ -167,6 +173,7 @@ const ClientsListTable = (props) => {
                             : () => ClickTableRow(row)
                         }
                         style={{ border: "0px", minWidth: "150px" }}
+                        className="gridjs-td"
                       >
                         {row.email}
                       </TableCell>
@@ -177,6 +184,7 @@ const ClientsListTable = (props) => {
                             : () => ClickTableRow(row)
                         }
                         style={{ border: "0px", minWidth: "120px", textAlign: 'right', paddingRight: '20px' }}
+                        className="gridjs-td"
                       >
                         {formatNumber(row.balanceAmount)}
                       </TableCell>
@@ -197,32 +205,33 @@ const ClientsListTable = (props) => {
                                   marginLeft: "auto",
                                   marginRight: "auto",
                                 }}
-                                className="my-3"
+                                className="my-3 gridjs-table-border"
                               >
                                 <Table className="w-full rtl:text-right">
                                   <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                                     <TableRow>
                                       <TableCell
                                       // className="w-1/6"
+                                      className="gridjs-th"
                                       >
                                         Date
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8 gridjs-th">
                                         File Name
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8 gridjs-th">
                                         Monitor
                                       </TableCell>
-                                      <TableCell className="w-1/8">
+                                      <TableCell className="w-1/8 gridjs-th">
                                         Records Found
                                       </TableCell>
-                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
+                                      <TableCell className="w-1/8 gridjs-th" style={{textAlign: 'right'}}>
                                         Price(R)
                                       </TableCell>
-                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
+                                      <TableCell className="w-1/8 gridjs-th" style={{textAlign: 'right'}}>
                                         Total(R)
                                       </TableCell>
-                                      <TableCell className="w-1/8" style={{textAlign: 'right'}}>
+                                      <TableCell className="w-1/8 gridjs-th" style={{textAlign: 'right'}}>
                                         Balance(R)
                                       </TableCell>
                                     </TableRow>
@@ -238,6 +247,7 @@ const ClientsListTable = (props) => {
                                                   border: "0px",
                                                   minWidth: "200px",
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {
                                                   transaction.dateCreated.split(
@@ -250,6 +260,7 @@ const ClientsListTable = (props) => {
                                                   border: "0px",
                                                   minWidth: "120px",
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 <a
                                                   className="hover:underline hover:text-[blue]"
@@ -263,6 +274,7 @@ const ClientsListTable = (props) => {
                                                   border: "0px",
                                                   minWidth: "120px",
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {transaction.monitor}
                                               </TableCell>
@@ -271,6 +283,7 @@ const ClientsListTable = (props) => {
                                                   border: "0px",
                                                   minWidth: "150px",
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {transaction.records}
                                               </TableCell>
@@ -280,6 +293,7 @@ const ClientsListTable = (props) => {
                                                   minWidth: "120px",
                                                   textAlign: 'right'
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {parseInt(transaction.billValue / transaction.records)}
                                               </TableCell>
@@ -289,6 +303,7 @@ const ClientsListTable = (props) => {
                                                   minWidth: "120px",
                                                   textAlign: 'right'
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {formatNumber(transaction.billValue)}
                                               </TableCell>
@@ -298,6 +313,7 @@ const ClientsListTable = (props) => {
                                                   minWidth: "120px",
                                                   textAlign: 'right'
                                                 }}
+                                                className="gridjs-td"
                                               >
                                                 {formatNumber(transaction.balance)}
                                               </TableCell>
@@ -311,6 +327,7 @@ const ClientsListTable = (props) => {
                                               border: "0px",
                                               minWidth: "200px",
                                             }}
+                                            className="gridjs-td"
                                           >
                                             {
                                               transaction.paymentDate.split(
@@ -324,6 +341,7 @@ const ClientsListTable = (props) => {
                                               border: "0px",
                                               minWidth: "120px",
                                             }}
+                                            className="gridjs-td"
                                           >
                                             Captured By {transaction.capturedBy}&nbsp;
                                             on {transaction.dateCreated.split(
@@ -336,6 +354,7 @@ const ClientsListTable = (props) => {
                                               minWidth: "150px",
                                               textAlign: 'right'
                                             }}
+                                            className="gridjs-td"
                                           >
                                             {formatNumber(transaction.paymentAmount)}
                                           </TableCell>
@@ -345,6 +364,7 @@ const ClientsListTable = (props) => {
                                               minWidth: "120px",
                                               textAlign: 'right'
                                             }}
+                                            className="gridjs-td"
                                           >
                                             {formatNumber(transaction.balance)}
                                           </TableCell>
@@ -477,6 +497,7 @@ const ClientsListTable = (props) => {
               onRowsPerPageChange={handleChangeRowsPerPage}
               labelRowsPerPage={t("rows_per_page")}
               style={{ marginRight: "10px" }}
+              className="gridjs-table-button"
             />
           </div>
         </div>

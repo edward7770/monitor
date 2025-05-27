@@ -9,5 +9,7 @@ namespace backend.Dtos.Match
     {
         public string FileName { get; set; }
         public DateTime? DownloadDate { get; set; }
+        public int Count187 { get; set; }
+        public int Count193 { get; set; }
     }
 }

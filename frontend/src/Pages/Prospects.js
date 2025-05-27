@@ -392,22 +392,23 @@ const Prospects = () => {
                   </div>
                   <TableContainer
                     sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                    className="gridjs-table-border"
                   >
                     <Table className="w-full rtl:text-right">
                       <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                         <TableRow>
                           <TableCell
-                            className="w-1/4"
+                            className="w-1/4 gridjs-th"
                             style={{ minWidth: "200px" }}
                           >
                             Name
                           </TableCell>
-                          <TableCell className="w-1/8">Contact Name</TableCell>
-                          <TableCell className="w-1/8">Office Number</TableCell>
-                          <TableCell className="w-1/8">Mobile Number</TableCell>
-                          <TableCell className="w-1/6">Email</TableCell>
-                          <TableCell className="w-1/8">Created Date</TableCell>
-                          <TableCell style={{ textAlign: "center" }}>
+                          <TableCell className="w-1/8 gridjs-th">Contact Name</TableCell>
+                          <TableCell className="w-1/8 gridjs-th">Office Number</TableCell>
+                          <TableCell className="w-1/8 gridjs-th">Mobile Number</TableCell>
+                          <TableCell className="w-1/6 gridjs-th">Email</TableCell>
+                          <TableCell className="w-1/8 gridjs-th">Created Date</TableCell>
+                          <TableCell className="gridjs-th" style={{ textAlign: "center" }}>
                             Actions
                           </TableCell>
                         </TableRow>
@@ -424,35 +425,41 @@ const Prospects = () => {
                                 <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.name}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.contactName}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.officeNumber}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.mobileNumber}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.email}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.dateCreated.split("T")[0]}
                                   </TableCell>
-                                  <TableCell style={{ border: "0px" }}>
+                                  <TableCell style={{ border: "0px" }} className="gridjs-td">
                                     <div className="flex justify-center items-center">
                                       <button
                                         className="btn btn-icon btn-sm btn-info mr-3"
@@ -503,6 +510,7 @@ const Prospects = () => {
                           onRowsPerPageChange={handleChangeRowsPerPage}
                           labelRowsPerPage={t("rows_per_page")}
                           style={{ marginRight: "10px" }}
+                          className="gridjs-table-button"
                         />
                       </div>
                     </div>
@@ -596,12 +604,13 @@ const Prospects = () => {
                 <div className="col-xl-12">
                   <TableContainer
                     sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                    className="gridjs-table-border"
                   >
                     <Table className="w-full rtl:text-right">
                       <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                         <TableRow>
                           <TableCell
-                            className="w-3/4"
+                            className="w-3/4 gridjs-th"
                             style={{ minWidth: "200px" }}
                           >
                             Note
@@ -617,11 +626,13 @@ const Prospects = () => {
                                 <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
                                   <TableCell
                                     style={{ border: "0px"}}
+                                    className="gridjs-td"
                                   >
                                     {row.note}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px"}}
+                                    className="gridjs-td"
                                   >
                                     {row.dateCreated.split("T")[0] + " " + row.dateCreated.split("T")[1].split(".")[0]}
                                   </TableCell>

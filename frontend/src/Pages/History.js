@@ -12,6 +12,7 @@ import { getMatchResultsAPI } from "../Services/UploadService";
 // } from "../Services/FormDataService";
 import {
   IconButton,
+  Badge,
   Dialog,
   DialogActions,
   DialogContent,
@@ -22,6 +23,16 @@ import { updateDownloadDates } from "../Services/MonitorService";
 import { createClientTransactionAPI } from "../Services/ClientTransactionService";
 import { getUserAPI } from "../Services/AuthService";
 import { toast } from "react-toastify";
+
+function formatNumber(number) {
+  if(number !== 0 || number !== null) {
+    return "R " + number.toLocaleString('en-US', {
+        maximumFractionDigits: 2
+    });
+  } else {
+    return "R 0";
+  }
+}
 
 // const groupByMatchedStep = (arr) => {
 //   const grouped = {};
@@ -112,6 +123,29 @@ import { toast } from "react-toastify";
 
 const History = (props) => {
   const { t } = useTranslation();
+  const theme = useThemeMode();
+  function useThemeMode() {
+    const [theme, setTheme] = useState(
+      document.documentElement.getAttribute("data-theme-mode") || "light"
+    );
+  
+    useEffect(() => {
+      const observer = new MutationObserver(() => {
+        const newTheme = document.documentElement.getAttribute("data-theme-mode");
+        setTheme(newTheme || "light");
+      });
+  
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme-mode"],
+      });
+  
+      return () => observer.disconnect();
+    }, []);
+  
+    return theme;
+  }
+
   const [rowData, setRowData] = useState([]);
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
@@ -206,7 +240,8 @@ const History = (props) => {
 
       // downloadCSV(extractedCSVRecords, "Monitor " + parseInt(index + 1));
     } else {
-      var matchedRecordsCount = selectedMatchResult.countJ187 + selectedMatchResult.countJ193;
+      const selectedMonitorFile = selectedMatchResult.resultMonitorFiles[index];
+      var matchedRecordsCount = selectedMonitorFile.count187 + selectedMonitorFile.count193;
 
       var balanceAmount =
         user.balanceAmount - matchedRecordsCount * user.price;
@@ -259,20 +294,29 @@ const History = (props) => {
   const DownloadCellRenderer = (params) => {
     let processProgress = 0;
     processProgress = ((params.data.processProgressRecords / params.data.countIdNumbers) * 100).toFixed(2);
+    let newFilesCount = params.data.newFilesCount;
+
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: 'center' }}>
         {params.data.status === "Processed" ? (
-          <IconButton
-            onClick={() => handleDownloadBtn(params.data.id)}
-            style={{
-              cursor: "pointer",
-              color: "#387CFE",
-              margin: "auto",
-            }}
-            title="Download File"
-          >
-            <DownloadIcon style={{ fontSize: "20px" }} />
-          </IconButton>
+          <div className="relative inline-block">
+            <IconButton
+              onClick={() => handleDownloadBtn(params.data.id)}
+              style={{
+                cursor: "pointer",
+                color: "#387CFE",
+                margin: "auto",
+              }}
+              title="Download File"
+            >
+              <DownloadIcon style={{ fontSize: "20px" }} />
+            </IconButton>
+            {newFilesCount > 0 && (
+              <span className="absolute top-[10px] right-[6px] transform translate-x-1/2 -translate-y-1/2 bg-[#2db960] text-white text-[10px] leading-none rounded-full px-1 py-1 min-w-[16px] h-[16px] flex items-center justify-center">
+                {newFilesCount}
+              </span>
+            )}
+          </div>
         ) : (
           <div className="flex w-full" style={{flexDirection: 'column'}}>
             <div
@@ -549,6 +593,8 @@ const History = (props) => {
 
       if (response.data.length > 0) {
         response.data.forEach((result) => {
+          let newFilesCount = result.resultMonitorFiles.filter(x => !x.downloadDate).length || 0;
+
           let matchItem = {
             id: result.id,
             uploadDate: new Date(result.uploadDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
@@ -557,6 +603,7 @@ const History = (props) => {
             countJ187: result.j187MatchedCount,
             countJ193: result.j193MatchedCount,
             resultMonitorFiles: result.resultMonitorFiles,
+            newFilesCount: newFilesCount,
             status: result.status,
             processProgressRecords: result.processProgressRecords
           };
@@ -601,7 +648,7 @@ const History = (props) => {
                 <div className="card-title">History Of Matched Results</div>
               </div>
               <div className="card-body">
-                <div className="ag-theme-quartz" style={{ width: "100%" }}>
+                <div className={`${theme ==="dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`} style={{ width: "100%" }}>
                   <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
@@ -636,7 +683,7 @@ const History = (props) => {
                 <div
                   className={`${
                     !file.downloadDate
-                      ? "shadow-md bg-slate-100"
+                      ? "shadow-md bg-[#f5f5f5]"
                       : "bg-slate-50"
                   } flex items-center justify-between p-2 mt-2 rounded-md`}
                   //   shadow-md mb-2 hover:shadow-lg
@@ -648,13 +695,13 @@ const History = (props) => {
                       <h5 className="text-md" style={{ fontSize: "16px" }}>
                         Monitor {parseInt(index + 1)}
                       </h5>
-                      {file.downloadDate && (
-                        <p className="text-sm" style={{ fontSize: "12px" }}>
-                          Last Downloaded Date: {file.downloadDate
-                            ? new Date(file.downloadDate + 'Z').toISOString().split("T").join(" ").split(".")[0] 
-                            : 'Invalid Date'}
-                        </p>
-                      )}
+                      <p className="text-sm" style={{ fontSize: "12px" }}>
+                        Last Downloaded Date: {file.downloadDate ? <>
+                          {file.downloadDate
+                          ? new Date(file.downloadDate + 'Z').toISOString().split("T").join(" ").split(".")[0] 
+                          : 'Invalid Date'}
+                        </> : <>Never,&nbsp;&nbsp;&nbsp;Cost: {formatNumber((file.count187 + file.count193) * user?.price)}</>}
+                      </p>
                     </div>
                   </div>
                   <div className="float-right">
@@ -664,7 +711,7 @@ const History = (props) => {
                       }
                       style={{
                         cursor: "pointer",
-                        color: "#387CFE",
+                        color: file.downloadDate ? "#147c14" : "#387CFE",
                         margin: "auto",
                       }}
                       title="Download File"

@@ -279,13 +279,36 @@ namespace backend.Repository
         //         Data = rawRecords
         //     };
         // }
-        public async Task<PagedResult<FormRecordX187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
+        public async Task<PagedResult<FormRecordX187Dto>> GetAllForm187Async(int page, int pageSize, string sortColumn, string sortDirection, string search, string searchOption)
         {
             var query = _context.XJ187s.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(record => record.RawRecord != null && record.RawRecord.Contains(search));
+                if(searchOption == "") {
+                    query = query.Where(record => record.RawRecord != null && record.RawRecord.Contains(search));
+                } else {
+                    if (searchOption == "CaseNumber")
+                    {
+                        query = query.Where(record => record.CaseNumber != null && record.CaseNumber.Contains(search));
+                    }
+                    else if (searchOption == "IdNo")
+                    {
+                        query = query.Where(record => record.IdNo != null && record.IdNo.Contains(search));
+                    }
+                    else if (searchOption == "Name")
+                    {
+                        query = query.Where(record => record.Name != null && record.Name.Contains(search));
+                    }
+                    else if (searchOption == "Particulars")
+                    {
+                        query = query.Where(record => record.Particulars != null && record.Particulars.Contains(search));
+                    }
+                     else if (searchOption == "ExecutorName")
+                    {
+                        query = query.Where(record => record.ExecutorName != null && record.ExecutorName.Contains(search));
+                    }
+                }
             }
 
             if (!string.IsNullOrEmpty(sortColumn))
@@ -368,13 +391,32 @@ namespace backend.Repository
         //         Data = rawRecords
         //     };
         // }
-        public async Task<PagedResult<FormRecordX193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search)
+        public async Task<PagedResult<FormRecordX193Dto>> GetAllForm193Async(int page, int pageSize, string sortColumn, string sortDirection, string search, string searchOption)
         {
             var query = _context.XJ193s.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(record => record.RawRecord != null && record.RawRecord.Contains(search));
+                if(searchOption == "") {
+                    query = query.Where(record => record.RawRecord != null && record.RawRecord.Contains(search));
+                } else {
+                    if (searchOption == "CaseNumber")
+                    {
+                        query = query.Where(record => record.CaseNumber != null && record.CaseNumber.Contains(search));
+                    }
+                    else if (searchOption == "IdNo")
+                    {
+                        query = query.Where(record => record.IdNo != null && record.IdNo.Contains(search));
+                    }
+                    else if (searchOption == "Name")
+                    {
+                        query = query.Where(record => record.Name != null && record.Name.Contains(search));
+                    }
+                    else if (searchOption == "Particulars")
+                    {
+                        query = query.Where(record => record.Particulars != null && record.Particulars.Contains(search));
+                    }
+                }
             }
 
             if (!string.IsNullOrEmpty(sortColumn))

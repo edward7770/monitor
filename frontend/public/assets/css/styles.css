@@ -186,7 +186,7 @@
 }
 @media (max-width: 991.98px) {
   .app-header .horizontal-logo .header-logo img {
-    height: 1.5rem;
+    height: 2rem;
     line-height: 1.5rem;
   }
 }
@@ -9977,7 +9977,7 @@ caption {
 }
 .authentication .desktop-logo,
 .authentication .desktop-dark {
-  height: 1.5rem;
+  height: 2rem;
   line-height: 1.5rem;
 }
 .coming-soon-main {
@@ -14074,7 +14074,14 @@ th.gridjs-th {
 }
 td.gridjs-td {
   border: 1px solid var(--default-border) !important;
-  padding: 0.75rem !important;
+  padding: 0.5rem !important;
+  color: var(--default-text-color) !important;
+}
+.gridjs-table-button {
+  color: var(--default-text-color) !important;
+}
+.gridjs-table-border {
+  border: 1px solid var(--default-border) !important;
 }
 .gridjs-tbody,
 td.gridjs-td {
@@ -15024,7 +15031,7 @@ code[class*=language-] {
     display: block;
   }
   [data-vertical-style=detached] .app-header .horizontal-logo img {
-    height: 1.5rem;
+    height: 2rem;
     line-height: 1.5rem;
   }
   [data-vertical-style=detached] .app-header .horizontal-logo .desktop-logo {
@@ -15339,7 +15346,7 @@ code[class*=language-] {
 }
 @media (min-width: 992px) and (min-width: 992px) {
   [data-nav-layout=horizontal] .horizontal-logo .header-logo img {
-    height: 1.5rem;
+    height: 2rem;
     line-height: 1.5rem;
   }
   [data-nav-layout=horizontal] .horizontal-logo .header-logo .desktop-logo {
@@ -16605,8 +16612,8 @@ code[class*=language-] {
   transition: all 0.05s ease;
 }
 .app-sidebar .main-sidebar-header .header-logo img {
-  height: 1.5rem;
-  line-height: 1.5rem;
+  height: 2rem;
+  line-height: 2rem;
 }
 .app-sidebar .main-sidebar-header .header-logo .desktop-logo {
   display: block;

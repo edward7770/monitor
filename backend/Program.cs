@@ -141,6 +141,7 @@ builder.Services.AddScoped<IDownloadHistoryRepository, DownloadHistoryRepository
 builder.Services.AddScoped<IExtractHistoryRepository, ExtractHistoryRepository>();
 builder.Services.AddScoped<IProspectRepository, ProspectRepository>();
 builder.Services.AddScoped<IProspectVoucherRepository, ProspectVoucherRepository>();
+builder.Services.AddScoped<IMonitorHistoryRepository, MonitorHistoryRepository>();
 
 // builder.Services.AddHostedService<LongRunningTaskService>();
 builder.Services.AddHangfire(config => config.UseMemoryStorage());
@@ -148,6 +149,7 @@ builder.Services.AddHangfireServer();
 
 builder.Services.AddScoped<SharePointFileDownloaderService>();
 builder.Services.AddScoped<ExtractFilesService>();
+builder.Services.AddScoped<ImportFormDataService>();
 builder.Services.AddHttpClient<SharePointFileDownloaderService>();
 
 
@@ -163,11 +165,18 @@ builder.Services.AddQuartz(q =>
         .WithCronSchedule("0 0 0 * * ?"));
 
     var ExtractjobKey = new JobKey("extract-sharepoint-files");
-        q.AddJob<ExtractFilesJob>(opts => opts.WithIdentity(ExtractjobKey));
-        q.AddTrigger(opts => opts
-            .ForJob(ExtractjobKey)
-            .WithIdentity("extract-sharepoint-files-trigger")
-            .WithCronSchedule("5 5 0 * * ?"));
+    q.AddJob<ExtractFilesJob>(opts => opts.WithIdentity(ExtractjobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(ExtractjobKey)
+        .WithIdentity("extract-sharepoint-files-trigger")
+        .WithCronSchedule("5 5 0 * * ?"));
+
+    var ImportjobKey = new JobKey("import-formdata");
+    q.AddJob<ImportFormdataJob>(opts => opts.WithIdentity(ImportjobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(ImportjobKey)
+        .WithIdentity("import-formdata-trigger")
+        .WithCronSchedule("0 30 0 * * ?"));
 });
 
 // Register the Quartz hosted service
@@ -260,5 +269,20 @@ public class ExtractFilesJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         BackgroundJob.Enqueue(() => _extractFilesService.ExtractRecordsFromFiles("Schedule", null));
+    }
+}
+
+public class ImportFormdataJob : IJob
+{
+    private readonly ImportFormDataService _importFormDataService;
+
+    public ImportFormdataJob(ImportFormDataService importFormDataService)
+    {
+        _importFormDataService = importFormDataService;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
+        BackgroundJob.Enqueue(() => _importFormDataService.ImportFormdataTask("Schedule", null));
     }
 }

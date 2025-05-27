@@ -163,7 +163,7 @@ namespace backend.Service
                 string mailBody = "";
                 mailBody += "<h2>Hello, " + name + "</h2>";
                 mailBody += "<p>Your process is ended sucessfully!</p></br>";
-                mailBody += "<a href='www.superlinq.com:2000'> Please check your account in monitor.</a></br>";
+                mailBody += "<a href='http://www.superlinq.com:2000'> Please check your account in monitor.</a></br>";
                 mail.Body = mailBody;
                 mail.IsBodyHtml = true;
 
@@ -225,7 +225,69 @@ namespace backend.Service
                 string mailBody = "";
                 mailBody += "<h2>Hello, " + name + "</h2>";
                 mailBody += "<p>Your monitor action process is ended.</p></br>";
-                mailBody += "<a href='www.superlinq.com:2000'> Please check your account in monitor.</a></br>";
+                mailBody += "<a href='http://www.superlinq.com:2000'> Please check your account in monitor.</a></br>";
+                mail.Body = mailBody;
+                mail.IsBodyHtml = true;
+
+                SmtpClient smtp = new SmtpClient
+                {
+                    Port = stmpPort,
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Host = stmpHost,
+                    Credentials = new NetworkCredential(serverEmail, serverPassword)
+                };
+
+                await smtp.SendMailAsync(mail);
+                return true;
+            }
+            catch (SmtpFailedRecipientException ex)
+            {
+                if (ex.StatusCode == SmtpStatusCode.MailboxUnavailable ||
+                    ex.StatusCode == SmtpStatusCode.MailboxNameNotAllowed ||
+                    ex.StatusCode == SmtpStatusCode.MailboxBusy)
+                {
+                    return false;
+                }
+                return false;
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine($"Failed to send email: SMTP error - {ex.Message}.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send email: General error - {ex.Message}.");
+                return false;
+            }
+        }
+
+        public async Task<bool> SendMonitorUpdatesClientMailbySmtp(string email, string name, string fileName, int J193Count, int J187Count)
+        {
+            string App_url = _config["SmtpConfig:applicationUrl"] ?? "";
+            string serverEmail = _config["SmtpConfig:Email"] ?? "";
+            string serverPassword = _config["SmtpConfig:Password"] ?? "";
+            string stmpHost = _config["SmtpConfig:stmpHost"] ?? "";
+            int stmpPort = int.Parse(_config["SmtpConfig:stmpPort"] ?? "0");
+
+            if (!await IsDomainValidAsync(email))
+            {
+                Console.WriteLine("Invalid email domain.");
+                return false; // Return false if the domain is not valid
+            }
+
+            try
+            {
+                MailMessage mail = new MailMessage();
+                mail.To.Add(email ?? string.Empty);
+                mail.From = new MailAddress(serverEmail);
+                mail.Subject = "Discovered New Records by Monitor Action!";
+
+                string mailBody = "";
+                mailBody += "<h5>Hello, " + name + "</h5>";
+                mailBody += "<p>" + fileName + " has new " + J193Count + " J193 records and new " + J187Count + " J187 records by monitor action</p></br>";
+                mailBody += "<a href='http://www.superlinq.com:2000/history'> Please check your account in monitor.</a></br>";
                 mail.Body = mailBody;
                 mail.IsBodyHtml = true;
 

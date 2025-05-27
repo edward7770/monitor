@@ -6,7 +6,8 @@ export const getForm193RecordsAPI = async (
   currentPage,
   pageSize,
   sortModel,
-  filterModel
+  filterModel,
+  searchOption
 ) => {
   try {
     const response = await axios.get(api + "data/form193", {
@@ -16,6 +17,7 @@ export const getForm193RecordsAPI = async (
         sortColumn: sortModel.length > 0 ? sortModel[0].colId : "",
         sortDirection: sortModel.length > 0 ? sortModel[0].sort : "asc",
         search: filterModel || "",
+        searchOption: searchOption || "",
       },
     });
 
@@ -29,7 +31,8 @@ export const getForm187RecordsAPI = async (
   currentPage,
   pageSize,
   sortModel,
-  search
+  search,
+  searchOption
 ) => {
   try {
     const response = await axios.get(api + "data/form187", {
@@ -39,6 +42,7 @@ export const getForm187RecordsAPI = async (
         sortColumn: sortModel.length > 0 ? sortModel[0].colId : "",
         sortDirection: sortModel.length > 0 ? sortModel[0].sort : "asc",
         search: search || "",
+        searchOption: searchOption || "",
       },
     });
 
@@ -75,6 +79,11 @@ export const runImport187API = async (data) => {
 
 export const getAllImportsAPI = async () => {
   const res = await axios.get(api + "data/import");
+  return res.data; 
+}
+
+export const getAllMonitorHistoriesAPI = async () => {
+  const res = await axios.get(api + "data/monitor");
   return res.data; 
 }
 

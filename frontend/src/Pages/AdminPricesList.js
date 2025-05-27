@@ -389,26 +389,27 @@ const AdminPricesList = () => {
                 <>
                   <TableContainer
                     sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                    className="gridjs-table-border"
                   >
                     <Table className="w-full rtl:text-right">
                       <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                         <TableRow>
                           <TableCell
-                            className="w-1/6"
+                            className="w-1/6 gridjs-th"
                             style={{ minWidth: "200px" }}
                           >
                             Tier
                           </TableCell>
-                          <TableCell className="w-1/6">Description</TableCell>
-                          <TableCell className="w-1/6">Start</TableCell>
-                          <TableCell className="w-1/6">End</TableCell>
+                          <TableCell className="w-1/6 gridjs-th">Description</TableCell>
+                          <TableCell className="w-1/6 gridjs-th">Start</TableCell>
+                          <TableCell className="w-1/6 gridjs-th">End</TableCell>
                           <TableCell
-                            className="w-1/8"
+                            className="w-1/8 gridjs-th"
                             style={{ textAlign: "right" }}
                           >
                             Price
                           </TableCell>
-                          <TableCell style={{ textAlign: "center" }}>
+                          <TableCell className="gridjs-th" style={{ textAlign: "center" }}>
                             Actions
                           </TableCell>
                         </TableRow>
@@ -425,21 +426,25 @@ const AdminPricesList = () => {
                                 <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.tier}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.description}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.start}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.end}
                                   </TableCell>
@@ -448,10 +453,11 @@ const AdminPricesList = () => {
                                       border: "0px",
                                       textAlign: "right",
                                     }}
+                                    className="gridjs-td"
                                   >
                                     {formatNumber(row.price)}
                                   </TableCell>
-                                  <TableCell style={{ border: "0px" }}>
+                                  <TableCell style={{ border: "0px" }} className="gridjs-td">
                                     <div className="flex justify-center items-center">
                                       <button
                                         className="btn btn-icon btn-sm btn-info mr-3"
@@ -507,6 +513,7 @@ const AdminPricesList = () => {
                           onRowsPerPageChange={handleChangeRowsPerPage}
                           labelRowsPerPage={t("rows_per_page")}
                           style={{ marginRight: "10px" }}
+                          className="gridjs-table-button"
                         />
                       </div>
                     </div>
@@ -564,6 +571,7 @@ const AdminPricesList = () => {
                 <>
                   <TableContainer
                     sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+                    className="gridjs-table-border"
                   >
                     <Table className="w-full rtl:text-right">
                       <TableHead className="text-md border-0 bg-gray-50 client-table-header">
@@ -571,13 +579,14 @@ const AdminPricesList = () => {
                           <TableCell
                             // className="w-1/6"
                             style={{ minWidth: "200px" }}
+                            className="gridjs-th"
                           >
                             Company Name
                           </TableCell>
-                          <TableCell className="w-1/5">Full Name</TableCell>
-                          <TableCell className="w-1/6">Phone Number</TableCell>
-                          <TableCell className="w-1/5">Email Address</TableCell>
-                          <TableCell className="w-1/6" style={{textAlign: 'right'}}>Balance(R)</TableCell>
+                          <TableCell className="w-1/5 ">Full Name</TableCell>
+                          <TableCell className="w-1/6 gridjs-th">Phone Number</TableCell>
+                          <TableCell className="w-1/5 gridjs-th">Email Address</TableCell>
+                          <TableCell className="w-1/6 gridjs-th" style={{textAlign: 'right'}}>Balance(R)</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody className="clients-list-table-1">
@@ -592,21 +601,25 @@ const AdminPricesList = () => {
                                 <TableRow className="odd:bg-white group/item even:bg-slate-50 border-0 cursor-pointer hover:bg-gray-100 w-full">
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.companyName}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.name}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.phone}
                                   </TableCell>
                                   <TableCell
                                     style={{ border: "0px", minWidth: "120px" }}
+                                    className="gridjs-td"
                                   >
                                     {row.email}
                                   </TableCell>
@@ -615,6 +628,7 @@ const AdminPricesList = () => {
                                       border: "0px",
                                       textAlign: "right",
                                     }}
+                                    className="gridjs-td"
                                   >
                                     {formatNumber(row.balanceAmount)}
                                   </TableCell>
@@ -648,6 +662,7 @@ const AdminPricesList = () => {
                           onRowsPerPageChange={handleChangeRowsPerPage1}
                           labelRowsPerPage={t("rows_per_page")}
                           style={{ marginRight: "10px" }}
+                          className="gridjs-table-button"
                         />
                       </div>
                     </div>

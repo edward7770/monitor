@@ -79,25 +79,28 @@ const DownloadHistory = () => {
             <div className="card-body">
             <TableContainer
               sx={{ border: 1, borderRadius: 2, borderColor: "grey.300" }}
+              className="gridjs-table-border"
             >
               <Table className="w-full rtl:text-right">
                 <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                   <TableRow>
-                    <TableCell style={{ width: "100px" }}></TableCell>
+                    <TableCell style={{ width: "100px" }} className="gridjs-th"></TableCell>
                     <TableCell
                       // className="w-1/6"
                       style={{ minWidth: "200px", paddingLeft: "0px" }}
+                      className="gridjs-th"
                     >
                       Action
                     </TableCell>
-                    <TableCell className="w-1/6">Files Count</TableCell>
-                    <TableCell className="w-1/4">Start Time</TableCell>
-                    <TableCell className="w-1/4">End Time</TableCell>
+                    <TableCell className="w-1/6 gridjs-th">Files Count</TableCell>
+                    <TableCell className="w-1/4 gridjs-th">Start Time</TableCell>
+                    <TableCell className="w-1/4 gridjs-th">End Time</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody className="clients-list-table">
                   {rowData &&
                     rowData
+                      .sort((a,b) => new Date(b.startTime) - new Date(a.startTime))
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => (
                         <React.Fragment key={row.id}>
@@ -115,8 +118,9 @@ const DownloadHistory = () => {
                                   : () => ClickTableRow(row)
                               }
                               style={{ border: "0px", width: "100px" }}
+                              className="gridjs-td"
                             >
-                              <IconButton style={{ padding: "6px" }}>
+                              <IconButton style={{ padding: "6px" }} className="gridjs-table-button">
                                 {openId !== row.id ? (
                                   <KeyboardArrowRightIcon />
                                 ) : (
@@ -135,6 +139,7 @@ const DownloadHistory = () => {
                                 minWidth: "200px",
                                 paddingLeft: "0px",
                               }}
+                              className="gridjs-td"
                             >
                               {row.byAction}
                             </TableCell>
@@ -145,6 +150,7 @@ const DownloadHistory = () => {
                                   : () => ClickTableRow(row)
                               }
                               style={{ border: "0px", minWidth: "120px" }}
+                              className="gridjs-td"
                             >
                               {row.filesCount}
                             </TableCell>
@@ -155,6 +161,7 @@ const DownloadHistory = () => {
                                   : () => ClickTableRow(row)
                               }
                               style={{ border: "0px", minWidth: "120px" }}
+                              className="gridjs-td"
                             >
                               {formatDateTime(row.startTime)}
                             </TableCell>
@@ -165,6 +172,7 @@ const DownloadHistory = () => {
                                   : () => ClickTableRow(row)
                               }
                               style={{ border: "0px", minWidth: "150px" }}
+                              className="gridjs-td"
                             >
                               {formatDateTime(row.endTime)}
                             </TableCell>
@@ -185,17 +193,17 @@ const DownloadHistory = () => {
                                         marginLeft: "auto",
                                         marginRight: "auto",
                                       }}
-                                      className="my-3"
+                                      className="my-3 gridjs-table-border"
                                     >
                                       <Table className="w-full rtl:text-right">
                                         <TableHead className="text-md border-0 bg-gray-50 client-table-header">
                                           <TableRow>
                                             <TableCell
-                                              className="w-2/3"
+                                              className="w-2/3 gridjs-th"
                                             >
                                               File Name
                                             </TableCell>
-                                            <TableCell className="w-1/3">
+                                            <TableCell className="w-1/3 gridjs-th">
                                               Process Time
                                             </TableCell>
                                           </TableRow>
@@ -211,6 +219,7 @@ const DownloadHistory = () => {
                                                         border: "0px",
                                                         minWidth: "200px",
                                                       }}
+                                                      className="gridjs-td"
                                                     >
                                                       {transaction.fileName}
                                                     </TableCell>
@@ -219,6 +228,7 @@ const DownloadHistory = () => {
                                                         border: "0px",
                                                         minWidth: "120px",
                                                       }}
+                                                      className="gridjs-td"
                                                     >
                                                         {formatDateTime(transaction.processTime)}
                                                     </TableCell>
@@ -262,6 +272,7 @@ const DownloadHistory = () => {
                       onRowsPerPageChange={handleChangeRowsPerPage}
                       labelRowsPerPage={t("rows_per_page")}
                       style={{ marginRight: "10px" }}
+                      className="gridjs-table-button"
                     />
                   </div>
                 </div>

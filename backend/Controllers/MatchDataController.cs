@@ -28,15 +28,17 @@ namespace backend.Controllers
         private readonly IFormDataRepository _formDataRepo;
         private readonly IMatchResultRepository _matchResultRepo;
         private readonly IMatchRepository _matchRepo;
+        private readonly IMonitorHistoryRepository _monitorHistoryRepo;
         private readonly UserManager<AppUser> _userManager;
         private readonly ISmtpService _smtpService;
         private readonly IWebHostEnvironment _hostEnvironment;
-        public MatchDataController(IMatchDataRepository matchDataRepo, IFormDataRepository formDataRepo, IMatchResultRepository matchResultRepo, IMatchRepository matchRepo, UserManager<AppUser> userManager, ISmtpService smtpService, IWebHostEnvironment hostEnvironment)
+        public MatchDataController(IMatchDataRepository matchDataRepo, IFormDataRepository formDataRepo, IMatchResultRepository matchResultRepo, IMatchRepository matchRepo, IMonitorHistoryRepository monitorHistoryRepo, UserManager<AppUser> userManager, ISmtpService smtpService, IWebHostEnvironment hostEnvironment)
         {
             _matchDataRepo = matchDataRepo;
             _formDataRepo = formDataRepo;
             _matchResultRepo = matchResultRepo;
             _matchRepo = matchRepo;
+            _monitorHistoryRepo = monitorHistoryRepo;
             _userManager = userManager;
             _smtpService = smtpService;
             _hostEnvironment = hostEnvironment;
@@ -433,7 +435,6 @@ namespace backend.Controllers
                 // }
 
                 await ProcessJ187RecordsAsync(latestJ187Records, matched187RecordsDictionary, matchFormRecords);
-
                 await ProcessJ193RecordsAsync(latestJ193Records, matched193RecordsDictionary, matchFormRecords);
 
                 var allMatches = await _matchRepo.GetAllMatchesAsync();
@@ -446,6 +447,28 @@ namespace backend.Controllers
                     {
                         var filePath = await GenerateExcelFileAsync(match, matched187RecordsDictionary, matched193RecordsDictionary);
                         await _matchRepo.UpdateResultFileNameAsync(match.Id, Path.GetFileName(filePath));
+
+                        var resultFileNames = match.ResultFileName
+                            .Split(',')
+                            .Select(file => file.Trim())
+                            .Where(file => !string.IsNullOrWhiteSpace(file))
+                            .ToList();
+
+                        var newMonitorHistory = new MonitorHistory {
+                            FileName = match.FileName,
+                            Monitor = resultFileNames.Count,
+                            J193Count = hasJ193Match ? matched193RecordsDictionary[match.Id].Count : 0,
+                            J187Count = hasJ187Match ? matched187RecordsDictionary[match.Id].Count : 0,
+                            DateCreated = DateTime.Now
+                        };
+
+                        await _monitorHistoryRepo.AddMonitorHistoryAsync(newMonitorHistory);
+
+                        var user = await _userManager.FindByIdAsync(match.ClientId);
+                        if (user != null)
+                        {
+                            await _smtpService.SendMonitorUpdatesClientMailbySmtp(user.Email, user.Name, match.FileName, hasJ193Match ? matched193RecordsDictionary[match.Id].Count : 0, hasJ187Match ? matched187RecordsDictionary[match.Id].Count : 0);
+                        }
                     }
                 }
 

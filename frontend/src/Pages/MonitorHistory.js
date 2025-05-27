@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { getAllImportsAPI } from "../Services/FormDataService";
+import { getAllMonitorHistoriesAPI } from "../Services/FormDataService";
 import { toast } from "react-toastify";
 
-const ImportHistory = () => {
+const MonitorHistory = () => {
   const { t } = useTranslation();
   const [rowData, setRowData] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -45,41 +45,24 @@ const ImportHistory = () => {
 
   const columnDefs = [
     {
-      headerName: "Action",
-      field: "action",
+        headerName: "File Name",
+        field: "fileName",
+        filter: false,
+        sortable: false,
+        minWidth: 180,
+        flex: 1,
+    },
+    {
+      headerName: "Monitor",
+      field: "monitor",
       filter: false,
       sortable: false,
       minWidth: 180,
       flex: 1,
     },
     {
-      headerName: "Type",
-      field: "type",
-      filter: false,
-      sortable: false,
-      minWidth: 180,
-      flex: 1,
-    },
-    {
-      headerName: "Start Date",
-      field: "startDate",
-      filter: false,
-      sortable: false,
-      minWidth: 180,
-      flex: 1,
-    },
-    {
-      headerName: "End Date",
-      field: "endDate",
-      filter: false,
-      sortable: false,
-      minWidth: 180,
-      flex: 1,
-      cellRenderer: DownloadCellRenderer,
-    },
-    {
-      headerName: "Records",
-      field: "records",
+      headerName: "New J193",
+      field: "j193Count",
       cellDataType: "number",
       filter: false,
       sortable: false,
@@ -87,8 +70,17 @@ const ImportHistory = () => {
       flex: 1,
     },
     {
-      headerName: "User Name",
-      field: "name",
+      headerName: "New J187",
+      field: "j187Count",
+      cellDataType: "number",
+      filter: false,
+      sortable: false,
+      minWidth: 180,
+      flex: 1,
+    },
+    {
+      headerName: "Created Date",
+      field: "dateCreated",
       cellDataType: "string",
       filter: false,
       sortable: false,
@@ -106,7 +98,7 @@ const ImportHistory = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "Monitor | Import History";
+    document.title = "Monitor | Monitor History";
 
     const user = JSON.parse(window.localStorage.getItem("user"));
     if (user) {
@@ -116,27 +108,23 @@ const ImportHistory = () => {
 
   useEffect(() => {
     let intervalId;
-    const fetchImportsAsync = async () => {
-      var response = await getAllImportsAPI();
-      var tempImportResults = [];
+    const fetchMonitorsAsync = async () => {
+      var response = await getAllMonitorHistoriesAPI();
+      var tempMonitorResults = [];
 
       if (response.length > 0) {
+        console.log(response)
         response.forEach((result) => {
           let matchItem = {
             id: result.id,
-            action: result.name ? "User" : "Schedule",
-            startDate:
-              new Date(result.startDate + 'Z').toISOString().split("T").join(" ").split(".")[0],
-            endDate:
-              result.endDate ? new Date(result.endDate + 'Z').toISOString().split("T").join(" ").split(".")[0] : null,
-            type: result.type,
-            records: result.records,
-            name: result.name,
-            progress: result.progress,
-            createdDate: result.startDate
+            monitor: "Monitor " +  result.monitor,
+            fileName: result.fileName,
+            j193Count: result.j193Count,
+            j187Count: result.j187Count,
+            dateCreated: result.dateCreated.split("T")[0] + " " + result.dateCreated.split("T")[1].split(".")[0],
           };
 
-          tempImportResults.push(matchItem);
+          tempMonitorResults.push(matchItem);
         });
 
         if(response[response.length - 1].endDate === null) {
@@ -144,7 +132,7 @@ const ImportHistory = () => {
             clearInterval(intervalId);
           }
 
-          intervalId = setInterval(fetchImportsAsync, 1000);
+          intervalId = setInterval(fetchMonitorsAsync, 1000);
         } else {
           if (intervalId) {
             clearInterval(intervalId);
@@ -152,12 +140,12 @@ const ImportHistory = () => {
         }
       }
 
-      if (tempImportResults.length > 0) {
-        setRowData(tempImportResults.sort((a,b) => new Date(b.createdDate) - new Date(a.createdDate)));
+      if (tempMonitorResults.length > 0) {
+        setRowData(tempMonitorResults.sort((a,b) => new Date(b.createdDate) - new Date(a.createdDate)));
       }
     };
 
-    fetchImportsAsync();
+    fetchMonitorsAsync();
 
     return () => {
       if (intervalId) {
@@ -173,7 +161,7 @@ const ImportHistory = () => {
           <div className="col-xl-12">
             <div className="card custom-card">
               <div className="card-header">
-                <div className="card-title">Import History</div>
+                <div className="card-title">Monitor History</div>
               </div>
               <div className="card-body">
                 <div className="ag-theme-quartz" style={{ width: "100%" }}>
@@ -196,4 +184,4 @@ const ImportHistory = () => {
   );
 };
 
-export default ImportHistory;
+export default MonitorHistory;
